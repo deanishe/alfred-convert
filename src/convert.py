@@ -14,17 +14,25 @@
 from __future__ import print_function, unicode_literals
 
 import sys
+import threading
+
 from pint import UnitRegistry, UndefinedUnitError
 
-from workflow import Workflow, ICON_WARNING
+from workflow import Workflow, ICON_WARNING, ICON_INFO
+from currency import fetch_currency_rates
 
 log = None
+
+CURRENCY_CACHE_AGE = 3600 * 12  # 12 hours
+CURRENCY_CACHE_NAME = 'exchange_rates'
+# Pint objects
+ureg = UnitRegistry()
+Q = ureg.Quantity
 
 
 def convert(query):
     """Parse query into `quantity`, `from_unit`, `to_unit`"""
-    ureg = UnitRegistry()
-    Q = ureg.Quantity
+    global log, ureg, Q
     # Parse number from start of query
     qty = []
     for c in query:
@@ -46,6 +54,7 @@ def convert(query):
     # of units that `pint` understands
     if len(atoms) == 1:
         raise ValueError('No destination unit specified')
+    q1 = q2 = ''
     for i in range(len(atoms)):
         from_unit = to_unit = None  # reset so no old values spill over
         q1 = ' '.join(atoms[:i]).strip()
@@ -66,16 +75,42 @@ def convert(query):
     if to_unit is None:
         raise ValueError('Unknown unit : %s' % q2)
     conv = from_unit.to(to_unit)
+    # units = unicode(conv.units)
+    # if units.upper() in CURRENCIES:
+    #     units = units.upper()
     return '%0.2f %s' % (conv.magnitude, conv.units)
 
 
-def main(wf):
+def update_exchange_rates(wf, ureg):
     global log
+    exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME, fetch_currency_rates,
+                                    CURRENCY_CACHE_AGE)
+    # EUR is reference
+    ureg.define('euros = [currency] = eur = EUR')
+    for abbr, rate in exchange_rates.items():
+        ureg.define('{0} = eur * {1} = {2}'.format(abbr, rate,
+                                                   abbr.lower()))
+        log.debug('1 EUR = {0} {1}'.format(rate, abbr))
+
+
+def main(wf):
+    global log, ureg, Q
     log = wf.logger
     if not len(wf.args):
         return 1
-    query = wf.args[0]
+    query = wf.args[0].lower()
     log.debug('query : %s', query)
+
+    if wf.cached_data_age(CURRENCY_CACHE_NAME) > CURRENCY_CACHE_AGE:
+        # Get exchange rates and register them
+        thread = threading.Thread(target=update_exchange_rates, args=(wf, ureg))
+        thread.daemon = False
+        thread.start()
+        wf.add_item('Updating exchange rates…', valid=False, icon=ICON_INFO)
+
+    else:  # Run synchronously
+        thread = None
+        update_exchange_rates(wf, ureg)
 
     error = None
     conversion = None
@@ -105,6 +140,8 @@ def main(wf):
         wf.add_item(conversion, valid=False, icon='icon.png')
 
     wf.send_feedback()
+    if thread:
+        thread.join()
     return 0
 
 

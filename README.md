@@ -33,4 +33,6 @@ It doesn't matter if there is a space between the quantity and the units or not.
 
 The Python [Pint](http://pint.readthedocs.org/en/latest/index.html) library does all the heavy lifting. See the [Pint GitHub repo](https://github.com/hgrecco/pint) for Pint licensing or `LICENSE.txt` and `AUTHORS.txt` in the `pint` subdirectory.
 
+The money icon is from [Gettyicons.com](http://www.gettyicons.com/free-icon/105/money-icon-set/free-money-icon-png/) and was created by [DaPino](http://www.dapino-colada.nl/).
+
 All other code/media are released under the [MIT Licence](http://opensource.org/licenses/MIT).

@@ -60,6 +60,23 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>script</key>
+				<string>open Help.html</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>6B9E2332-4E13-4547-8CD9-C3E4D307C878</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>keyword</key>
@@ -81,17 +98,29 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
 				<key>escaping</key>
-				<integer>127</integer>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>convcurrencies</string>
+				<key>runningsubtext</key>
+				<string>Loading currencies…</string>
 				<key>script</key>
-				<string>open Help.html</string>
+				<string>python currency.py "{query}"</string>
+				<key>subtext</key>
+				<string>Show list of currencies supported by Convert</string>
+				<key>title</key>
+				<string>Convert: Supported Currencies</string>
 				<key>type</key>
 				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.script</string>
+			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
-			<string>6B9E2332-4E13-4547-8CD9-C3E4D307C878</string>
+			<string>958A2D60-7569-45BC-A439-EE18BD094943</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -114,6 +143,11 @@
 		<dict>
 			<key>ypos</key>
 			<real>130</real>
+		</dict>
+		<key>958A2D60-7569-45BC-A439-EE18BD094943</key>
+		<dict>
+			<key>ypos</key>
+			<real>250</real>
 		</dict>
 	</dict>
 	<key>webaddress</key>
