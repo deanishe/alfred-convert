@@ -2,7 +2,7 @@
 
 Convert between different units in [Alfred 2](http://www.alfredapp.com/).
 
-![](screenshot1.png "")
+![](https://raw.github.com/deanishe/alfred-convert/master/screenshot1.png "")
 
 Alfred-Convert uses a [built-in library](http://pint.readthedocs.org/en/latest/index.html) to do the conversion offline, so conversions are fast, but currencies are not supported.
 
@@ -23,11 +23,11 @@ It doesn't matter if there is a space between the quantity and the units or not.
 
 ## Screenshots ##
 
-![](screenshot1.png "")
+![](https://raw.github.com/deanishe/alfred-convert/master/screenshot1.png "")
 
-![](screenshot2.png "")
+![](https://raw.github.com/deanishe/alfred-convert/master/screenshot2.png "")
 
-![](screenshot3.png "")
+![](https://raw.github.com/deanishe/alfred-convert/master/screenshot3.png "")
 
 ## Thanks, copyright, licensing ##
 
