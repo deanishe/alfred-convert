@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>net.deanishe.alfred-convert</string>
+	<key>connections</key>
+	<dict>
+		<key>1F76517E-4F63-4286-BBBB-D8A6F19F6117</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>6B9E2332-4E13-4547-8CD9-C3E4D307C878</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Dean Jackson</string>
+	<key>description</key>
+	<string>Free-form conversions between different units</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Convert</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>conv</string>
+				<key>runningsubtext</key>
+				<string>Convertifying…</string>
+				<key>script</key>
+				<string>python convert.py "{query}"</string>
+				<key>subtext</key>
+				<string>Convert a free-form quantity to other units</string>
+				<key>title</key>
+				<string>Convert a Quantity</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>convhelp</string>
+				<key>subtext</key>
+				<string>Open the Convert help file in your browser</string>
+				<key>text</key>
+				<string>View Convert Help File</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>1F76517E-4F63-4286-BBBB-D8A6F19F6117</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>script</key>
+				<string>open Help.html</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>6B9E2332-4E13-4547-8CD9-C3E4D307C878</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+		<key>1F76517E-4F63-4286-BBBB-D8A6F19F6117</key>
+		<dict>
+			<key>ypos</key>
+			<real>130</real>
+		</dict>
+		<key>6B9E2332-4E13-4547-8CD9-C3E4D307C878</key>
+		<dict>
+			<key>ypos</key>
+			<real>130</real>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>
