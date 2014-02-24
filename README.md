@@ -8,7 +8,7 @@ Alfred-Convert uses a [built-in library](http://pint.readthedocs.org/en/latest/i
 
 ## Downloading ##
 
-Download from [GitHub]() or [Packal]().
+Download from [GitHub](https://github.com/deanishe/alfred-convert/blob/master/Convert.alfredworkflow?raw=true)<!-- or [Packal]()-->.
 
 ## Usage ##
 
