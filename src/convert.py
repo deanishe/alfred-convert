@@ -81,6 +81,11 @@ def convert(query):
     return '%0.2f %s' % (conv.magnitude, conv.units)
 
 
+def wait():
+    import time
+    time.sleep(10)
+
+
 def main(wf):
     global log, ureg, Q
     thread = None
@@ -106,10 +111,11 @@ def main(wf):
     if cache_age > CURRENCY_CACHE_AGE or cache_age == 0:  # Cache in background
         # Get exchange rates and register them
         log.debug('Updating exchange rate data in background')
-        thread = threading.Thread(target=wf.cached_data,
-                                  args=(CURRENCY_CACHE_NAME,
-                                        fetch_currency_rates,
-                                        CURRENCY_CACHE_AGE))
+        # thread = threading.Thread(target=wf.cached_data,
+        #                           args=(CURRENCY_CACHE_NAME,
+        #                                 fetch_currency_rates,
+        #                                 CURRENCY_CACHE_AGE))
+        thread = threading.Thread(target=wait)
         thread.daemon = False
         thread.start()
         wf.add_item('Updating exchange rates…', valid=False, icon=ICON_INFO)
