@@ -3,3 +3,6 @@ Currency conversion:
 		Currently, it's possible that currencies will never be loaded if there's no Internet connection.
 		To fix this, load existing cached data and trigger background update to cached file with or without updating currently loaded data.
 			- Test on McLovin without Internet connection
+
+Deployment:
+	- Replace symlinked workflow directory with copy of package
