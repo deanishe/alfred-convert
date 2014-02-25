@@ -81,36 +81,38 @@ def convert(query):
     return '%0.2f %s' % (conv.magnitude, conv.units)
 
 
-def update_exchange_rates(wf, ureg):
-    global log
-    exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME, fetch_currency_rates,
-                                    CURRENCY_CACHE_AGE)
-    # EUR is reference
-    ureg.define('euros = [currency] = eur = EUR')
-    for abbr, rate in exchange_rates.items():
-        ureg.define('{0} = eur * {1} = {2}'.format(abbr, rate,
-                                                   abbr.lower()))
-        log.debug('1 EUR = {0} {1}'.format(rate, abbr))
-
-
 def main(wf):
     global log, ureg, Q
+    thread = None
     log = wf.logger
     if not len(wf.args):
         return 1
     query = wf.args[0].lower()
     log.debug('query : %s', query)
 
-    if wf.cached_data_age(CURRENCY_CACHE_NAME) > CURRENCY_CACHE_AGE:
+    cache_age = wf.cached_data_age(CURRENCY_CACHE_NAME)
+    if cache_age > 0:  # Load data for now, regardless how stale
+        # EUR is reference
+        log.debug('Loading existing exchange rate data (%0.2f hours old)',
+                  cache_age / 3600.0)
+        exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME,
+                                        fetch_currency_rates, 0)
+        ureg.define('euros = [currency] = eur = EUR')
+        for abbr, rate in exchange_rates.items():
+            ureg.define('{0} = eur / {1} = {2}'.format(abbr, rate,
+                                                       abbr.lower()))
+            # log.debug('1 EUR = {0} {1}'.format(rate, abbr))
+
+    if cache_age > CURRENCY_CACHE_AGE or cache_age == 0:  # Cache in background
         # Get exchange rates and register them
-        thread = threading.Thread(target=update_exchange_rates, args=(wf, ureg))
+        log.debug('Updating exchange rate data in background')
+        thread = threading.Thread(target=wf.cached_data,
+                                  args=(CURRENCY_CACHE_NAME,
+                                        fetch_currency_rates,
+                                        CURRENCY_CACHE_AGE))
         thread.daemon = False
         thread.start()
         wf.add_item('Updating exchange rates…', valid=False, icon=ICON_INFO)
-
-    else:  # Run synchronously
-        thread = None
-        update_exchange_rates(wf, ureg)
 
     error = None
     conversion = None
