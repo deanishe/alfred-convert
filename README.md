@@ -25,6 +25,8 @@ The syntax is simple: the quantity, the unit you want to convert from then the u
 
 It doesn't matter if there is a space between the quantity and the units or not. **Alfred-Convert** will tell you if it doesn't understand your query or know the units.
 
+Actioning an item (selecting it and hitting `ENTER`) will copy it to the clipboard.
+
 Use `convhelp` to view the built-in help file (this file) and `convcurrencies` to view and search the list of supported currencies.
 
 ## Screenshots ##
@@ -89,6 +91,6 @@ The Python [Pint](http://pint.readthedocs.org/en/latest/index.html) library does
 
 The money icon is from [Gettyicons.com](http://www.gettyicons.com/free-icon/105/money-icon-set/free-money-icon-png/) and was created by [DaPino](http://www.dapino-colada.nl/).
 
-Exchange rates are downloaded from the [European Central Bank's website](http://www.ecb.europa.eu/stats/html/index.en.html).
+Exchange rates are downloaded from the [European Central Bank's website](http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html).
 
 All other code/media are released under the [MIT Licence](http://opensource.org/licenses/MIT).

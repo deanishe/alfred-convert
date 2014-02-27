@@ -154,7 +154,7 @@ def main(wf):
                     'For example: 2.5cm in  |  178lb kg  |  200m/s mph',
                     valid=False, icon=ICON_WARNING)
     else:  # Show result
-        wf.add_item(conversion, valid=False, icon='icon.png')
+        wf.add_item(conversion, valid=True, arg=conversion, icon='icon.png')
 
     wf.send_feedback()
     log.debug('finished')
