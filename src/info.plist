@@ -63,7 +63,7 @@
 				<key>escaping</key>
 				<integer>127</integer>
 				<key>script</key>
-				<string>open Help.html</string>
+				<string>open README.html</string>
 				<key>type</key>
 				<integer>0</integer>
 			</dict>
