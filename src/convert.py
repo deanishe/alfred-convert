@@ -14,24 +14,35 @@
 from __future__ import print_function, unicode_literals
 
 import sys
-import threading
+import os
+import subprocess
 
 from pint import UnitRegistry, UndefinedUnitError
 
 from workflow import Workflow, ICON_WARNING, ICON_INFO
 from currency import fetch_currency_rates
+from config import CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME, UPDATE_STATUS_FILE
 
 log = None
 
-CURRENCY_CACHE_AGE = 3600 * 12  # 12 hours
-CURRENCY_CACHE_NAME = 'exchange_rates'
 # Pint objects
 ureg = UnitRegistry()
 Q = ureg.Quantity
 
 
 def convert(query):
-    """Parse query into `quantity`, `from_unit`, `to_unit`"""
+    """Parse query, calculate and return conversion result
+
+    Raises a `ValueError` if the query is not understood or is invalid (e.g.
+    trying to convert between incompatible units).
+
+    :param query: the query entered into Alfred
+    :type query: `unicode`
+    :returns: the result of the conversion
+    :rtype: `unicode`
+
+    """
+
     global log, ureg, Q
     # Parse number from start of query
     qty = []
@@ -81,14 +92,9 @@ def convert(query):
     return '%0.2f %s' % (conv.magnitude, conv.units)
 
 
-def wait():
-    import time
-    time.sleep(10)
-
-
 def main(wf):
     global log, ureg, Q
-    thread = None
+    # thread = None
     log = wf.logger
     if not len(wf.args):
         return 1
@@ -109,16 +115,19 @@ def main(wf):
             # log.debug('1 EUR = {0} {1}'.format(rate, abbr))
 
     if cache_age > CURRENCY_CACHE_AGE or cache_age == 0:  # Cache in background
-        # Get exchange rates and register them
-        log.debug('Updating exchange rate data in background')
-        # thread = threading.Thread(target=wf.cached_data,
-        #                           args=(CURRENCY_CACHE_NAME,
-        #                                 fetch_currency_rates,
-        #                                 CURRENCY_CACHE_AGE))
-        thread = threading.Thread(target=wait)
-        thread.daemon = False
-        thread.start()
-        wf.add_item('Updating exchange rates…', valid=False, icon=ICON_INFO)
+        # Update exchange rates in background process
+        dirpath = os.path.abspath(os.path.dirname(__file__))
+        cmd = ['/usr/bin/python',
+               os.path.join(dirpath, 'update_exchange_rates.py')]
+        log.debug('Excecuting background command : %s', cmd)
+        pid = subprocess.Popen(cmd).pid
+        log.debug('Update process PID : %d', pid)
+        # Report update if one's happening
+        if os.path.exists(wf.cachefile(UPDATE_STATUS_FILE)):
+            log.debug('cache file exists : %s' % UPDATE_STATUS_FILE)
+            wf.add_item('Updating exchange rates…', valid=False, icon=ICON_INFO)
+        else:
+            log.debug('cache file does not exists : %s' % UPDATE_STATUS_FILE)
 
     error = None
     conversion = None
@@ -148,8 +157,7 @@ def main(wf):
         wf.add_item(conversion, valid=False, icon='icon.png')
 
     wf.send_feedback()
-    if thread:
-        thread.join()
+    log.debug('finished')
     return 0
 
 

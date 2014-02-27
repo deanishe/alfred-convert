@@ -13,11 +13,15 @@
 
 from __future__ import print_function, unicode_literals
 
-from workflow import Workflow, ICON_WARNING, web
+from datetime import datetime, timedelta
+
 try:
     from xml.etree import cElementTree as ET
 except ImportError:
     from xml.etree import ElementTree as ET
+
+from workflow import Workflow, web, ICON_WARNING, ICON_INFO
+from config import CURRENCY_CACHE_NAME
 
 log = None
 
@@ -34,6 +38,7 @@ CURRENCIES = {
     'CNY': 'Chinese yuan renminbi',
     'CZK': 'Czech koruna',
     'DKK': 'Danish krone',
+    'EUR': 'Euro',
     'GBP': 'Pound sterling',
     'HKD': 'Hong Kong dollar',
     'HRK': 'Croatian kuna',
@@ -50,7 +55,7 @@ CURRENCIES = {
     'NZD': 'New Zealand dollar',
     'PHP': 'Philippine peso',
     'PLN': 'Polish zloty',
-    'RON': 'New Romanian leu 1',
+    'RON': 'New Romanian leu',
     'RUB': 'Russian rouble',
     'SEK': 'Swedish krona',
     'SGD': 'Singapore dollar',
@@ -59,6 +64,24 @@ CURRENCIES = {
     'USD': 'US dollar',
     'ZAR': 'South African rand'
 }
+
+
+def human_timedelta(td):
+    output = []
+    d = {'day': td.days}
+    d['hour'], rem = divmod(td.seconds, 3600)
+    d['minute'], d['second'] = divmod(rem, 60)
+    for unit in ('day', 'hour', 'minute', 'second'):
+        i = d[unit]
+        if unit == 'second' and len(output):
+            # no seconds unless last update was < 1m ago
+            break
+        if i == 1:
+            output.append('1 %s' % unit)
+        elif i > 1:
+            output.append('%d %ss' % (i, unit))
+    output.append('ago')
+    return ' '.join(output)
 
 
 def fetch_currency_rates():
@@ -77,7 +100,6 @@ def fetch_currency_rates():
     for elem in root.findall('{0}Cube/{0}Cube/{0}Cube'.format(NS_ECB)):
         currency = elem.attrib.get('currency')
         rate = float(elem.attrib.get('rate'))
-        print('1 EUR = {0} {1}'.format(rate, currency))
         exchange_rates[currency] = rate
 
     return exchange_rates
@@ -118,8 +140,16 @@ def main(wf):
         wf.add_item('No matching currencies found',
                     valid=False, icon=ICON_WARNING)
     else:
+        if not query:  # Show last update time
+            td = timedelta(seconds=wf.cached_data_age(CURRENCY_CACHE_NAME))
+            # currencies_updated = datetime.now() - timedelta(seconds=age)
+            wf.add_item('Exchange rates updated %s' % human_timedelta(td),
+                        valid=False, icon=ICON_INFO)
         for name, abbr in currencies:
-            wf.add_item(abbr, name, valid=False, icon='money.png')
+            # wf.add_item(abbr, name, valid=False, icon='money.png')
+            wf.add_item('%s — %s' % (abbr, name),
+                        'Use the 3-letter currency code in conversions',
+                        valid=False, icon='money.png')
 
     wf.send_feedback()
     return 0
