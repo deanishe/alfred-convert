@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <title>README</title>
+  <title>Alfred-Convert Help</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
 /*
@@ -654,7 +654,7 @@ sub {
 </style>
 
 </head>
-<body class="normal firstload">
+<body class="normal">
   <div id="wrapper">
       <h1 id="alfred-convert">Alfred-Convert</h1>
 
@@ -664,11 +664,13 @@ sub {
 <img src="https://raw.github.com/deanishe/alfred-convert/master/screenshot1.png" alt="" />
 </figure>
 
-<p>Alfred-Convert uses a <a href="http://pint.readthedocs.org/en/latest/index.html">built-in library</a> to do the conversion offline, so conversions are fast, but currencies are not supported.</p>
+<p>Alfred-Convert uses a <a href="http://pint.readthedocs.org/en/latest/index.html">built-in library</a> to do the conversion offline.</p>
+
+<p><strong>Note:</strong> Currency conversions do require occasional Internet connectivity to update exchange rates. <strong>Alfred-Convert</strong> will otherwise work just fine without an Internet connection.</p>
 
 <h2 id="downloading">Downloading</h2>
 
-<p>Download from <a href="https://github.com/deanishe/alfred-convert/blob/master/Convert.alfredworkflow?raw=true">GitHub</a><!-- or [Packal]()-->.</p>
+<p>Download from <a href="https://github.com/deanishe/alfred-convert/blob/master/Convert.alfredworkflow?raw=true">GitHub</a>.</p>
 
 <h2 id="usage">Usage</h2>
 
@@ -681,7 +683,9 @@ sub {
 <li><code>conv 20.5 m/s mph</code></li>
 </ul>
 
-<p>It doesn&#8217;t matter if there is a space between the quantity and the units or not. Alfred-Convert will tell you if it doesn&#8217;t understand your query or know the units.</p>
+<p>It doesn&#8217;t matter if there is a space between the quantity and the units or not. <strong>Alfred-Convert</strong> will tell you if it doesn&#8217;t understand your query or know the units.</p>
+
+<p>Use <code>convhelp</code> to view the built-in help file (this file) and <code>convcurrencies</code> to view and search the list of supported currencies.</p>
 
 <h2 id="screenshots">Screenshots</h2>
 
@@ -697,9 +701,174 @@ sub {
 <img src="https://raw.github.com/deanishe/alfred-convert/master/screenshot3.png" alt="" />
 </figure>
 
+<h2 id="supportedunits">Supported units</h2>
+
+<p>Currently, <strong>Alfred-Convert</strong> only supports <a href="https://raw.github.com/deanishe/alfred-convert/master/src/pint/default_en.txt">the units</a> understood by the underlying <a href="http://pint.readthedocs.org/en/latest/index.html">Pint</a> library (plus currencies).</p>
+
+<p>If you&#8217;d like to see more units added, please create a corresponding <a href="https://github.com/deanishe/alfred-convert/issues">GitHub issue</a>.</p>
+
+<h3 id="supportedcurrencies">Supported currencies</h3>
+
+<p>To convert, use the appropriate <strong>abbreviation</strong> for the relevant currencies.</p>
+
+<p>You can also view (and search) the list from within Alfred using the keyword <code>convcurrencies</code>.</p>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Name</th>
+	<th style="text-align:left;">Abbreviation</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">Australian dollar</td>
+	<td style="text-align:left;">AUD</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Bulgarian lev</td>
+	<td style="text-align:left;">BGN</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Brasilian real</td>
+	<td style="text-align:left;">BRL</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Canadian dollar</td>
+	<td style="text-align:left;">CAD</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Swiss franc</td>
+	<td style="text-align:left;">CHF</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Chinese yuan renminbi</td>
+	<td style="text-align:left;">CNY</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Czech koruna</td>
+	<td style="text-align:left;">CZK</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Danish krone</td>
+	<td style="text-align:left;">DKK</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Euro</td>
+	<td style="text-align:left;">EUR</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Pound sterling</td>
+	<td style="text-align:left;">GBP</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Hong Kong dollar</td>
+	<td style="text-align:left;">HKD</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Croatian kuna</td>
+	<td style="text-align:left;">HRK</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Hungarian forint</td>
+	<td style="text-align:left;">HUF</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Indonesian rupiah</td>
+	<td style="text-align:left;">IDR</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Israeli shekel</td>
+	<td style="text-align:left;">ILS</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Indian rupee</td>
+	<td style="text-align:left;">INR</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Japanese yen</td>
+	<td style="text-align:left;">JPY</td>
+</tr>
+<tr>
+	<td style="text-align:left;">South Korean won</td>
+	<td style="text-align:left;">KRW</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Lithuanian litas</td>
+	<td style="text-align:left;">LTL</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Mexican peso</td>
+	<td style="text-align:left;">MXN</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Malaysian ringgit</td>
+	<td style="text-align:left;">MYR</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Norwegian krone</td>
+	<td style="text-align:left;">NOK</td>
+</tr>
+<tr>
+	<td style="text-align:left;">New Zealand dollar</td>
+	<td style="text-align:left;">NZD</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Philippine peso</td>
+	<td style="text-align:left;">PHP</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Polish zloty</td>
+	<td style="text-align:left;">PLN</td>
+</tr>
+<tr>
+	<td style="text-align:left;">New Romanian leu</td>
+	<td style="text-align:left;">RON</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Russian rouble</td>
+	<td style="text-align:left;">RUB</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Swedish krona</td>
+	<td style="text-align:left;">SEK</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Singapore dollar</td>
+	<td style="text-align:left;">SGD</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Thai baht</td>
+	<td style="text-align:left;">THB</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Turkish lira</td>
+	<td style="text-align:left;">TRY</td>
+</tr>
+<tr>
+	<td style="text-align:left;">US dollar</td>
+	<td style="text-align:left;">USD</td>
+</tr>
+<tr>
+	<td style="text-align:left;">South African rand</td>
+	<td style="text-align:left;">ZAR</td>
+</tr>
+</tbody>
+</table>
+
 <h2 id="thankscopyrightlicensing">Thanks, copyright, licensing</h2>
 
 <p>The Python <a href="http://pint.readthedocs.org/en/latest/index.html">Pint</a> library does all the heavy lifting. See the <a href="https://github.com/hgrecco/pint">Pint GitHub repo</a> for Pint licensing or <code>LICENSE.txt</code> and <code>AUTHORS.txt</code> in the <code>pint</code> subdirectory.</p>
+
+<p>The money icon is from <a href="http://www.gettyicons.com/free-icon/105/money-icon-set/free-money-icon-png/">Gettyicons.com</a> and was created by <a href="http://www.dapino-colada.nl/">DaPino</a>.</p>
+
+<p>Exchange rates are downloaded from the <a href="http://www.ecb.europa.eu/stats/html/index.en.html">European Central Bank&#8217;s website</a>.</p>
 
 <p>All other code/media are released under the <a href="http://opensource.org/licenses/MIT">MIT Licence</a>.</p>
 <!-- ##END MARKED WRAPPER## -->
