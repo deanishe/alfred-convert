@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Copyright © 2014 deanishe@deanishe.net
+# Copyright (c) 2014 Dean Jackson <deanishe@deanishe.net>
 #
 # MIT Licence. See http://opensource.org/licenses/MIT
 #
@@ -8,12 +8,27 @@
 #
 
 """
-web.py
+Basic, ``requests``-like API for retrieving data from the Web.
 
-Basic, requests-like API for retrieving data from the Web.
-
-Intended to replace most basic functionality of ``requests``, but at
+Intended to replace basic functionality of ``requests``, but at
 1/200th of the size.
+
+Features:
+
+- JSON requests and responses
+- Form data submission
+- File uploads
+- Redirection support
+
+**WARNING**: As ``web.py`` is based on Python 2's standard HTTP libraries, it
+**does not** verify SSL certificates when establishing HTTPS connections.
+
+As a result, you *must not* use this module for sensitive connections.
+
+If you require certificate verification (which you really should), you should
+use the `requests <http://docs.python-requests.org/en/latest/>`_
+Python library (upon which the `web.py` API is based) or the
+command-line tool `cURL <http://curl.haxx.se/>`_ instead.
 
 """
 
@@ -27,6 +42,9 @@ import string
 import random
 import json
 import re
+import unicodedata
+import codecs
+
 
 USER_AGENT = u'alfred-workflow-0.1'
 
@@ -34,7 +52,7 @@ USER_AGENT = u'alfred-workflow-0.1'
 BOUNDARY_CHARS = string.digits + string.ascii_letters
 
 # Table mapping response codes to messages; entries have the
-# form {code: (shortmessage, longmessage)}.
+# form {code: message}.
 RESPONSES = {
     100: 'Continue',
     101: 'Switching Protocols',
@@ -80,10 +98,10 @@ RESPONSES = {
 
 
 def str_dict(dic):
-    """Convert keys and values in ``d`` into UTF-8-encoded `str`
+    """Convert keys and values in ``dic`` into UTF-8-encoded :class:`str`
 
-    :param dic: `dict`
-    :returns: `dict`
+    :param dic: :class:`dict` of Unicode strings
+    :returns: :class:`dict`
 
     """
     dic2 = {}
@@ -105,7 +123,7 @@ class NoRedirectHandler(urllib2.HTTPRedirectHandler):
 
 class Response(object):
     """
-    Response returned by `request` / `get` / `post` functions.
+    Returned by :func:`request` / :func:`get` / :func:`post` functions.
 
     A simplified version of the ``Response`` object in the ``requests`` library.
 
@@ -116,16 +134,16 @@ class Response(object):
     ISO-8859-1
     >>> r.content  # bytes
     <html> ...
-    >>> r.text  # unicode, decoded according to encoding
+    >>> r.text  # unicode, decoded according to charset in HTTP header/meta tag
     u'<html> ...'
     >>> r.json()  # content parsed as JSON
 
     """
 
     def __init__(self, request):
-        """Call `request` with urllib2 and process results.
+        """Call `request` with :mod:`urllib2` and process results.
 
-        :param request: `~urllib2.Request` instance
+        :param request: :class:`urllib2.Request` instance
 
         """
 
@@ -133,23 +151,27 @@ class Response(object):
         self.url = None
         self.raw = None
         self.encoding = None
-        self.content = None
         self.error = None
         self.status_code = None
         self.reason = None
         self.headers = {}
+        self._content = None
 
         # Execute query
         try:
             self.raw = urllib2.urlopen(request)
         except urllib2.HTTPError as err:
             self.error = err
-            self.url = err.geturl()
+            try:
+                self.url = err.geturl()
+            # sometimes (e.g. when authentication fails)
+            # urllib can't get a URL from an HTTPError
+            except AttributeError:
+                pass
             self.status_code = err.code
         else:
             self.status_code = self.raw.getcode()
             self.url = self.raw.geturl()
-            self.content = self.raw.read()
         self.reason = RESPONSES.get(self.status_code)
 
         # Parse additional info if request succeeded
@@ -162,31 +184,82 @@ class Response(object):
             self.encoding = self._get_encoding()
 
     def json(self):
-        """Decode response contents as JSON
+        """Decode response contents as JSON.
 
         :returns: decoded JSON
-        :rtype: `list` / `dict`
+        :rtype: ``list`` / ``dict``
 
         """
 
-        return json.loads(self.content)
+        return json.loads(self.content, self.encoding or 'utf-8')
+
+    @property
+    def content(self):
+        """Return raw content of response (i.e. bytes)
+
+        :returns: ``str``
+
+        """
+
+        if not self._content:
+            self._content = self.raw.read()
+
+        return self._content
 
     @property
     def text(self):
-        """Return unicode-decoded content of response
+        """Return unicode-decoded content of response.
 
-        :returns: `unicode`
+        :returns: ``unicode``
 
         """
 
         if self.encoding:
-            return unicode(self.content, self.encoding)
+            return unicodedata.normalize('NFC', unicode(self.content,
+                                                        self.encoding))
         return self.content
 
-    def raise_for_status(self):
-        """Raise stored error if one occurred
+    def iter_content(self, chunk_size=1, decode_unicode=False):
+        """Iterate over response data.
 
-        error will be instance of `~urllib2.HTTPError`
+        :param chunk_size: Number of bytes to read into memory
+        :type chunk_size: ``int``
+        :param decode_unicode: Decode to Unicode using detected encoding
+        :type decode_unicode: ``Boolean``
+        :returns: iterator
+
+        """
+
+        def decode_stream(iterator, r):
+
+            decoder = codecs.getincrementaldecoder(r.encoding)(errors='replace')
+
+            for chunk in iterator:
+                rv = decoder.decode(chunk)
+                if rv:
+                    yield rv
+            rv = decoder.decode(b'', final=True)
+            if rv:
+                yield rv  # pragma: nocover
+
+        def generate():
+            while True:
+                chunk = self.raw.read(chunk_size)
+                if not chunk:
+                    break
+                yield chunk
+
+        chunks = generate()
+
+        if decode_unicode and self.encoding:
+            chunks = decode_stream(chunks, self)
+
+        return chunks
+
+    def raise_for_status(self):
+        """Raise stored error if one occurred.
+
+        error will be instance of :class:`urllib2.HTTPError`
         """
 
         if self.error:
@@ -194,10 +267,10 @@ class Response(object):
         return
 
     def _get_encoding(self):
-        """Get encoding from HTTP headers or content
+        """Get encoding from HTTP headers or content.
 
         :returns: encoding or `None`
-        :rtype: `unicode` or `None`
+        :rtype: ``unicode`` or ``None``
 
         """
 
@@ -210,43 +283,46 @@ class Response(object):
                           self.content)
             if m:
                 encoding = m.group(1)
-        elif (self.mimetype.startswith('application/') and
+        elif ((self.mimetype.startswith('application/') or
+               self.mimetype.startswith('text/')) and
               'xml' in self.mimetype):
-            m = re.search("""<?xml.+encoding=["']{0,1}(.+)["'].*>""",
+            m = re.search("""<?xml.+encoding=["'](.+?)["'].*>""",
                           self.content)
             if m:
                 encoding = m.group(1)
         elif self.mimetype == 'application/json' and not encoding:
             # The default encoding for JSON
             encoding = 'utf-8'
+        if encoding:
+            encoding = encoding.lower()
         return encoding
 
 
 def request(method, url, params=None, data=None, headers=None, cookies=None,
             files=None, auth=None, timeout=60, allow_redirects=False):
-    """Initiate an HTTP(S) request.
+    """Initiate an HTTP(S) request. Returns :class:`Response` object.
 
     :param method: 'GET' or 'POST'
-    :type method: `unicode`
+    :type method: ``unicode``
     :param url: URL to open
-    :type url: `unicode`
+    :type url: ``unicode``
     :param params: mapping of URL parameters
-    :type params: `dict`
-    :param data: mapping of form data {'field_name': 'value'} or `str`
-    :type data: `dict` or `str`
+    :type params: ``dict``
+    :param data: mapping of form data ``{'field_name': 'value'}`` or ``str``
+    :type data: ``dict`` or ``str``
     :param headers: HTTP headers
-    :type headers: `dict`
+    :type headers: ``dict``
     :param cookies: cookies to send to server
-    :type cookies: `dict`
+    :type cookies: ``dict``
     :param files: files to upload
     :type files:
     :param auth: username, password
-    :type auth: `tuple`
+    :type auth: ``tuple``
     :param timeout: connection timeout limit in seconds
-    :type timeout: `int`
+    :type timeout: ``int``
     :param allow_redirects: follow redirections
-    :type allow_redirects: `Boolean`
-    :returns: `~web.Response` instance
+    :type allow_redirects: ``Boolean``
+    :returns: :class:`Response` object
 
     """
 
@@ -297,9 +373,9 @@ def request(method, url, params=None, data=None, headers=None, cookies=None,
 
 def get(url, params=None, headers=None, cookies=None, auth=None,
         timeout=60, allow_redirects=True):
-    """Initiate a GET request. Arguments as for `request` function.
+    """Initiate a GET request. Arguments as for :func:`request` function.
 
-    :returns: `Request` instance
+    :returns: :class:`Response` instance
 
     """
 
@@ -309,9 +385,9 @@ def get(url, params=None, headers=None, cookies=None, auth=None,
 
 def post(url, params=None, data=None, headers=None, cookies=None, files=None,
          auth=None, timeout=60, allow_redirects=False):
-    """Initiate a POST request. Arguments as for `request` function.
+    """Initiate a POST request. Arguments as for :func:`request` function.
 
-    :returns: `Request` instance
+    :returns: :class:`Response` instance
 
     """
     return request('POST', url, params, data, headers, cookies, files, auth,
@@ -319,19 +395,26 @@ def post(url, params=None, data=None, headers=None, cookies=None, files=None,
 
 
 def encode_multipart_formdata(fields, files):
-    """
+    """Encode form data (``fields``) and ``files`` for POST request.
 
     :param fields: mapping of ``{name : value}`` pairs for normal form fields.
-    :type fields: `dict`
-    :param files: mapping of ``{name : {
-                                 'filename': 'blah.txt',
-                                 'content': '<binary data>',
-                                 'mimetype': 'text/plain'}
-                                }`` elements for file data.
-                                ``mimetype`` is optional.
-    :type files: `dict` of ``dicts``
-    :returns: ``(headers, body)`` ``headers`` is a `dict` of HTTP headers
+    :type fields: :class:`dict`
+    :param files: dictionary of fieldnames/files elements for file data.
+                  See below for details.
+    :type files: :class:`dict` of :class:`dicts`
+    :returns: ``(headers, body)`` ``headers`` is a :class:`dict` of HTTP headers
     :rtype: 2-tuple ``(dict, str)``
+
+    The ``files`` argument is a dictionary::
+
+        {'fieldname' : { 'filename': 'blah.txt',
+                         'content': '<binary data>',
+                         'mimetype': 'text/plain'}
+        }
+
+    - ``fieldname`` is the name of the field in the HTML form.
+    - ``mimetype`` is optional. If not provided, :mod:`mimetypes` will be used to guess the mimetype, or ``application/octet-stream`` will be used.
+
     """
 
     def get_content_type(filename):
@@ -340,7 +423,7 @@ def encode_multipart_formdata(fields, files):
         :param filename: filename of file
         :type filename: unicode/string
         :returns: mime-type, e.g. ``text/html``
-        :rtype: string
+        :rtype: :class:``str``
 
         """
 
