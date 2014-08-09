@@ -14,14 +14,12 @@
 from __future__ import print_function, unicode_literals
 
 import sys
-import os
-import subprocess
 
 from pint import UnitRegistry, UndefinedUnitError
 
 from workflow import Workflow, ICON_WARNING, ICON_INFO
-from currency import fetch_currency_rates
-from config import CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME, UPDATE_STATUS_FILE
+from workflow.background import run_in_background, is_running
+from config import CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME
 
 log = None
 
@@ -101,33 +99,28 @@ def main(wf):
     query = wf.args[0].lower()
     log.debug('query : %s', query)
 
-    cache_age = wf.cached_data_age(CURRENCY_CACHE_NAME)
-    if cache_age > 0:  # Load data for now, regardless how stale
-        # EUR is reference
-        log.debug('Loading existing exchange rate data (%0.2f hours old)',
-                  cache_age / 3600.0)
-        exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME,
-                                        fetch_currency_rates, 0)
+    # Load cached data
+    exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME, max_age=0)
+
+    if exchange_rates:  # Add exchange rates to conversion database
         ureg.define('euros = [currency] = eur = EUR')
         for abbr, rate in exchange_rates.items():
             ureg.define('{0} = eur / {1} = {2}'.format(abbr, rate,
                                                        abbr.lower()))
-            # log.debug('1 EUR = {0} {1}'.format(rate, abbr))
 
-    if cache_age > CURRENCY_CACHE_AGE or cache_age == 0:  # Cache in background
-        # Update exchange rates in background process
-        dirpath = os.path.abspath(os.path.dirname(__file__))
-        cmd = ['/usr/bin/python',
-               os.path.join(dirpath, 'update_exchange_rates.py')]
-        log.debug('Excecuting background command : %s', cmd)
-        pid = subprocess.Popen(cmd).pid
-        log.debug('Update process PID : %d', pid)
-        # Report update if one's happening
-        if os.path.exists(wf.cachefile(UPDATE_STATUS_FILE)):
-            log.debug('cache file exists : %s' % UPDATE_STATUS_FILE)
-            wf.add_item('Updating exchange rates…', valid=False, icon=ICON_INFO)
+    if not wf.cached_data_fresh(CURRENCY_CACHE_NAME, CURRENCY_CACHE_AGE):
+        # Update currency rates
+        cmd = ['/usr/bin/python', wf.workflowfile('update_exchange_rates.py')]
+        run_in_background('update', cmd)
+
+    if is_running('update'):
+        if exchange_rates is None:  # No data cached yet
+            wf.add_item('Fetching exchange rates…',
+                        'Currency conversions will be momentarily possible',
+                        icon=ICON_INFO)
         else:
-            log.debug('cache file does not exists : %s' % UPDATE_STATUS_FILE)
+            wf.add_item('Updating exchange rates…',
+                        icon=ICON_INFO)
 
     error = None
     conversion = None

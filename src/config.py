@@ -16,4 +16,3 @@ from __future__ import print_function, unicode_literals
 
 CURRENCY_CACHE_AGE = 3600 * 12  # 12 hours
 CURRENCY_CACHE_NAME = 'exchange_rates'
-UPDATE_STATUS_FILE = 'updating_exchange_rates'
