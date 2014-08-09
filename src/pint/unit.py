@@ -18,15 +18,49 @@ import itertools
 import functools
 import pkg_resources
 from decimal import Decimal
-from contextlib import contextmanager
-from io import open
+from contextlib import contextmanager, closing
+from io import open, StringIO
 from numbers import Number
+from collections import defaultdict
 from tokenize import untokenize, NUMBER, STRING, NAME, OP
 
-from .context import Context, ContextChain
-from .util import (formatter, logger, NUMERIC_TYPES, pi_theorem, solve_dependencies,
-                   ParserHelper, string_types, ptok, string_preprocessor)
-from .util import find_shortest_path
+from .context import Context, ContextChain, _freeze
+from .util import (logger, pi_theorem, solve_dependencies, ParserHelper,
+                   string_preprocessor, find_connected_nodes, find_shortest_path)
+from .compat import tokenizer, string_types, NUMERIC_TYPES, TransformDict
+from .formatting import format_unit
+
+
+class DefinitionSyntaxError(ValueError):
+    """Raised when a textual definition has a syntax error.
+    """
+
+    def __init__(self, msg, filename=None, lineno=None):
+        super(ValueError, self).__init__()
+        self.msg = msg
+        self.filename = None
+        self.lineno = None
+
+    def __str__(self):
+        return "While opening {0}, in line {1}: ".format(self.filename, self.lineno) + self.msg
+
+
+class RedefinitionError(ValueError):
+    """Raised when a unit or prefix is redefined.
+    """
+
+    def __init__(self, name, definition_type):
+        super(ValueError, self).__init__()
+        self.name = name
+        self.definition_type = definition_type
+        self.filename = None
+        self.lineno = None
+
+    def __str__(self):
+        msg = "cannot redefine '{0}' ({1})".format(self.name, self.definition_type)
+        if self.filename:
+            return "While opening {0}, in line {1}: ".format(self.filename, self.lineno) + msg
+        return msg
 
 
 class UndefinedUnitError(ValueError):
@@ -83,10 +117,10 @@ class Converter(object):
 
     is_multiplicative = True
 
-    def to_reference(self, value):
+    def to_reference(self, value, inplace=False):
         return value
 
-    def from_reference(self, value):
+    def from_reference(self, value, inplace=False):
         return value
 
 
@@ -99,11 +133,21 @@ class ScaleConverter(Converter):
     def __init__(self, scale):
         self.scale = scale
 
-    def to_reference(self, value):
-        return value / self.scale
+    def to_reference(self, value, inplace=False):
+        if inplace:
+            value *= self.scale
+        else:
+            value = value * self.scale
 
-    def from_reference(self, value):
-        return value * self.scale
+        return value
+
+    def from_reference(self, value, inplace=False):
+        if inplace:
+            value /= self.scale
+        else:
+            value = value / self.scale
+
+        return value
 
 
 class OffsetConverter(Converter):
@@ -118,11 +162,23 @@ class OffsetConverter(Converter):
     def is_multiplicative(self):
         return self.offset == 0
 
-    def to_reference(self, value):
-        return value / self.scale + self.offset
+    def to_reference(self, value, inplace=False):
+        if inplace:
+            value *= self.scale
+            value += self.offset
+        else:
+            value = value * self.scale + self.offset
 
-    def from_reference(self, value):
-        return (value - self.offset) * self.scale
+        return value
+
+    def from_reference(self, value, inplace=False):
+        if inplace:
+            value -= self.offset
+            value /= self.scale
+        else:
+            value = (value - self.offset) / self.scale
+
+        return value
 
 
 class Definition(object):
@@ -170,6 +226,10 @@ class Definition(object):
     @property
     def symbol(self):
         return self._symbol or self._name
+
+    @property
+    def has_symbol(self):
+        return bool(self._symbol)
 
     @property
     def aliases(self):
@@ -225,8 +285,9 @@ class UnitDefinition(Definition):
             elif not any(_is_dim(key) for key in converter.keys()):
                 self.is_base = False
             else:
-                raise ValueError('Base units must be referenced only to dimensions. '
-                                 'Derived units must not be referenced to dimensions.')
+                raise ValueError('Cannot mix dimensions and units in the same definition. '
+                                 'Base units must be referenced only to dimensions. '
+                                 'Derived units must be referenced only to units.')
             self.reference = UnitsContainer(converter.items())
             if 'offset' in modifiers:
                 converter = OffsetConverter(converter.scale, modifiers['offset'])
@@ -298,39 +359,14 @@ class UnitsContainer(dict):
         return dict.__eq__(self, other)
 
     def __str__(self):
-        if not self:
-            return 'dimensionless'
-        return formatter(self.items())
+      return self.__format__('')
 
     def __repr__(self):
         tmp = '{%s}' % ', '.join(["'{0}': {1}".format(key, value) for key, value in sorted(self.items())])
         return '<UnitsContainer({0})>'.format(tmp)
 
     def __format__(self, spec):
-        if 'L' in spec:
-            tmp = formatter(self.items(), True, True,
-                            r' \cdot ', r'\frac[{0}][{1}]', '{0}^[{1}]',
-                            r'\left( {0} \right)')
-            tmp = tmp.replace('[', '{').replace(']', '}')
-            return tmp
-        elif 'P' in spec:
-            def fmt_exponent(num):
-                PRETTY = '⁰¹²³⁴⁵⁶⁷⁸⁹'
-                ret = '{0:n}'.format(num).replace('-', '⁻')
-                for n in range(10):
-                    ret = ret.replace(str(n), PRETTY[n])
-                return ret
-            tmp = formatter(self.items(), True, False,
-                            '·', '/', '{0}{1}',
-                            '({0})', fmt_exponent)
-            return tmp
-        elif 'H' in spec:
-            tmp = formatter(self.items(), True, True,
-                            r' ', r'{0}/{1}', '{0}<sup>{1}</sup>',
-                            r'({0})')
-            return tmp
-        else:
-            return str(self)
+        return format_unit(self, spec)
 
     def __copy__(self):
         ret = self.__class__()
@@ -411,16 +447,29 @@ class UnitRegistry(object):
     :param force_ndarray: convert any input, scalar or not to a numpy.ndarray.
     :param default_to_delta: In the context of a multiplication of units, interpret
                              non-multiplicative units as their *delta* counterparts.
+    :param on_redefinition: action to take in case a unit is redefined.
+                            'warn', 'raise', 'ignore'
+    :type on_redefintion: str
     """
 
-    def __init__(self, filename='', force_ndarray=False, default_to_delta=True):
+    def __init__(self, filename='', force_ndarray=False, default_to_delta=True, on_redefinition='warn'):
         self.Quantity = build_quantity_class(self, force_ndarray)
+        self.Measurement = build_measurement_class(self, force_ndarray)
+
+        #: Action to take in case a unit is redefined. 'warn', 'raise', 'ignore'
+        self._on_redefinition = on_redefinition
 
         #: Map dimension name (string) to its definition (DimensionDefinition).
         self._dimensions = {}
 
         #: Map unit name (string) to its definition (UnitDefinition).
+        #: Might contain prefixed units.
         self._units = {}
+
+        #: Map unit name in lower case (string) to a set of unit names with the right case.
+        #: Does not contain prefixed units.
+        #: e.g: 'hz' - > set('Hz', )
+        self._units_casei = defaultdict(set)
 
         #: Map prefix name (string) to its definition (PrefixDefinition).
         self._prefixes = {'': PrefixDefinition('', '', (), 1)}
@@ -434,22 +483,33 @@ class UnitRegistry(object):
         #: Stores active contexts.
         self._active_ctx = ContextChain()
 
+        #: Maps dimensionality (_freeze(UnitsContainer)) to Units (str)
+        self._dimensional_equivalents = TransformDict(_freeze)
+
+        #: Maps dimensionality (_freeze(UnitsContainer)) to Dimensionality (_freeze(UnitsContainer))
+        self._base_units_cache = TransformDict(_freeze)
+        #: Maps dimensionality (_freeze(UnitsContainer)) to Units (_freeze(UnitsContainer))
+        self._dimensionality_cache = TransformDict(_freeze)
+
         #: When performing a multiplication of units, interpret
         #: non-multiplicative units as their *delta* counterparts.
         self.default_to_delta = default_to_delta
 
         if filename == '':
-            data = pkg_resources.resource_filename(__name__, 'default_en.txt')
-            self.load_definitions(data, True)
+            self.load_definitions('default_en.txt', True)
         elif filename is not None:
             self.load_definitions(filename)
 
         self.define(UnitDefinition('pi', 'π', (), ScaleConverter(math.pi)))
 
+        self._build_cache()
+
     def __getattr__(self, item):
         return self.Quantity(1, item)
 
     def __getitem__(self, item):
+        logger.warning('Calling the getitem method from a UnitRegistry is deprecated. '
+                       'use `parse_expression` method or use the registry as a callable.')
         return self.parse_expression(item)
 
     def __dir__(self):
@@ -492,11 +552,9 @@ class UnitRegistry(object):
         Notice that this methods will not disable the context. Use `disable_contexts`.
         """
         context = self._contexts[name_or_alias]
-        name = self._contexts[name_or_alias].aliases
-        aliases = self._contexts[name].aliases
 
-        del self._contexts[name]
-        for alias in aliases:
+        del self._contexts[context.name]
+        for alias in context.aliases:
             del self._contexts[alias]
 
         return context
@@ -556,7 +614,7 @@ class UnitRegistry(object):
             >>> with ureg.context('one'):
             ...     pass
 
-        If the context has an argument, you can specify it's value as a keyword
+        If the context has an argument, you can specify its value as a keyword
         argument::
 
             >>> with ureg.context('one', n=1):
@@ -600,29 +658,44 @@ class UnitRegistry(object):
             definition = Definition.from_string(definition)
 
         if isinstance(definition, DimensionDefinition):
-            d = self._dimensions
+            d, di = self._dimensions, None
         elif isinstance(definition, UnitDefinition):
-            d = self._units
+            d, di = self._units, self._units_casei
             if definition.is_base:
                 for dimension in definition.reference.keys():
-                    if dimension != '[]' and dimension in self._dimensions:
-                        raise ValueError('Only one unit per dimension can be a base unit.')
+                    if dimension in self._dimensions:
+                        if dimension != '[]':
+                            raise DefinitionSyntaxError('only one unit per dimension can be a base unit.')
+                        continue
+
                     self.define(DimensionDefinition(dimension, '', (), None, is_base=True))
 
         elif isinstance(definition, PrefixDefinition):
-            d = self._prefixes
+            d, di = self._prefixes, None
         else:
             raise TypeError('{0} is not a valid definition.'.format(definition))
 
-        d[definition.name] = definition
+        def _adder(key, value, action=self._on_redefinition, selected_dict=d, casei_dict=di):
+            if key in selected_dict:
+                if action == 'raise':
+                    raise RedefinitionError(key, type(value))
+                elif action == 'warn':
+                    logger.warning("Redefining '%s' (%s)", key, type(value))
 
-        if definition.symbol:
-            d[definition.symbol] = definition
+            selected_dict[key] = value
+            if casei_dict is not None:
+                casei_dict[key.lower()].add(key)
+
+        _adder(definition.name, definition)
+
+        if definition.has_symbol:
+            _adder(definition.symbol, definition)
 
         for alias in definition.aliases:
             if ' ' in alias:
                 logger.warn('Alias cannot contain a space: ' + alias)
-            d[alias] = definition
+
+            _adder(alias, definition)
 
         if isinstance(definition.converter, OffsetConverter):
             d_name = 'delta_' + definition.name
@@ -650,20 +723,29 @@ class UnitRegistry(object):
         # Permit both filenames and line-iterables
         if isinstance(file, string_types):
             try:
-                with open(file, encoding='utf-8') as fp:
-                    return self.load_definitions(fp, is_resource)
+                if is_resource:
+                    with closing(pkg_resources.resource_stream(__name__, file)) as fp:
+                        rbytes = fp.read()
+                    return self.load_definitions(StringIO(rbytes.decode('utf-8')), is_resource)
+                else:
+                    with open(file, encoding='utf-8') as fp:
+                        return self.load_definitions(fp, is_resource)
+            except (RedefinitionError, DefinitionSyntaxError) as e:
+                if e.filename is None:
+                    e.filename = file
+                raise e
             except Exception as e:
-                msg = getattr(e, 'message', str(e))
+                msg = getattr(e, 'message', '') or str(e)
                 raise ValueError('While opening {0}\n{1}'.format(file, msg))
 
-        ifile = enumerate(file)
+        ifile = enumerate(file, 1)
         for no, line in ifile:
             line = line.strip()
             if not line or line.startswith('#'):
                 continue
             if line.startswith('@import'):
                 if is_resource:
-                    path = pkg_resources.resource_filename(__name__, line[7:].strip())
+                    path = line[7:].strip()
                 else:
                     try:
                         path = os.path.dirname(file.name)
@@ -679,31 +761,56 @@ class UnitRegistry(object):
                         try:
                             self.add_context(Context.from_lines(context, self.get_dimensionality))
                         except KeyError as e:
-                            raise ValueError('Unknown dimension {0}'.format(str(e)))
+                            raise DefinitionSyntaxError('unknown dimension {0} in context'.format(str(e)), lineno=no)
                         break
                     elif line.startswith('@'):
-                        raise ValueError('In line {0}, cannot nest @ directives:\n{1}'.format(no, line))
+                        raise DefinitionSyntaxError('cannot nest @ directives', lineno=no)
                     context.append(line)
             else:
                 try:
                     self.define(Definition.from_string(line))
+                except (RedefinitionError, DefinitionSyntaxError) as ex:
+                    if ex.lineno is None:
+                        ex.lineno = no
+                    raise ex
                 except Exception as ex:
                     logger.error("In line {0}, cannot add '{1}' {2}".format(no, line, ex))
 
-    def validate(self):
-        """Walk the registry and calculate for each unit definition
-        the corresponding base units and dimensionality.
+    def _build_cache(self):
+        """Build a cache of dimensionality and base units.
         """
 
-        deps = dict((name, set(definition.reference.keys()))
+        deps = dict((name, set(definition.reference.keys() if definition.reference else {}))
                     for name, definition in self._units.items())
 
         for unit_names in solve_dependencies(deps):
             for unit_name in unit_names:
-                bu = self.get_base_units(unit_name)
-                di = self.get_dimensionality(bu)
+                prefixed = False
+                for p in self._prefixes.keys():
+                    if p and unit_name.startswith(p):
+                        prefixed = True
+                        break
+                if '[' in unit_name:
+                    continue
+                try:
+                    uc = ParserHelper.from_word(unit_name)
 
-    def get_name(self, name_or_alias):
+                    bu = self.get_base_units(uc)
+                    di = self.get_dimensionality(uc)
+
+                    self._base_units_cache[uc] = bu
+                    self._dimensionality_cache[uc] = di
+
+                    if not prefixed:
+                        if di not in self._dimensional_equivalents:
+                            self._dimensional_equivalents[di] = set()
+
+                        self._dimensional_equivalents[di].add(self._units[unit_name].name)
+
+                except Exception as e:
+                    logger.warning('Could not resolve {0}: {1!r}'.format(unit_name, e))
+
+    def get_name(self, name_or_alias, case_sensitive=True):
         """Return the canonical name of a unit.
         """
 
@@ -715,7 +822,7 @@ class UnitRegistry(object):
         except KeyError:
             pass
 
-        candidates = self._dedup_candidates(self.parse_unit_name(name_or_alias))
+        candidates = self._dedup_candidates(self.parse_unit_name(name_or_alias, case_sensitive))
         if not candidates:
             raise UndefinedUnitError(name_or_alias)
         elif len(candidates) == 1:
@@ -763,6 +870,9 @@ class UnitRegistry(object):
         if isinstance(input_units, string_types):
             input_units = ParserHelper.from_string(input_units)
 
+        if input_units in self._dimensionality_cache:
+            return copy.copy(self._dimensionality_cache[input_units])
+
         for key, value in input_units.items():
             if _is_dim(key):
                 reg = self._dimensions[key]
@@ -790,9 +900,8 @@ class UnitRegistry(object):
 
         :param input_units: units
         :type input_units: UnitsContainer or str
-        :param check_nonmult: if True None will be returned as the multiplicative factor
-                              is a non-multiplicative units is found in the final
-                              Units.
+        :param check_nonmult: if True, None will be returned as the multiplicative factor
+                              is a non-multiplicative units is found in the final Units.
         :return: multiplicative factor, base units
         """
         if not input_units:
@@ -800,6 +909,10 @@ class UnitRegistry(object):
 
         if isinstance(input_units, string_types):
             input_units = ParserHelper.from_string(input_units)
+
+        # The cache is only done for check_nonmult=True
+        if check_nonmult and input_units in self._base_units_cache:
+            return copy.deepcopy(self._base_units_cache[input_units])
 
         factor = 1.
         units = UnitsContainer()
@@ -814,7 +927,7 @@ class UnitRegistry(object):
                     factor *= (reg.converter.scale * fac) ** value
                 units *= uni ** value
 
-        # Check if any of the final units is non multiplicative and return non instead.
+        # Check if any of the final units is non multiplicative and return None instead.
         if check_nonmult:
             for unit in units.keys():
                 if not isinstance(self._units[unit].converter, ScaleConverter):
@@ -822,7 +935,27 @@ class UnitRegistry(object):
 
         return factor, units
 
-    def convert(self, value, src, dst):
+    def get_compatible_units(self, input_units):
+        if not input_units:
+            return 1., UnitsContainer()
+
+        if isinstance(input_units, string_types):
+            input_units = ParserHelper.from_string(input_units)
+
+        src_dim = self.get_dimensionality(input_units)
+
+        ret = self._dimensional_equivalents[src_dim]
+
+        if self._active_ctx:
+            nodes = find_connected_nodes(self._active_ctx.graph, _freeze(src_dim))
+            ret = set()
+            if nodes:
+                for node in nodes:
+                    ret |= self._dimensional_equivalents[node]
+
+        return frozenset(ret)
+
+    def convert(self, value, src, dst, inplace=False):
         """Convert value from some source to destination units.
 
         :param value: value
@@ -868,7 +1001,7 @@ class UnitRegistry(object):
             # If the source has a single element, it might be a non-multiplicative unit
             # and therefore it is treated differently.
             src_unit, src_value = list(src.items())[0]
-            src_unit = self._units[src_unit]
+            src_unit = self._units[self.get_name(src_unit)]
 
             # We only continue if is a ScaleConverter,
             # if not just exit to use the standard src / dst.
@@ -882,11 +1015,11 @@ class UnitRegistry(object):
                     raise DimensionalityError(src, dst, src_dim, dst_dim)
 
                 dst_unit, dst_value = list(dst.items())[0]
-                dst_unit = self._units[dst_unit]
+                dst_unit = self._units[self.get_name(dst_unit)]
                 if not type(src_unit.converter) is type(dst_unit.converter):
                     raise DimensionalityError(src, dst, src_dim, dst_dim)
 
-                return dst_unit.converter.from_reference(src_unit.converter.to_reference(value))
+                return dst_unit.converter.from_reference(src_unit.converter.to_reference(value, inplace), inplace)
 
         factor, units = self.get_base_units(src / dst)
 
@@ -897,9 +1030,14 @@ class UnitRegistry(object):
         # factor is type float and if our magnitude is type Decimal then
         # must first convert to Decimal before we can '*' the values
         if isinstance(value, Decimal):
-            return Decimal(str(factor)) * value
-        
-        return factor * value
+            factor = Decimal(str(factor))
+
+        if inplace:
+            value *= factor
+        else:
+            value = value * factor
+
+        return value
 
     def pi_theorem(self, quantities):
         """Builds dimensionless quantities using the Buckingham π theorem
@@ -927,10 +1065,11 @@ class UnitRegistry(object):
 
         return tuple(unique)
 
-    def parse_unit_name(self, unit_name):
+    def parse_unit_name(self, unit_name, case_sensitive=True):
         """Parse a unit to identify prefix, unit name and suffix
         by walking the list of prefix and suffix.
         """
+
         for suffix, prefix in itertools.product(self._suffixes.keys(), self._prefixes.keys()):
             if unit_name.startswith(prefix) and unit_name.endswith(suffix):
                 name = unit_name[len(prefix):]
@@ -938,10 +1077,16 @@ class UnitRegistry(object):
                     name = name[:-len(suffix)]
                     if len(name) == 1:
                         continue
-                if name in self._units:
-                    yield (self._prefixes[prefix].name,
-                           self._units[name].name,
-                           self._suffixes[suffix])
+                if case_sensitive:
+                    if name in self._units:
+                        yield (self._prefixes[prefix].name,
+                               self._units[name].name,
+                               self._suffixes[suffix])
+                else:
+                    for real_name in self._units_casei.get(name.lower(), ()):
+                        yield (self._prefixes[prefix].name,
+                               self._units[real_name].name,
+                               self._suffixes[suffix])
 
     def parse_units(self, input_string, to_delta=None):
         """Parse a units expression and returns a UnitContainer with
@@ -980,7 +1125,7 @@ class UnitRegistry(object):
 
         return ret
 
-    def parse_expression(self, input_string, **values):
+    def parse_expression(self, input_string, case_sensitive=True, **values):
         """Parse a mathematical expression including units and return a quantity object.
 
         Numerical constants can be specified as keyword arguments and will take precedence
@@ -991,7 +1136,7 @@ class UnitRegistry(object):
             return self.Quantity(1)
 
         input_string = string_preprocessor(input_string)
-        gen = ptok(input_string)
+        gen = tokenizer(input_string)
         result = []
         unknown = set()
         for toknum, tokval, _, _, _ in gen:
@@ -1001,7 +1146,7 @@ class UnitRegistry(object):
                     result.append((toknum, tokval))
                     continue
                 try:
-                    tokval = self.get_name(tokval)
+                    tokval = self.get_name(tokval, case_sensitive)
                 except UndefinedUnitError as ex:
                     unknown.add(ex.unit_names)
                 if tokval:
@@ -1029,6 +1174,8 @@ class UnitRegistry(object):
                      'pi': math.pi},
                     values
                     )
+
+    __call__ = parse_expression
 
     def wraps(self, ret, args, strict=True):
         """Wraps a function to become pint-aware.
@@ -1112,3 +1259,55 @@ def build_quantity_class(registry, force_ndarray=False):
     Quantity.force_ndarray = force_ndarray
 
     return Quantity
+
+
+def build_measurement_class(registry, force_ndarray=False):
+    from .measurement import _Measurement, ufloat
+
+    if ufloat is None:
+        class Measurement(object):
+
+            def __init__(self, *args):
+                raise RuntimeError("Pint requires the 'uncertainties' package to create a Measurement object.")
+
+    else:
+        class Measurement(_Measurement, registry.Quantity):
+            pass
+
+    Measurement._REGISTRY = registry
+    Measurement.force_ndarray = force_ndarray
+
+    return Measurement
+
+
+class LazyRegistry(object):
+
+    def __init__(self, args=None, kwargs=None):
+        self.__dict__['params'] = args or (), kwargs or {}
+
+    def __init(self):
+        args, kwargs = self.__dict__['params']
+        kwargs['on_redefinition'] = 'raise'
+        self.__class__ = UnitRegistry
+        self.__init__(*args, **kwargs)
+
+    def __getattr__(self, item):
+        if item == '_on_redefinition':
+            return 'raise'
+        self.__init()
+        return getattr(self, item)
+
+    def __setattr__(self, key, value):
+        if key == '__class__':
+            super(LazyRegistry, self).__setattr__(key, value)
+        else:
+            self.__init()
+            setattr(self, key, value)
+
+    def __getitem__(self, item):
+        self.__init()
+        return self[item]
+
+    def __call__(self, *args, **kwargs):
+        self.__init()
+        return self(*args, **kwargs)

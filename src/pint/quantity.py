@@ -10,53 +10,26 @@
 from __future__ import division, unicode_literals, print_function, absolute_import
 
 import copy
+import math
 import operator
 import functools
-from collections import Iterable
 
+from .formatting import remove_custom_flags
 from .unit import DimensionalityError, UnitsContainer, UnitDefinition, UndefinedUnitError
-from .measurement import Measurement
-from .util import string_types, NUMERIC_TYPES, ndarray
-
-try:
-    import numpy as np
-
-    def _to_magnitude(value, force_ndarray=False):
-        if isinstance(value, (dict, bool)) or value is None:
-            raise ValueError('Invalid magnitude for Quantity: {!r}'.format(value))
-        elif isinstance(value, string_types) and value == '':
-            raise ValueError('Quantity magnitude cannot be an empty string.')
-        elif isinstance(value, (list, tuple)):
-            return np.asarray(value)
-        if force_ndarray:
-            return np.asarray(value)
-        return value
-
-except ImportError:
-    def _to_magnitude(value, force_ndarray=False):
-        if isinstance(value, (dict, bool)) or value is None:
-            raise ValueError('Invalid magnitude for Quantity: {!r}'.format(value))
-        elif isinstance(value, string_types) and value == '':
-            raise ValueError('Quantity magnitude cannot be an empty string.')
-        elif isinstance(value, (list, tuple)):
-            raise ValueError('lists and tuples are valid magnitudes for '
-                             'Quantity only when NumPy is present.')
-        return value
+from .compat import string_types, ndarray, np, _to_magnitude, long_type
+from .util import logger
 
 
 def _eq(first, second, check_all):
     """Comparison of scalars and arrays
     """
     out = first == second
-    if check_all and isinstance(out, Iterable):
-        if isinstance(out, ndarray):
-            return np.all(out)
-        else:
-            return all(out)
+    if check_all and isinstance(out, ndarray):
+        return np.all(out)
     return out
 
 
-class _Exception(Exception):
+class _Exception(Exception):            # pragma: no cover
 
     def __init__(self, internal):
         self.internal = internal
@@ -70,20 +43,19 @@ def _check(q1, other):
 
     In other case, return False.
     """
+
     if isinstance(other, q1.__class__):
+        # Both quantities are the same class and therefore from the same registry.
+        # (Each registry has its own Quantity class)
         return True
-    try:
-        reg = other._REGISTRY
-    except AttributeError:
-        return False
+    elif isinstance(other, _Quantity):
+        # The other object is a Quantity but from another registry.
+        raise ValueError('Cannot operate between quantities of different registries')
 
-    if q1._REGISTRY is reg:
-        return True
-
-    raise ValueError('Cannot operate between quantities of different registries')
+    return False
 
 
-def _has_multiplicative_units(q):
+def _only_multiplicative_units(q):
     """Check if the quantity has non-multiplicative units.
     """
 
@@ -117,7 +89,7 @@ class _Quantity(object):
         if units is None:
             if isinstance(value, string_types):
                 if value == '':
-                    raise ValueError('Quantity magnitude cannot be an empty string.')
+                    raise ValueError('Expression to parse as Quantity cannot be an empty string.')
                 inst = cls._REGISTRY.parse_expression(value)
                 return cls.__new__(cls, inst)
             elif isinstance(value, cls):
@@ -135,20 +107,29 @@ class _Quantity(object):
             inst._magnitude = _to_magnitude(value, inst.force_ndarray)
             inst._units = inst._REGISTRY.parse_units(units)
         elif isinstance(units, cls):
+            if units.magnitude != 1:
+                logger.warning('Creating new Quantity using a non unity Quantity as units.')
             inst = copy.copy(units)
             inst._magnitude = _to_magnitude(value, inst.force_ndarray)
         else:
             raise TypeError('units must be of type str, Quantity or '
                             'UnitsContainer; not {0}.'.format(type(units)))
 
+        inst.__used = False
         inst.__handling = None
         return inst
 
+    @property
+    def debug_used(self):
+        return self.__used
+
     def __copy__(self):
-        return self.__class__(copy.copy(self._magnitude), copy.copy(self._units))
+        ret = self.__class__(copy.copy(self._magnitude), copy.copy(self._units))
+        ret.__used = self.__used
+        return ret
 
     def __str__(self):
-        return '{0} {1}'.format(self._magnitude, self._units)
+        return format(self)
 
     def __repr__(self):
         return "<Quantity({0}, '{1}')>".format(self._magnitude, self._units)
@@ -163,8 +144,8 @@ class _Quantity(object):
         else:
             units = self.units
 
-        return format(self.magnitude, spec.replace('L', '').replace('P', '').replace('H', '')) \
-               + ' ' + format(units, spec)
+        return '%s %s' % (format(self.magnitude, remove_custom_flags(spec)),
+                          format(units, spec))
 
     # IPython related code
     def _repr_html_(self):
@@ -212,12 +193,27 @@ class _Quantity(object):
 
         return self._dimensionality
 
-    def _convert_magnitude(self, other, *contexts, **ctx_kwargs):
+    def compatible_units(self, *contexts):
+        if contexts:
+            with self._REGISTRY.context(*contexts):
+                return self._REGISTRY.get_compatible_units(self._units)
+
+        return self._REGISTRY.get_compatible_units(self._units)
+
+    def _convert_magnitude_not_inplace(self, other, *contexts, **ctx_kwargs):
         if contexts:
             with self._REGISTRY.context(*contexts, **ctx_kwargs):
                 return self._REGISTRY.convert(self._magnitude, self._units, other)
 
         return self._REGISTRY.convert(self._magnitude, self._units, other)
+
+    def _convert_magnitude(self, other, *contexts, **ctx_kwargs):
+        if contexts:
+            with self._REGISTRY.context(*contexts, **ctx_kwargs):
+                return self._REGISTRY.convert(self._magnitude, self._units, other)
+
+        return self._REGISTRY.convert(self._magnitude, self._units, other,
+                                      inplace=isinstance(self._magnitude, ndarray))
 
     def ito(self, other=None, *contexts, **ctx_kwargs):
         """Inplace rescale to different units.
@@ -236,7 +232,8 @@ class _Quantity(object):
 
         self._magnitude = self._convert_magnitude(other, *contexts, **ctx_kwargs)
         self._units = other
-        return self
+
+        return None
 
     def to(self, other=None, *contexts, **ctx_kwargs):
         """Return Quantity rescaled to different units.
@@ -244,9 +241,18 @@ class _Quantity(object):
         :param other: destination units.
         :type other: Quantity, str or dict
         """
-        ret = copy.copy(self)
-        ret.ito(other, *contexts, **ctx_kwargs)
-        return ret
+        if isinstance(other, string_types):
+            other = self._REGISTRY.parse_units(other)
+        elif isinstance(other, self.__class__):
+            other = copy.copy(other.units)
+        elif isinstance(other, UnitsContainer):
+            pass
+        else:
+            other = UnitsContainer(other)
+
+        magnitude = self._convert_magnitude_not_inplace(other, *contexts, **ctx_kwargs)
+
+        return self.__class__(magnitude, other)
 
     def ito_base_units(self):
         """Return Quantity rescaled to base units
@@ -256,28 +262,48 @@ class _Quantity(object):
 
         self._magnitude = self._convert_magnitude(other)
         self._units = other
-        return self
+
+        return None
 
     def to_base_units(self):
         """Return Quantity rescaled to base units
         """
 
-        ret = copy.copy(self)
-        ret.ito_base_units()
-        return ret
+        _, other = self._REGISTRY.get_base_units(self.units)
+
+        magnitude = self._convert_magnitude_not_inplace(other)
+
+        return self.__class__(magnitude, other)
 
     # Mathematical operations
+    def __int__(self):
+        if self.dimensionless:
+            return int(self._convert_magnitude_not_inplace(UnitsContainer()))
+        raise DimensionalityError(self.units, 'dimensionless')
+
+    def __long__(self):
+        if self.dimensionless:
+            return long_type(self._convert_magnitude_not_inplace(UnitsContainer()))
+        raise DimensionalityError(self.units, 'dimensionless')
+
     def __float__(self):
         if self.dimensionless:
-            return float(self._convert_magnitude(UnitsContainer()))
+            return float(self._convert_magnitude_not_inplace(UnitsContainer()))
         raise DimensionalityError(self.units, 'dimensionless')
 
     def __complex__(self):
         if self.dimensionless:
-            return complex(self._convert_magnitude(UnitsContainer()))
+            return complex(self._convert_magnitude_not_inplace(UnitsContainer()))
         raise DimensionalityError(self.units, 'dimensionless')
 
     def _iadd_sub(self, other, op):
+        """Perform addition or subtraction operation in-place and return the result.
+
+        :param other: object to be added to / subtracted from self
+        :type other: Quantity or any type accepted by :func:`_to_magnitude`
+        :param op: operator function (e.g. operator.add, operator.isub)
+        :type op: function
+        """
         if _check(self, other):
             if not self.dimensionality == other.dimensionality:
                 raise DimensionalityError(self.units, other.units,
@@ -287,15 +313,32 @@ class _Quantity(object):
             else:
                 self._magnitude = op(self._magnitude, other.to(self)._magnitude)
         else:
-            if self.dimensionless:
+            try:
+                other_magnitude = _to_magnitude(other, self.force_ndarray)
+            except TypeError:
+                return NotImplemented
+            if _eq(other, 0, True):
+                # If the other value is 0 (but not Quantity 0)
+                # do the operation without checking units.
+                # We do the calculation instead of just returning the same value to
+                # enforce any shape checking and type casting due to the operation.
+                self._magnitude = op(self._magnitude, other_magnitude)
+            elif self.dimensionless:
                 self.ito(UnitsContainer())
-                self._magnitude = op(self._magnitude, _to_magnitude(other, self.force_ndarray))
+                self._magnitude = op(self._magnitude, other_magnitude)
             else:
                 raise DimensionalityError(self.units, 'dimensionless')
 
         return self
 
     def _add_sub(self, other, op):
+        """Perform addition or subtraction operation and return the result.
+
+        :param other: object to be added to / subtracted from self
+        :type other: Quantity or any type accepted by :func:`_to_magnitude`
+        :param op: operator function (e.g. operator.add, operator.isub)
+        :type op: function
+        """
         if _check(self, other):
             if not self.dimensionality == other.dimensionality:
                 raise DimensionalityError(self.units, other.units,
@@ -307,7 +350,15 @@ class _Quantity(object):
 
             units = copy.copy(self.units)
         else:
-            if self.dimensionless:
+            if _eq(other, 0, True):
+                # If the other value is 0 (but not Quantity 0)
+                # do the operation without checking units.
+                # We do the calculation instead of just returning the same value to
+                # enforce any shape checking and type casting due to the operation.
+                units = self.units
+                magnitude = op(self._magnitude,
+                               _to_magnitude(other, self.force_ndarray))
+            elif self.dimensionless:
                 units = UnitsContainer()
                 magnitude = op(self.to(units)._magnitude,
                                _to_magnitude(other, self.force_ndarray))
@@ -317,7 +368,10 @@ class _Quantity(object):
         return self.__class__(magnitude, units)
 
     def __iadd__(self, other):
-        return self._iadd_sub(other, operator.iadd)
+        if not isinstance(self._magnitude, ndarray):
+            return self._add_sub(other, operator.add)
+        else:
+            return self._iadd_sub(other, operator.iadd)
 
     def __add__(self, other):
         return self._add_sub(other, operator.add)
@@ -325,7 +379,10 @@ class _Quantity(object):
     __radd__ = __add__
 
     def __isub__(self, other):
-        return self._iadd_sub(other, operator.isub)
+        if not isinstance(self._magnitude, ndarray):
+            return self._add_sub(other, operator.sub)
+        else:
+            return self._iadd_sub(other, operator.isub)
 
     def __sub__(self, other):
         return self._add_sub(other, operator.sub)
@@ -336,18 +393,24 @@ class _Quantity(object):
     def _imul_div(self, other, magnitude_op, units_op=None):
         """Perform multiplication or division operation in-place and return the result.
 
-        Arguments:
-        other -- object to be multiplied/divided with self
-        magnitude_op -- operator function to perform on the magnitudes (e.g. operator.mul)
-        units_op -- operator function to perform on the units; if None, magnitude_op is used
-
+        :param other: object to be multiplied/divided with self
+        :type other: Quantity or any type accepted by :func:`_to_magnitude`
+        :param magnitude_op: operator function to perform on the magnitudes (e.g. operator.mul)
+        :type magnitude_op: function
+        :param units_op: operator function to perform on the units; if None, *magnitude_op* is used
+        :type units_op: function or None
         """
         if units_op is None:
             units_op = magnitude_op
-        if _check(self, other):
-            if not _has_multiplicative_units(self):
+
+        if self.__used:
+            if not _only_multiplicative_units(self):
                 self.ito_base_units()
-            if not _has_multiplicative_units(other):
+        else:
+            self.__used = True
+
+        if _check(self, other):
+            if not _only_multiplicative_units(other):
                 other = other.to_base_units()
             self._magnitude = magnitude_op(self._magnitude, other._magnitude)
             self._units = units_op(self._units, other._units)
@@ -362,11 +425,45 @@ class _Quantity(object):
         return self
 
     def _mul_div(self, other, magnitude_op, units_op=None):
-        ret = copy.copy(self)
-        return ret._imul_div(other, magnitude_op, units_op)
+        """Perform multiplication or division operation and return the result.
+
+        :param other: object to be multiplied/divided with self
+        :type other: Quantity or any type accepted by :func:`_to_magnitude`
+        :param magnitude_op: operator function to perform on the magnitudes (e.g. operator.mul)
+        :type magnitude_op: function
+        :param units_op: operator function to perform on the units; if None, *magnitude_op* is used
+        :type units_op: function or None
+        """
+        if units_op is None:
+            units_op = magnitude_op
+
+        new_self = self
+        if self.__used:
+            if not _only_multiplicative_units(self):
+                new_self = self.to_base_units()
+
+        if _check(self, other):
+            if not _only_multiplicative_units(other):
+                other = other.to_base_units()
+            magnitude = magnitude_op(new_self._magnitude, other._magnitude)
+            units = units_op(new_self._units, other._units)
+        else:
+            try:
+                other_magnitude = _to_magnitude(other, self.force_ndarray)
+            except TypeError:
+                return NotImplemented
+            magnitude = magnitude_op(new_self._magnitude, other_magnitude)
+            units = units_op(new_self._units, UnitsContainer())
+
+        ret = self.__class__(magnitude, units)
+        ret.__used = True
+        return ret
 
     def __imul__(self, other):
-        return self._imul_div(other, operator.imul)
+        if not isinstance(self._magnitude, ndarray):
+            return self._mul_div(other, operator.mul)
+        else:
+            return self._imul_div(other, operator.imul)
 
     def __mul__(self, other):
         return self._mul_div(other, operator.mul)
@@ -374,13 +471,19 @@ class _Quantity(object):
     __rmul__ = __mul__
 
     def __itruediv__(self, other):
-        return self._imul_div(other, operator.itruediv)
+        if not isinstance(self._magnitude, ndarray):
+            return self._mul_div(other, operator.truediv)
+        else:
+            return self._imul_div(other, operator.itruediv)
 
     def __truediv__(self, other):
         return self._mul_div(other, operator.truediv)
 
     def __ifloordiv__(self, other):
-        return self._imul_div(other, operator.ifloordiv, units_op=operator.itruediv)
+        if not isinstance(self._magnitude, ndarray):
+            return self._mul_div(other, operator.floordiv, units_op=operator.itruediv)
+        else:
+            return self._imul_div(other, operator.ifloordiv, units_op=operator.itruediv)
 
     def __floordiv__(self, other):
         return self._mul_div(other, operator.floordiv, units_op=operator.truediv)
@@ -404,20 +507,33 @@ class _Quantity(object):
     __idiv__ = __itruediv__
 
     def __ipow__(self, other):
+        if not isinstance(self._magnitude, ndarray):
+            return self.__pow__(other)
+
         try:
             other_magnitude = _to_magnitude(other, self.force_ndarray)
         except TypeError:
             return NotImplemented
         else:
-            if not _has_multiplicative_units(self):
+            if not _only_multiplicative_units(self):
                 self.ito_base_units()
             self._magnitude **= _to_magnitude(other, self.force_ndarray)
             self._units **= other
             return self
 
     def __pow__(self, other):
-        ret = copy.copy(self)
-        return operator.ipow(ret, other)
+        try:
+            other_magnitude = _to_magnitude(other, self.force_ndarray)
+        except TypeError:
+            return NotImplemented
+        else:
+            new_self = self
+            if not _only_multiplicative_units(self):
+                new_self = self.to_base_units()
+
+            magnitude = new_self._magnitude ** _to_magnitude(other, self.force_ndarray)
+            units = new_self._units ** other
+            return self.__class__(magnitude, units)
 
     def __abs__(self):
         return self.__class__(abs(self._magnitude), self._units)
@@ -432,9 +548,9 @@ class _Quantity(object):
         return self.__class__(operator.neg(self._magnitude), self._units)
 
     def __eq__(self, other):
-        # This is class comparison by name is to bypass that
+        # We compare to the base class of Quantity because
         # each Quantity class is unique.
-        if other.__class__.__name__ != self.__class__.__name__:
+        if not isinstance(other, _Quantity):
             return (self.dimensionless and
                     _eq(self._convert_magnitude(UnitsContainer()), other, False))
 
@@ -458,7 +574,7 @@ class _Quantity(object):
     def compare(self, other, op):
         if not isinstance(other, self.__class__):
             if self.dimensionless:
-                return op(self._convert_magnitude(UnitsContainer()), other)
+                return op(self._convert_magnitude_not_inplace(UnitsContainer()), other)
             else:
                 raise ValueError('Cannot compare Quantity and {0}'.format(type(other)))
 
@@ -579,6 +695,18 @@ class _Quantity(object):
             raise DimensionalityError('dimensionless', self.units)
         self.magnitude.put(indices, values, mode)
 
+    @property
+    def real(self):
+        return self.__class__(self._magnitude.real, self.units)
+
+    @property
+    def imag(self):
+        return self.__class__(self._magnitude.imag, self.units)
+
+    @property
+    def T(self):
+        return self.__class__(self._magnitude.T, self.units)
+
     def searchsorted(self, v, side='left'):
         if isinstance(v, self.__class__):
             v = v.to(self).magnitude
@@ -656,6 +784,13 @@ class _Quantity(object):
 
     def __setitem__(self, key, value):
         try:
+            if math.isnan(value):
+                self._magnitude[key] = value
+                return
+        except (TypeError, DimensionalityError):
+            pass
+
+        try:
             if isinstance(value, self.__class__):
                 factor = self.__class__(value.magnitude, value.units / self.units).to_base_units()
             else:
@@ -682,9 +817,16 @@ class _Quantity(object):
     def __array_prepare__(self, obj, context=None):
         # If this uf is handled by Pint, write it down in the handling dictionary.
 
+        # name of the ufunc, argument of the ufunc, domain of the ufunc
+        # In ufuncs with multiple outputs, domain indicates which output
+        # is currently being prepared (eg. see modf).
+        # In ufuncs with a single output, domain is 0
         uf, objs, huh = context
-        ufname = uf.__name__ if huh == 0 else '{0}__{1}'.format(uf.__name__, huh)
+
         if uf.__name__ in self.__handled and huh == 0:
+            # Only one ufunc should be handled at a time.
+            # If a ufunc is already being handled (and this is not another domain),
+            # something is wrong..
             if self.__handling:
                 raise Exception('Cannot handled nested ufuncs.\n'
                                 'Current: {0}\n'
@@ -696,16 +838,30 @@ class _Quantity(object):
     def __array_wrap__(self, obj, context=None):
         uf, objs, huh = context
 
+        # if this ufunc is not handled by Pint, pass it to the magnitude.
         if uf.__name__ not in self.__handled:
             return self.magnitude.__array_wrap__(obj, context)
 
         try:
             ufname = uf.__name__ if huh == 0 else '{0}__{1}'.format(uf.__name__, huh)
 
+            # First, we check the units of the input arguments.
+
             if huh == 0:
+                # Do this only when the wrap is called for the first ouput.
+
+                # Store the destination units
                 dst_units = None
+                # List of magnitudes of Quantities with the right units
+                # to be used as argument of the ufunc
                 mobjs = None
+
                 if uf.__name__ in self.__require_units:
+                    # ufuncs in __require_units
+                    # require specific units
+                    # This is more complex that it should be due to automatic
+                    # conversion between radians/dimensionless
+                    # TODO: maybe could be simplified using Contexts
                     dst_units = self.__require_units[uf.__name__]
                     if dst_units == 'radian':
                         mobjs = []
@@ -721,9 +877,13 @@ class _Quantity(object):
                         mobjs = tuple(mobjs)
                     else:
                         dst_units = self._REGISTRY.parse_expression(dst_units).units
+
                 elif len(objs) > 1 and uf.__name__ not in self.__skip_other_args:
+                    # ufunc with multiple arguments require that all inputs have
+                    # the same arguments unless they are in __skip_other_args
                     dst_units = objs[0].units
 
+                # Do the conversion (if needed) and extract the magnitude for each input.
                 if mobjs is None:
                     if dst_units is not None:
                         mobjs = tuple(self._REGISTRY.convert(getattr(other, 'magnitude', other),
@@ -734,14 +894,22 @@ class _Quantity(object):
                         mobjs = tuple(getattr(other, 'magnitude', other)
                                       for other in objs)
 
+                # call the ufunc
                 out = uf(*mobjs)
 
+                # If there are multiple outputs,
+                # store them in __handling (uf, objs, huh, out0, out1, ...)
+                # and return the first
                 if uf.nout > 1:
                     self.__handling += out
                     out = out[0]
             else:
+                # If this is not the first output,
+                # just grab the result that was previously calculated.
                 out = self.__handling[3 + huh]
 
+
+            # Second, we set the units of the output value.
             if ufname in self.__set_units:
                 try:
                     out = self.__class__(out, self.__set_units[ufname])
@@ -775,6 +943,8 @@ class _Quantity(object):
         except Exception as ex:
             print(ex)
         finally:
+            # If this is the last output argument for the ufunc,
+            # we are done handling this ufunc.
             if uf.nout == huh + 1:
                 self.__handling = None
 
@@ -784,11 +954,10 @@ class _Quantity(object):
     def plus_minus(self, error, relative=False):
         if isinstance(error, self.__class__):
             if relative:
-                raise ValueError('{0} is not a valid relative error.'.format(error))
+                raise ValueError('{} is not a valid relative error.'.format(error))
+            error = error.to(self.units).magnitude
         else:
             if relative:
-                error = error * abs(self)
-            else:
-                error = self.__class__(error, self.units)
+                error = error * abs(self.magnitude)
 
-        return Measurement(copy.copy(self), error)
+        return self._REGISTRY.Measurement(copy.copy(self.magnitude), error, self.units)

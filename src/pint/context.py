@@ -15,14 +15,12 @@ from __future__ import division, unicode_literals, print_function, absolute_impo
 import re
 from collections import defaultdict
 import weakref
-from pint.compat import ChainMap
-from pint.util import ParserHelper, string_types
+
+from .compat import ChainMap
+from .util import ParserHelper, string_types
 
 #: Regex to match the header parts of a context.
 _header_re = re.compile('@context\s*(?P<defaults>\(.*\))?\s+(?P<name>\w+)\s*(=(?P<aliases>.*))*')
-
-#: Reqex to match the different parts of a relation definition.
-_def_re = re.compile('\s*(\w+)\s*=\s*([\w\d+-/*()]+)\s*')
 
 #: Regex to match variable names in an equation.
 _varname_re = re.compile('[A-Za-z_][A-Za-z0-9_]*')
@@ -123,8 +121,15 @@ class Context(object):
                 if not val.imag:
                     return val.real
                 return val
-            defaults = dict((str(k), to_num(v))
-                            for k, v in _def_re.findall(defaults.strip('()')))
+
+            try:
+                _txt = defaults
+                defaults = (part.split('=') for part in defaults.strip('()').split(','))
+                defaults = dict((str(k).strip(), to_num(v))
+                                for k, v in defaults)
+            except (ValueError, TypeError):
+                raise ValueError('Could not parse Context definition defaults: %s', _txt)
+
             ctx = cls(name, aliases, defaults)
         else:
             ctx = cls(name, aliases)
