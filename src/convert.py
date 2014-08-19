@@ -96,7 +96,7 @@ def main(wf):
     log = wf.logger
     if not len(wf.args):
         return 1
-    query = wf.args[0].lower()
+    query = wf.args[0]  # .lower()
     log.debug('query : %s', query)
 
     # Load cached data
