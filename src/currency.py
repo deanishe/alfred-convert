@@ -13,57 +13,27 @@
 
 from __future__ import print_function, unicode_literals
 
+import csv
 from datetime import timedelta
+from itertools import izip_longest
+import re
 
-try:
-    from xml.etree import cElementTree as ET
-except ImportError:
-    from xml.etree import ElementTree as ET
+from workflow import (Workflow, web,
+                      ICON_WARNING, ICON_INFO,
+                      MATCH_ALL, MATCH_ALLCHARS)
 
-from workflow import Workflow, web, ICON_WARNING, ICON_INFO
-from config import CURRENCY_CACHE_NAME, ICON_CURRENCY, REFERENCE_CURRENCY
+from config import (CURRENCY_CACHE_NAME,
+                    ICON_CURRENCY,
+                    REFERENCE_CURRENCY,
+                    CURRENCIES,
+                    YAHOO_BASE_URL,
+                    SYMBOLS_PER_REQUEST)
 
-log = None
 
-# ECB XML feed settings
-XML_URL = 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml'
-NS_ECB = '{http://www.ecb.int/vocabulary/2002-08-01/eurofxref}'
+wf = Workflow()
+log = wf.logger
 
-CURRENCIES = {
-    'AUD': 'Australian dollar',
-    'BGN': 'Bulgarian lev',
-    'BRL': 'Brasilian real',
-    'CAD': 'Canadian dollar',
-    'CHF': 'Swiss franc',
-    'CNY': 'Chinese yuan renminbi',
-    'CZK': 'Czech koruna',
-    'DKK': 'Danish krone',
-    'EUR': 'Euro',
-    'GBP': 'Pound sterling',
-    'HKD': 'Hong Kong dollar',
-    'HRK': 'Croatian kuna',
-    'HUF': 'Hungarian forint',
-    'IDR': 'Indonesian rupiah',
-    'ILS': 'Israeli shekel',
-    'INR': 'Indian rupee',
-    'JPY': 'Japanese yen',
-    'KRW': 'South Korean won',
-    'LTL': 'Lithuanian litas',
-    'MXN': 'Mexican peso',
-    'MYR': 'Malaysian ringgit',
-    'NOK': 'Norwegian krone',
-    'NZD': 'New Zealand dollar',
-    'PHP': 'Philippine peso',
-    'PLN': 'Polish zloty',
-    'RON': 'New Romanian leu',
-    'RUB': 'Russian rouble',
-    'SEK': 'Swedish krona',
-    'SGD': 'Singapore dollar',
-    'THB': 'Thai baht',
-    'TRY': 'Turkish lira',
-    'USD': 'US dollar',
-    'ZAR': 'South African rand'
-}
+parse_yahoo_response = re.compile(r'{}(.+)=X'.format(REFERENCE_CURRENCY)).match
 
 
 def human_timedelta(td):
@@ -84,6 +54,75 @@ def human_timedelta(td):
     return ' '.join(output)
 
 
+def grouper(n, iterable, fillvalue=None):
+    """Return iterable that groups ``iterable`` into groups of length ``n``
+
+    :param n: Size of group
+    :type n: ``int``
+    :param iterable: Iterable to split into groups
+    :param fillvalue: Value to pad groups with if there aren't enough values
+        in ``iterable``
+    :returns: Iterator
+
+    """
+
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
+
+
+def load_yahoo_rates(symbols):
+    """Return dict of exchange rates from Yahoo!
+
+    :param symbols: List of symbols, e.g. ``['GBP', 'USD', ...]``
+    :returns: Dictionary of rates: ``{'GBP': 1.12, 'USD': 3.2}``
+
+    """
+
+    rates = {}
+    count = len(symbols)
+
+    # Build URL
+    parts = []
+    for symbol in symbols:
+        if symbol == REFERENCE_CURRENCY:
+            count -= 1
+            continue
+        parts.append('{}{}=X'.format(REFERENCE_CURRENCY, symbol))
+    query = ','.join(parts)
+    url = YAHOO_BASE_URL.format(query)
+
+    # Fetch data
+    # log.debug('Fetching {} ...'.format(url))
+    r = web.get(url)
+    r.raise_for_status()
+
+    # Parse response
+    lines = r.content.split('\n')
+    ycount = 0
+    for row in csv.reader(lines):
+        if not row:
+            continue
+        name, rate = row
+        m = parse_yahoo_response(name)
+        if not m:
+            log.error('Invalid currency : {}'.format(name))
+            ycount += 1
+            continue
+        symbol = m.group(1)
+        rate = float(rate)
+        if rate == 0:
+            log.error('No exchange rate for : {}'.format(name))
+            ycount += 1
+            continue
+        rates[symbol] = rate
+        ycount += 1
+
+    assert ycount == count, 'Yahoo! returned {} results, not {}'.format(
+        ycount, count)
+
+    return rates
+
+
 def fetch_currency_rates():
     """Retrieve today's currency rates from the ECB's homepage
 
@@ -91,42 +130,14 @@ def fetch_currency_rates():
 
     """
 
-    exchange_rates = {}
+    rates = {}
 
-    r = web.get(XML_URL)
-    r.raise_for_status()
-    root = ET.fromstring(r.content)
+    for symbols in grouper(SYMBOLS_PER_REQUEST, CURRENCIES.keys()):
+        symbols = [s for s in symbols if s]
+        d = load_yahoo_rates(symbols)
+        rates.update(d)
 
-    for elem in root.findall('{0}Cube/{0}Cube/{0}Cube'.format(NS_ECB)):
-        currency = elem.attrib.get('currency')
-        rate = float(elem.attrib.get('rate'))
-        exchange_rates[currency] = rate
-
-    return exchange_rates
-
-
-def filter_currencies(query):
-    """Return list of currency tuples `(name, abbr)` for supported
-    currencies matching `query`
-
-    """
-
-    if not query:
-        return [(v, k) for k, v in CURRENCIES.items()]
-
-    currencies = []
-    query = query.lower()
-    # Currencies that start with query
-    for k, v in CURRENCIES.items():
-        if k.lower().startswith(query) or v.lower().startswith(query):
-            currencies.append((v, k))
-    # Currencies that contain query
-    for k, v in CURRENCIES.items():
-        if query in k.lower() or query in v.lower():
-            if (v, k) not in currencies:
-                currencies.append((v, k))
-
-    return currencies
+    return rates
 
 
 def main(wf):
@@ -135,7 +146,16 @@ def main(wf):
     query = ''
     if len(wf.args):
         query = wf.args[0]
-    currencies = filter_currencies(query)
+
+    currencies = CURRENCIES.items()
+
+    if query:
+        currencies = wf.filter(query, currencies,
+                               key=lambda t: ' '.join(t),
+                               match_on=MATCH_ALL ^ MATCH_ALLCHARS,
+                               min_score=30)
+
+    # currencies = filter_currencies(query)
     if not currencies:
         wf.add_item('No matching currencies found',
                     valid=False, icon=ICON_WARNING)
@@ -156,5 +176,4 @@ def main(wf):
 
 
 if __name__ == '__main__':
-    wf = Workflow()
     wf.run(main)

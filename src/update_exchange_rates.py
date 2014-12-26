@@ -18,6 +18,8 @@ from config import CURRENCY_CACHE_NAME, CURRENCY_CACHE_AGE
 from currency import fetch_currency_rates
 from workflow import Workflow
 
+log = None
+
 
 def main(wf):
     # Insert delay to check info message is posted in Alfred
@@ -34,4 +36,5 @@ def main(wf):
 
 if __name__ == '__main__':
     wf = Workflow()
+    log = wf.logger
     wf.run(main)
