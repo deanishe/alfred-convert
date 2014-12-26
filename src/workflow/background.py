@@ -9,53 +9,7 @@
 #
 
 """
-
-.. versionadded:: 1.4
-
-Run scripts in the background.
-
-This module allows your workflow to execute longer-running processes, e.g.
-updating the data cache from a webservice, in the background, allowing
-the workflow to remain responsive in Alfred.
-
-For example, if your workflow requires up-to-date exchange rates, you might
-write a script ``update_exchange_rates.py`` to retrieve the data from the
-relevant webservice, and call it from your main workflow script:
-
-.. code-block:: python
-   :linenos:
-
-    from workflow import Workflow, ICON_INFO
-    from workflow.background import run_in_background, is_running
-
-    def main(wf):
-        # Is cache over 6 hours old or non-existent?
-        if not wf.cached_data_fresh('exchange-rates', 3600):
-            run_in_background('update',
-                              ['/usr/bin/python',
-                               wf.workflowfile('update_exchange_rates.py')])
-
-        # Add a notification if the script is running
-        if is_running('update'):
-            wf.add_item('Updating exchange rates...', icon=ICON_INFO)
-
-        exchange_rates = wf.cached_data('exchage-rates')
-
-        # Display (possibly stale) cache data
-        if exchange_rates:
-            for rate in exchange_rates:
-                wf.add_item(rate)
-
-        # Send results to Alfred
-        wf.send_feedback()
-
-    if __name__ == '__main__':
-        wf = Workflow()
-        wf.run(main)
-
-
-For a working example, see :ref:`Part 2 of the tutorial <tutorial2>`.
-
+Run background tasks
 """
 
 from __future__ import print_function, unicode_literals
@@ -129,8 +83,8 @@ def is_running(name):
     if not os.path.exists(pidfile):
         return False
 
-    with open(pidfile, 'rb') as file:
-        pid = int(file.read().strip())
+    with open(pidfile, 'rb') as file_obj:
+        pid = int(file_obj.read().strip())
 
     if _process_exists(pid):
         return True
@@ -189,14 +143,28 @@ def _background(stdin='/dev/null', stdout='/dev/null',
 
 def run_in_background(name, args, **kwargs):
     """Pickle arguments to cache file, then call this script again via
-    :meth:`subprocess.call`.
+    :func:`subprocess.call`.
 
     :param name: name of task
     :type name: ``unicode``
-    :param args: arguments passed as first argument to :meth:`subprocess.call`
-    :param *kwargs: keyword arguments to :meth:`subprocess.call`
+    :param args: arguments passed as first argument to :func:`subprocess.call`
+    :param \**kwargs: keyword arguments to :func:`subprocess.call`
     :returns: exit code of sub-process
     :rtype: ``int``
+
+    When you call this function, it caches its arguments and then calls
+    ``background.py`` in a subprocess. The Python subprocess will load the
+    cached arguments, fork into the background, and then run the command you
+    specified.
+
+    This function will return as soon as the ``background.py`` subprocess has
+    forked, returning the exit code of *that* process (i.e. not of the command
+    you're trying to run).
+
+    If that process fails, an error will be written to the log file.
+
+    If a process is already running under the same name, this function will
+    return immediately and will not run the specified command.
 
     """
 
@@ -207,8 +175,9 @@ def run_in_background(name, args, **kwargs):
     argcache = _arg_cache(name)
 
     # Cache arguments
-    with open(argcache, 'wb') as file:
-        pickle.dump({'args': args, 'kwargs': kwargs}, file)
+    with open(argcache, 'wb') as file_obj:
+        pickle.dump({'args': args, 'kwargs': kwargs}, file_obj)
+        log.debug('Command arguments cached to `{}`'.format(argcache))
 
     # Call this script
     cmd = ['/usr/bin/python', __file__, name]
@@ -235,8 +204,8 @@ def main(wf):  # pragma: no cover
         return 1
 
     # Load cached arguments
-    with open(argcache, 'rb') as file:
-        data = pickle.load(file)
+    with open(argcache, 'rb') as file_obj:
+        data = pickle.load(file_obj)
 
     # Cached arguments
     args = data['args']
@@ -251,8 +220,8 @@ def main(wf):  # pragma: no cover
     _background()
 
     # Write PID to file
-    with open(pidfile, 'wb') as file:
-        file.write('{}'.format(os.getpid()))
+    with open(pidfile, 'wb') as file_obj:
+        file_obj.write('{}'.format(os.getpid()))
 
     # Run the command
     try:

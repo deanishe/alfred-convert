@@ -10,7 +10,7 @@ atto- =  1e-18 = a-
 femto- = 1e-15 = f-
 pico- =  1e-12 = p-
 nano- =  1e-9  = n-
-micro- = 1e-6  = u-
+micro- = 1e-6  = u- = µ-
 milli- = 1e-3  = m-
 centi- = 1e-2  = c-
 deci- =  1e-1  = d-
@@ -76,7 +76,7 @@ gilbert = 10 / (4 * pi ) * ampere_turn
 coulomb = ampere * second = C
 volt = joule / coulomb = V
 farad = coulomb / volt = F
-ohm = volt / ampere
+ohm = volt / ampere = Ω
 siemens = ampere / volt = S = mho
 weber = volt * second = Wb
 tesla = weber / meter ** 2 = T
@@ -138,7 +138,7 @@ byte = 8 * bit = Bo = octet
 baud = bit / second = Bd = bps
 
 # Length
-angstrom = 1e-10 * meter
+angstrom = 1e-10 * meter = ångström = Å
 inch = 2.54 * centimeter = in = international_inch = inches = international_inches 
 foot = 12 * inch = ft = international_foot = feet = international_feet
 mile = 5280 * foot = mi = international_mile
@@ -291,7 +291,7 @@ quart = gallon / 4 = liquid_quart = US_liquid_quart
 pint = quart / 2 = pt = liquid_pint = US_liquid_pint
 cup = pint / 2 = liquid_cup = US_liquid_cup
 gill = cup / 2 = liquid_gill = US_liquid_gill
-floz = gill / 4 = fluid_ounce = US_fluid_ounce = US_liquid_ounce
+fluid_ounce = gill / 4 = floz = US_fluid_ounce = US_liquid_ounce
 imperial_bushel = 36.36872 * liter = UK_bushel
 imperial_gallon = imperial_bushel / 8 = UK_gallon
 imperial_quart = imperial_gallon / 4 = UK_quart
@@ -317,4 +317,34 @@ firkin = barrel / 4
 @context boltzmann
     [temperature] -> [energy]: boltzmann_constant * value
     [energy] -> [temperature]: value / boltzmann_constant
+@end
+
+@context(mw=0,volume=0,solvent_mass=0) chemistry = chem
+    # mw is the molecular weight of the species
+    # volume is the volume of the solution
+    # solvent_mass is the mass of solvent in the solution
+    
+    # moles -> mass require the molecular weight
+    [substance] -> [mass]: value * mw
+    [mass] -> [substance]: value / mw
+
+    # moles/volume -> mass/volume and moles/mass -> mass / mass 
+    # require the  molecular weight
+    [substance] / [volume] -> [mass] / [volume]: value * mw
+    [mass] / [volume] -> [substance] / [volume]: value / mw
+    [substance] / [mass] -> [mass] / [mass]: value * mw
+    [mass] / [mass] -> [substance] / [mass]: value / mw
+
+    # moles/volume -> moles requires the solution volume
+    [substance] / [volume] -> [substance]: value * volume
+    [substance] -> [substance] / [volume]: value / volume
+
+    # moles/mass -> moles requires the solvent (usually water) mass
+    [substance] / [mass] -> [substance]: value * solvent_mass
+    [substance] -> [substance] / [mass]: value / solvent_mass
+
+    # moles/mass -> moles/volume require the solvent mass and the volume
+    [substance] / [mass] -> [substance]/[volume]: value * solvent_mass / volume
+    [substance] / [volume] -> [substance] / [mass]: value / solvent_mass * volume
+
 @end
