@@ -13,7 +13,7 @@
 
 from __future__ import print_function, unicode_literals
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 try:
     from xml.etree import cElementTree as ET

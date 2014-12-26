@@ -27,6 +27,9 @@ log = None
 ureg = UnitRegistry()
 Q = ureg.Quantity
 
+UPDATE_SETTINGS = {'github_slug': 'deanishe/alfred-convert'}
+ICON_UPDATE = 'update-available.png'
+
 
 def convert(query):
     """Parse query, calculate and return conversion result
@@ -47,6 +50,8 @@ def convert(query):
     for c in query:
         if c in '1234567890.':
             qty.append(c)
+        else:
+            break
     if not len(qty):
         raise ValueError('Start your query with a number')
 
@@ -91,13 +96,18 @@ def convert(query):
 
 
 def main(wf):
-    global log, ureg, Q
+    global ureg, Q
     # thread = None
-    log = wf.logger
     if not len(wf.args):
         return 1
     query = wf.args[0]  # .lower()
     log.debug('query : %s', query)
+
+    # Notify of available update
+    if wf.update_available:
+        wf.add_item('A newer version is available',
+                    'Use query `workflow:update` to install the new version',
+                    icon=ICON_UPDATE)
 
     # Load cached data
     exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME, max_age=0)
@@ -147,7 +157,12 @@ def main(wf):
                     'For example: 2.5cm in  |  178lb kg  |  200m/s mph',
                     valid=False, icon=ICON_WARNING)
     else:  # Show result
-        wf.add_item(conversion, valid=True, arg=conversion, icon='icon.png')
+        wf.add_item(conversion,
+                    valid=True,
+                    arg=conversion,
+                    copytext=conversion,
+                    largetext=conversion,
+                    icon='icon.png')
 
     wf.send_feedback()
     log.debug('finished')
@@ -155,5 +170,6 @@ def main(wf):
 
 
 if __name__ == '__main__':
-    wf = Workflow()
+    wf = Workflow(update_settings=UPDATE_SETTINGS)
+    log = wf.logger
     sys.exit(wf.run(main))
