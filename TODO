@@ -1,8 +1,11 @@
 Currency conversion:
-	- Alter workflow so currencies are loaded from cache if it exists, and updated in the background. @done(14-02-25 19:18)
+	- Add additional currencies
+	- Add Yahoo! lookup for currencies not in ECB list
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+	- Test on McLovin without Internet connection @done(14-12-26 13:58) @project(Currency conversion)
+	- Replace symlinked workflow directory with copy of package @done(14-12-26 13:57) @project(Deployment)
+	- Alter workflow so currencies are loaded from cache if it exists, and updated in the background. @done(14-02-25 19:18) @project(Currency conversion)
 		Currently, it's possible that currencies will never be loaded if there's no Internet connection.
 		To fix this, load existing cached data and trigger background update to cached file with or without updating currently loaded data.
-			- Test on McLovin without Internet connection
-
-Deployment:
-	- Replace symlinked workflow directory with copy of package
