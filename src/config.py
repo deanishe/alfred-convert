@@ -31,6 +31,7 @@ with open(os.path.join(os.path.dirname(__file__),
                        'currencies.json'), 'rb') as fp:
     CURRENCIES = json.load(fp)
 
+HELP_URL = 'https://github.com/deanishe/alfred-convert/issues'
 
 ICON_UPDATE = 'icons/update-available.png'
 ICON_CURRENCY = 'icons/money.png'

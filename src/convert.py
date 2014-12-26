@@ -25,7 +25,8 @@ from config import (CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME,
                     ICON_UPDATE,
                     UPDATE_SETTINGS, DEFAULT_SETTINGS,
                     BUILTIN_UNIT_DEFINITIONS,
-                    CUSTOM_DEFINITIONS_FILENAME)
+                    CUSTOM_DEFINITIONS_FILENAME,
+                    HELP_URL)
 
 log = None
 
@@ -190,6 +191,7 @@ def main(wf):
 
 if __name__ == '__main__':
     wf = Workflow(update_settings=UPDATE_SETTINGS,
-                  default_settings=DEFAULT_SETTINGS)
+                  default_settings=DEFAULT_SETTINGS,
+                  help_url=HELP_URL)
     log = wf.logger
     sys.exit(wf.run(main))
