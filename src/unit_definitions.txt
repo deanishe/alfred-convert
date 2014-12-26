@@ -1,0 +1,5 @@
+# Barrel of oil equivalent
+barrel_of_oil_equivalent = 169.902 m**3 = boe
+
+# Million standard cubic feed
+MMscf = 28.31685 l * 1000000 = mmscf

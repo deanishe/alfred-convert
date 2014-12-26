@@ -14,44 +14,22 @@
 from __future__ import print_function, unicode_literals
 
 import csv
-from datetime import timedelta
 from itertools import izip_longest
 import re
 
-from workflow import (Workflow, web,
-                      ICON_WARNING, ICON_INFO,
-                      MATCH_ALL, MATCH_ALLCHARS)
+from workflow import Workflow, web
 
 from config import (CURRENCY_CACHE_NAME,
-                    ICON_CURRENCY,
+                    CURRENCY_CACHE_AGE,
                     REFERENCE_CURRENCY,
                     CURRENCIES,
                     YAHOO_BASE_URL,
                     SYMBOLS_PER_REQUEST)
 
 
-wf = Workflow()
-log = wf.logger
+log = None
 
 parse_yahoo_response = re.compile(r'{}(.+)=X'.format(REFERENCE_CURRENCY)).match
-
-
-def human_timedelta(td):
-    output = []
-    d = {'day': td.days}
-    d['hour'], rem = divmod(td.seconds, 3600)
-    d['minute'], d['second'] = divmod(rem, 60)
-    for unit in ('day', 'hour', 'minute', 'second'):
-        i = d[unit]
-        if unit == 'second' and len(output):
-            # no seconds unless last update was < 1m ago
-            break
-        if i == 1:
-            output.append('1 %s' % unit)
-        elif i > 1:
-            output.append('%d %ss' % (i, unit))
-    output.append('ago')
-    return ' '.join(output)
 
 
 def grouper(n, iterable, fillvalue=None):
@@ -88,6 +66,7 @@ def load_yahoo_rates(symbols):
             count -= 1
             continue
         parts.append('{}{}=X'.format(REFERENCE_CURRENCY, symbol))
+
     query = ','.join(parts)
     url = YAHOO_BASE_URL.format(query)
 
@@ -102,18 +81,22 @@ def load_yahoo_rates(symbols):
     for row in csv.reader(lines):
         if not row:
             continue
+
         name, rate = row
         m = parse_yahoo_response(name)
-        if not m:
+
+        if not m:  # Couldn't get symbol
             log.error('Invalid currency : {}'.format(name))
             ycount += 1
             continue
         symbol = m.group(1)
         rate = float(rate)
-        if rate == 0:
+
+        if rate == 0:  # Yahoo! returns 0.0 as rate for unsupported currencies
             log.error('No exchange rate for : {}'.format(name))
             ycount += 1
             continue
+
         rates[symbol] = rate
         ycount += 1
 
@@ -141,39 +124,20 @@ def fetch_currency_rates():
 
 
 def main(wf):
-    global log
-    log = wf.logger
-    query = ''
-    if len(wf.args):
-        query = wf.args[0]
 
-    currencies = CURRENCIES.items()
+    log.debug('Fetching exchange rates from Yahoo! ...')
 
-    if query:
-        currencies = wf.filter(query, currencies,
-                               key=lambda t: ' '.join(t),
-                               match_on=MATCH_ALL ^ MATCH_ALLCHARS,
-                               min_score=30)
+    exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME,
+                                    fetch_currency_rates,
+                                    CURRENCY_CACHE_AGE)
 
-    # currencies = filter_currencies(query)
-    if not currencies:
-        wf.add_item('No matching currencies found',
-                    valid=False, icon=ICON_WARNING)
-    else:
-        if not query:  # Show last update time
-            td = timedelta(seconds=wf.cached_data_age(CURRENCY_CACHE_NAME))
-            # currencies_updated = datetime.now() - timedelta(seconds=age)
-            wf.add_item('Exchange rates updated %s' % human_timedelta(td),
-                        valid=False, icon=ICON_INFO)
-        for name, abbr in currencies:
-            # wf.add_item(abbr, name, valid=False, icon='money.png')
-            wf.add_item('%s — %s' % (abbr, name),
-                        'Use the 3-letter currency code in conversions',
-                        valid=False, icon=ICON_CURRENCY)
+    log.debug('Exchange rates updated.')
 
-    wf.send_feedback()
-    return 0
+    for currency, rate in exchange_rates.items():
+        wf.logger.debug('1 EUR = {0} {1}'.format(rate, currency))
 
 
 if __name__ == '__main__':
+    wf = Workflow()
+    log = wf.logger
     wf.run(main)

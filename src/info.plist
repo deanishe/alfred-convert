@@ -25,11 +25,22 @@
 				<string></string>
 			</dict>
 		</array>
-		<key>1F76517E-4F63-4286-BBBB-D8A6F19F6117</key>
+		<key>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>6B9E2332-4E13-4547-8CD9-C3E4D307C878</string>
+				<string>14C63701-669A-43A3-BF6A-65A23759DA5F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>EF92F243-C49B-4DFC-B0A4-72317B2457A7</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -63,7 +74,7 @@
 				<key>runningsubtext</key>
 				<string>Convertifying…</string>
 				<key>script</key>
-				<string>python convert.py "{query}"</string>
+				<string>/usr/bin/python convert.py "{query}"</string>
 				<key>subtext</key>
 				<string>Convert a free-form quantity to other units</string>
 				<key>title</key>
@@ -92,44 +103,6 @@
 			<string>alfred.workflow.output.clipboard</string>
 			<key>uid</key>
 			<string>607FA0B2-94A5-48E4-96E9-0BFA8872F7EE</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>escaping</key>
-				<integer>127</integer>
-				<key>script</key>
-				<string>open README.html</string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>6B9E2332-4E13-4547-8CD9-C3E4D307C878</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>convhelp</string>
-				<key>subtext</key>
-				<string>Open the Convert help file in your browser</string>
-				<key>text</key>
-				<string>View Convert Help File</string>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>1F76517E-4F63-4286-BBBB-D8A6F19F6117</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -166,28 +139,66 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>convcurrencies</string>
+				<string>convinfo</string>
 				<key>queuedelay</key>
 				<integer>0</integer>
 				<key>queuemode</key>
 				<integer>1</integer>
-				<key>runningsubtext</key>
-				<string>Loading currencies…</string>
 				<key>script</key>
-				<string>python currency.py "{query}"</string>
+				<string>/usr/bin/python info.py "{query}"</string>
 				<key>subtext</key>
-				<string>Show list of currencies supported by Convert</string>
+				<string>View help file and supported currencies</string>
 				<key>title</key>
-				<string>Convert: Supported Currencies</string>
+				<string>Convert Information and Help</string>
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
-			<string>958A2D60-7569-45BC-A439-EE18BD094943</string>
+			<string>EF92F243-C49B-4DFC-B0A4-72317B2457A7</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>output</key>
+				<integer>0</integer>
+				<key>removeextension</key>
+				<false/>
+				<key>sticky</key>
+				<false/>
+				<key>title</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>14C63701-669A-43A3-BF6A-65A23759DA5F</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>/usr/bin/python info.py {query}</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -196,15 +207,15 @@
 	<string></string>
 	<key>uidata</key>
 	<dict>
+		<key>14C63701-669A-43A3-BF6A-65A23759DA5F</key>
+		<dict>
+			<key>ypos</key>
+			<real>250</real>
+		</dict>
 		<key>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</key>
 		<dict>
 			<key>ypos</key>
 			<real>10</real>
-		</dict>
-		<key>1F76517E-4F63-4286-BBBB-D8A6F19F6117</key>
-		<dict>
-			<key>ypos</key>
-			<real>130</real>
 		</dict>
 		<key>607FA0B2-94A5-48E4-96E9-0BFA8872F7EE</key>
 		<dict>
@@ -216,12 +227,12 @@
 			<key>ypos</key>
 			<real>130</real>
 		</dict>
-		<key>6B9E2332-4E13-4547-8CD9-C3E4D307C878</key>
+		<key>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</key>
 		<dict>
 			<key>ypos</key>
-			<real>130</real>
+			<real>250</real>
 		</dict>
-		<key>958A2D60-7569-45BC-A439-EE18BD094943</key>
+		<key>EF92F243-C49B-4DFC-B0A4-72317B2457A7</key>
 		<dict>
 			<key>ypos</key>
 			<real>250</real>

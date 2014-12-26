@@ -13,14 +13,19 @@
 
 from __future__ import print_function, unicode_literals
 
+import os
+import shutil
 import sys
 
 from pint import UnitRegistry, UndefinedUnitError
 
 from workflow import Workflow, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
-from config import (CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME, ICON_UPDATE,
-                    UPDATE_SETTINGS, DEFAULT_SETTINGS)
+from config import (CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME,
+                    ICON_UPDATE,
+                    UPDATE_SETTINGS, DEFAULT_SETTINGS,
+                    BUILTIN_UNIT_DEFINITIONS,
+                    CUSTOM_DEFINITIONS_FILENAME)
 
 log = None
 
@@ -29,7 +34,7 @@ ureg = UnitRegistry()
 Q = ureg.Quantity
 
 
-def convert(query):
+def convert(query, decimal_places=2):
     """Parse query, calculate and return conversion result
 
     Raises a `ValueError` if the query is not understood or is invalid (e.g.
@@ -87,10 +92,12 @@ def convert(query):
     if to_unit is None:
         raise ValueError('Unknown unit : %s' % q2)
     conv = from_unit.to(to_unit)
-    # units = unicode(conv.units)
-    # if units.upper() in CURRENCIES:
-    #     units = units.upper()
-    return '%0.2f %s' % (conv.magnitude, conv.units)
+    log.debug('%f %s' % (conv.magnitude, conv.units))
+
+    fmt = '%%0.%df %%s' % decimal_places
+    result = fmt % (conv.magnitude, conv.units)
+
+    return result
 
 
 def main(wf):
@@ -107,18 +114,30 @@ def main(wf):
                     'Use query `workflow:update` to install the new version',
                     icon=ICON_UPDATE)
 
+    # Add custom units from workflow and user data
+    ureg.load_definitions(BUILTIN_UNIT_DEFINITIONS)
+    user_definitions = wf.datafile(CUSTOM_DEFINITIONS_FILENAME)
+
+    # User's custom units
+    if os.path.exists(user_definitions):
+        ureg.load_definitions(user_definitions)
+    else:  # Copy template to data dir
+        shutil.copy(
+            wf.workflowfile('{}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
+            wf.datafile(CUSTOM_DEFINITIONS_FILENAME))
+
     # Load cached data
     exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME, max_age=0)
 
     if exchange_rates:  # Add exchange rates to conversion database
-        ureg.define('euros = [currency] = eur = EUR')
+        ureg.define('euro = [currency] = eur = EUR')
         for abbr, rate in exchange_rates.items():
             ureg.define('{0} = eur / {1} = {2}'.format(abbr, rate,
                                                        abbr.lower()))
 
     if not wf.cached_data_fresh(CURRENCY_CACHE_NAME, CURRENCY_CACHE_AGE):
         # Update currency rates
-        cmd = ['/usr/bin/python', wf.workflowfile('update_exchange_rates.py')]
+        cmd = ['/usr/bin/python', wf.workflowfile('currency.py')]
         run_in_background('update', cmd)
 
     if is_running('update'):
@@ -134,7 +153,9 @@ def main(wf):
     conversion = None
 
     try:
-        conversion = convert(query)
+        conversion = convert(query,
+                             decimal_places=wf.settings.get('decimal_places',
+                                                            2))
     except UndefinedUnitError as err:
         log.critical('Unknown unit : %s', err.unit_names)
         error = 'Unknown unit : {}'.format(err.unit_names)

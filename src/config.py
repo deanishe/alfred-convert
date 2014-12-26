@@ -20,6 +20,13 @@ import os
 CURRENCY_CACHE_AGE = 3600 * 12  # 12 hours
 CURRENCY_CACHE_NAME = 'exchange_rates'
 
+DECIMAL_PLACES_DEFAULT = 2
+
+CUSTOM_DEFINITIONS_FILENAME = 'unit_definitions.txt'
+
+BUILTIN_UNIT_DEFINITIONS = os.path.join(os.path.dirname(__file__),
+                                        CUSTOM_DEFINITIONS_FILENAME)
+
 with open(os.path.join(os.path.dirname(__file__),
                        'currencies.json'), 'rb') as fp:
     CURRENCIES = json.load(fp)
@@ -36,4 +43,4 @@ SYMBOLS_PER_REQUEST = 50
 
 UPDATE_SETTINGS = {'github_slug': 'deanishe/alfred-convert'}
 
-DEFAULT_SETTINGS = {}
+DEFAULT_SETTINGS = {'decimal_places': DECIMAL_PLACES_DEFAULT}
