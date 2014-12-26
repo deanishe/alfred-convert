@@ -56,6 +56,10 @@
 				<integer>102</integer>
 				<key>keyword</key>
 				<string>conv</string>
+				<key>queuedelay</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
 				<key>runningsubtext</key>
 				<string>Convertifying…</string>
 				<key>script</key>
@@ -163,6 +167,10 @@
 				<integer>102</integer>
 				<key>keyword</key>
 				<string>convcurrencies</string>
+				<key>queuedelay</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
 				<key>runningsubtext</key>
 				<string>Loading currencies…</string>
 				<key>script</key>
