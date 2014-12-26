@@ -19,16 +19,14 @@ from pint import UnitRegistry, UndefinedUnitError
 
 from workflow import Workflow, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
-from config import CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME
+from config import (CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME, ICON_UPDATE,
+                    UPDATE_SETTINGS, DEFAULT_SETTINGS)
 
 log = None
 
 # Pint objects
 ureg = UnitRegistry()
 Q = ureg.Quantity
-
-UPDATE_SETTINGS = {'github_slug': 'deanishe/alfred-convert'}
-ICON_UPDATE = 'update-available.png'
 
 
 def convert(query):
@@ -170,6 +168,7 @@ def main(wf):
 
 
 if __name__ == '__main__':
-    wf = Workflow(update_settings=UPDATE_SETTINGS)
+    wf = Workflow(update_settings=UPDATE_SETTINGS,
+                  default_settings=DEFAULT_SETTINGS)
     log = wf.logger
     sys.exit(wf.run(main))

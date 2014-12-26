@@ -21,7 +21,7 @@ except ImportError:
     from xml.etree import ElementTree as ET
 
 from workflow import Workflow, web, ICON_WARNING, ICON_INFO
-from config import CURRENCY_CACHE_NAME
+from config import CURRENCY_CACHE_NAME, ICON_CURRENCY, REFERENCE_CURRENCY
 
 log = None
 
@@ -149,7 +149,7 @@ def main(wf):
             # wf.add_item(abbr, name, valid=False, icon='money.png')
             wf.add_item('%s — %s' % (abbr, name),
                         'Use the 3-letter currency code in conversions',
-                        valid=False, icon='money.png')
+                        valid=False, icon=ICON_CURRENCY)
 
     wf.send_feedback()
     return 0
