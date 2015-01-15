@@ -17,6 +17,7 @@ up your Python script to best utilise the :class:`Workflow` object.
 
 from __future__ import print_function, unicode_literals
 
+import binascii
 import os
 import sys
 import string
@@ -551,7 +552,7 @@ class SerializerManager(object):
         """
 
         if name not in self._serializers:
-            raise ValueError('No such serializer registered : {}'.format(name))
+            raise ValueError('No such serializer registered : {0}'.format(name))
 
         serializer = self._serializers[name]
         del self._serializers[name]
@@ -1044,7 +1045,7 @@ class Workflow(object):
 
     @property
     def bundleid(self):
-        """Workflow bundle ID from Alfred's environmental vars or ``info.plist``.
+        """Workflow bundle ID from environmental vars or ``info.plist``.
 
         :returns: bundle ID
         :rtype: ``unicode``
@@ -1143,7 +1144,7 @@ class Workflow(object):
         # Handle magic args
         if len(args) and self._capture_args:
             for name in self.magic_arguments:
-                key = '{}{}'.format(self.magic_prefix, name)
+                key = '{0}{1}'.format(self.magic_prefix, name)
                 if key in args:
                     msg = self.magic_arguments[name]()
 
@@ -1382,7 +1383,7 @@ class Workflow(object):
         """
 
         if not self._settings:
-            self.logger.debug('Reading settings from `{}` ...'.format(
+            self.logger.debug('Reading settings from `{0}` ...'.format(
                               self.settings_path))
             self._settings = Settings(self.settings_path,
                                       self._default_settings)
@@ -1426,11 +1427,11 @@ class Workflow(object):
 
         if manager.serializer(serializer_name) is None:
             raise ValueError(
-                'Unknown serializer : `{}`. Register your serializer '
+                'Unknown serializer : `{0}`. Register your serializer '
                 'with `manager` first.'.format(serializer_name))
 
         self.logger.debug(
-            'default cache serializer set to `{}`'.format(serializer_name))
+            'default cache serializer set to `{0}`'.format(serializer_name))
 
         self._cache_serializer = serializer_name
 
@@ -1471,11 +1472,11 @@ class Workflow(object):
 
         if manager.serializer(serializer_name) is None:
             raise ValueError(
-                'Unknown serializer : `{}`. Register your serializer '
+                'Unknown serializer : `{0}`. Register your serializer '
                 'with `manager` first.'.format(serializer_name))
 
         self.logger.debug(
-            'default data serializer set to `{}`'.format(serializer_name))
+            'default data serializer set to `{0}`'.format(serializer_name))
 
         self._data_serializer = serializer_name
 
@@ -1489,10 +1490,10 @@ class Workflow(object):
 
         """
 
-        metadata_path = self.datafile('.{}.alfred-workflow'.format(name))
+        metadata_path = self.datafile('.{0}.alfred-workflow'.format(name))
 
         if not os.path.exists(metadata_path):
-            self.logger.debug('No data stored for `{}`'.format(name))
+            self.logger.debug('No data stored for `{0}`'.format(name))
             return None
 
         with open(metadata_path, 'rb') as file_obj:
@@ -1502,18 +1503,18 @@ class Workflow(object):
 
         if serializer is None:
             raise ValueError(
-                'Unknown serializer `{}`. Register a corresponding serializer '
+                'Unknown serializer `{0}`. Register a corresponding serializer '
                 'with `manager.register()` to load this data.'.format(
                     serializer_name))
 
-        self.logger.debug('Data `{}` stored in `{}` format'.format(
+        self.logger.debug('Data `{0}` stored in `{1}` format'.format(
             name, serializer_name))
 
-        filename = '{}.{}'.format(name, serializer_name)
+        filename = '{0}.{1}'.format(name, serializer_name)
         data_path = self.datafile(filename)
 
         if not os.path.exists(data_path):
-            self.logger.debug('No data stored for `{}`'.format(name))
+            self.logger.debug('No data stored for `{0}`'.format(name))
             if os.path.exists(metadata_path):
                 os.unlink(metadata_path)
 
@@ -1522,7 +1523,7 @@ class Workflow(object):
         with open(data_path, 'rb') as file_obj:
             data = serializer.load(file_obj)
 
-        self.logger.debug('Stored data loaded from : {}'.format(data_path))
+        self.logger.debug('Stored data loaded from : {0}'.format(data_path))
 
         return data
 
@@ -1548,28 +1549,28 @@ class Workflow(object):
         # In order for `stored_data()` to be able to load data stored with
         # an arbitrary serializer, yet still have meaningful file extensions,
         # the format (i.e. extension) is saved to an accompanying file
-        metadata_path = self.datafile('.{}.alfred-workflow'.format(name))
-        filename = '{}.{}'.format(name, serializer_name)
+        metadata_path = self.datafile('.{0}.alfred-workflow'.format(name))
+        filename = '{0}.{1}'.format(name, serializer_name)
         data_path = self.datafile(filename)
 
         if data_path == self.settings_path:
             raise ValueError(
                 'Cannot save data to' +
-                '`{}` with format `{}`. '.format(name, serializer_name) +
+                '`{0}` with format `{1}`. '.format(name, serializer_name) +
                 "This would overwrite Alfred-Workflow's settings file.")
 
         serializer = manager.serializer(serializer_name)
 
         if serializer is None:
             raise ValueError(
-                'Invalid serializer `{}`. Register your serializer with '
+                'Invalid serializer `{0}`. Register your serializer with '
                 '`manager.register()` first.'.format(serializer_name))
 
         if data is None:  # Delete cached data
             for path in (metadata_path, data_path):
                 if os.path.exists(path):
                     os.unlink(path)
-                    self.logger.debug('Deleted data file : {}'.format(path))
+                    self.logger.debug('Deleted data file : {0}'.format(path))
 
             return
 
@@ -1580,7 +1581,7 @@ class Workflow(object):
         with open(data_path, 'wb') as file_obj:
             serializer.dump(data, file_obj)
 
-        self.logger.debug('Stored data saved at : {}'.format(data_path))
+        self.logger.debug('Stored data saved at : {0}'.format(data_path))
 
     def cached_data(self, name, data_func=None, max_age=60):
         """Retrieve data from cache or re-generate and re-cache data if
@@ -1728,19 +1729,30 @@ class Workflow(object):
         By default, :meth:`filter` uses all of the following flags (i.e.
         :const:`MATCH_ALL`). The tests are always run in the given order:
 
-        1. :const:`MATCH_STARTSWITH` : Item search key startswith ``query`` (case-insensitive).
-        2. :const:`MATCH_CAPITALS` : The list of capital letters in item search key starts with ``query`` (``query`` may be lower-case). E.g., ``of`` would match ``OmniFocus``, ``gc`` would match ``Google Chrome``
-        3. :const:`MATCH_ATOM` : Search key is split into "atoms" on non-word characters (.,-,' etc.). Matches if ``query`` is one of these atoms (case-insensitive).
-        4. :const:`MATCH_INITIALS_STARTSWITH` : Initials are the first characters of the above-described "atoms" (case-insensitive).
-        5. :const:`MATCH_INITIALS_CONTAIN` : ``query`` is a substring of the above-described initials.
+        1. :const:`MATCH_STARTSWITH` : Item search key startswith
+            ``query``(case-insensitive).
+        2. :const:`MATCH_CAPITALS` : The list of capital letters in item
+            search key starts with ``query`` (``query`` may be
+            lower-case). E.g., ``of`` would match ``OmniFocus``,
+            ``gc`` would match ``Google Chrome``
+        3. :const:`MATCH_ATOM` : Search key is split into "atoms" on
+            non-word characters (.,-,' etc.). Matches if ``query`` is
+            one of these atoms (case-insensitive).
+        4. :const:`MATCH_INITIALS_STARTSWITH` : Initials are the first
+            characters of the above-described "atoms" (case-insensitive).
+        5. :const:`MATCH_INITIALS_CONTAIN` : ``query`` is a substring of
+            the above-described initials.
         6. :const:`MATCH_INITIALS` : Combination of (4) and (5).
-        7. :const:`MATCH_SUBSTRING` : Match if ``query`` is a substring of item search key (case-insensitive).
-        8. :const:`MATCH_ALLCHARS` : Matches if all characters in ``query`` appear in item search key in the same order (case-insensitive).
+        7. :const:`MATCH_SUBSTRING` : Match if ``query`` is a substring
+            of item search key (case-insensitive).
+        8. :const:`MATCH_ALLCHARS` : Matches if all characters in
+            ``query`` appear in item search key in the same order
+            (case-insensitive).
         9. :const:`MATCH_ALL` : Combination of all the above.
 
 
-        :const:`MATCH_ALLCHARS` is considerably slower than the other tests and
-        provides much less accurate results.
+        :const:`MATCH_ALLCHARS` is considerably slower than the other
+        tests and provides much less accurate results.
 
         **Examples:**
 
@@ -1815,11 +1827,11 @@ class Workflow(object):
         results.sort(reverse=ascending)
         results = [t[1] for t in results]
 
-        if max_results and len(results) > max_results:
-            results = results[:max_results]
-
         if min_score:
             results = [r for r in results if r[1] > min_score]
+
+        if max_results and len(results) > max_results:
+            results = results[:max_results]
 
         # return list of ``(item, score, rule)``
         if include_score:
@@ -1957,7 +1969,7 @@ class Workflow(object):
         # to catch any errors and display an error message in Alfred
         try:
             if self.version:
-                self.logger.debug('Workflow version : {}'.format(self.version))
+                self.logger.debug('Workflow version : {0}'.format(self.version))
 
             # Run update check if configured for self-updates.
             # This call has to go in the `run` try-except block, as it will
@@ -1978,7 +1990,7 @@ class Workflow(object):
             self.logger.exception(err)
             if self.help_url:
                 self.logger.info(
-                    'For assistance, see: {}'.format(self.help_url))
+                    'For assistance, see: {0}'.format(self.help_url))
             if not sys.stdout.isatty():  # Show error in Alfred
                 self._items = []
                 if self._name:
@@ -1992,7 +2004,7 @@ class Workflow(object):
                 self.send_feedback()
             return 1
         finally:
-            self.logger.debug('Workflow finished in {:0.3f} seconds.'.format(
+            self.logger.debug('Workflow finished in {0:0.3f} seconds.'.format(
                               time.time() - start))
         return 0
 
@@ -2117,7 +2129,7 @@ class Workflow(object):
 
             self._last_version_run = version
 
-        self.logger.debug('Last run version : {}'.format(
+        self.logger.debug('Last run version : {0}'.format(
                           self._last_version_run))
 
         return self._last_version_run
@@ -2148,7 +2160,7 @@ class Workflow(object):
 
         self.settings['__workflow_last_version'] = str(version)
 
-        self.logger.debug('Set last run version : {}'.format(version))
+        self.logger.debug('Set last run version : {0}'.format(version))
 
         return True
 
@@ -2166,7 +2178,7 @@ class Workflow(object):
         """
 
         update_data = self.cached_data('__workflow_update_status', max_age=0)
-        self.logger.debug('update_data : {}'.format(update_data))
+        self.logger.debug('update_data : {0}'.format(update_data))
 
         if not update_data or not update_data.get('available'):
             return False
@@ -2318,8 +2330,23 @@ class Workflow(object):
         if not service:
             service = self.bundleid
 
-        password = self._call_security('find-generic-password', service,
-                                       account, '-w')
+        output = self._call_security('find-generic-password', service,
+                                     account, '-g')
+
+        # Parsing of `security` output is adapted from python-keyring
+        # by Jason R. Coombs
+        # https://pypi.python.org/pypi/keyring
+        m = re.search(
+            r'password:\s*(?:0x(?P<hex>[0-9A-F]+)\s*)?(?:"(?P<pw>.*)")?',
+            output)
+
+        if m:
+            groups = m.groupdict()
+            h = groups.get('hex')
+            password = groups.get('pw')
+            if h:
+                password = unicode(binascii.unhexlify(h), 'utf-8')
+
         self.logger.debug('Got password : %s:%s', service, account)
 
         return password
@@ -2350,6 +2377,7 @@ class Workflow(object):
 
     def _register_default_magic(self):
         """Register the built-in magic arguments"""
+        # TODO: refactor & simplify
 
         # Wrap callback and message with callable
         def callback(func, msg):
@@ -2425,7 +2453,7 @@ class Workflow(object):
 
         def show_version():
             if self.version:
-                return 'Version: {}'.format(self.version)
+                return 'Version: {0}'.format(self.version)
             else:
                 return 'This workflow has no version number'
 
@@ -2435,7 +2463,7 @@ class Workflow(object):
             for name in sorted(self.magic_arguments.keys()):
                 if name == 'magic':
                     continue
-                arg = '{}{}'.format(self.magic_prefix, name)
+                arg = '{0}{1}'.format(self.magic_prefix, name)
                 self.logger.debug(arg)
 
                 if not isatty:
