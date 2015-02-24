@@ -248,7 +248,7 @@ All other code/media are released under the [MIT Licence](http://opensource.org/
 [ghpulls]: https://github.com/deanishe/alfred-convert/pulls
 [ghreleases]: https://github.com/deanishe/alfred-convert/releases
 [packal]: http://www.packal.org/workflow/convert
-[yahoo-finance]: http://finance.yahoo.com/
+[yahoo-finance]: https://finance.yahoo.com/
 [getty]: http://www.gettyicons.com/free-icon/105/money-icon-set/free-money-icon-png/
 [dapino]: http://www.dapino-colada.nl/
 [fontawesome]: http://fortawesome.github.io/Font-Awesome/

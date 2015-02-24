@@ -38,7 +38,7 @@ ICON_CURRENCY = 'icons/money.png'
 
 REFERENCE_CURRENCY = 'EUR'
 
-YAHOO_BASE_URL = 'http://download.finance.yahoo.com/d/quotes.csv?f=sl1&s={}'
+YAHOO_BASE_URL = 'https://download.finance.yahoo.com/d/quotes.csv?f=sl1&s={}'
 
 SYMBOLS_PER_REQUEST = 50
 

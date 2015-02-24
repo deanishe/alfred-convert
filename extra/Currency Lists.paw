@@ -145,7 +145,7 @@
     </object>
     <object type="LMREQUEST" id="z111">
         <attribute name="uuid" type="string">A0F1EC34-AFCF-44CA-8695-CA483E0A179F</attribute>
-        <attribute name="url" type="string">http://download.finance.yahoo.com/d/quotes.csv?s=EURGBP=X,EURCHF=X,EURCAD=X,EURUSD=X,EURJPY=X,EURAFN=X,EURALL=X,EURAED=X\u2600f=sl1</attribute>
+        <attribute name="url" type="string">https://download.finance.yahoo.com/d/quotes.csv?s=EURGBP=X,EURCHF=X,EURCAD=X,EURUSD=X,EURJPY=X,EURAFN=X,EURALL=X,EURAED=X\u2600f=sl1</attribute>
         <attribute name="storecookies" type="bool">1</attribute>
         <attribute name="sendcookies" type="bool">1</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
