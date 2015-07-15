@@ -16,6 +16,7 @@ up your Python script to best utilise the :class:`Workflow` object.
 """
 
 from __future__ import print_function, unicode_literals
+from contextlib import contextmanager
 
 import binascii
 import os
@@ -32,6 +33,8 @@ import pickle
 import time
 import logging
 import logging.handlers
+import signal
+
 try:
     import xml.etree.cElementTree as ET
 except ImportError:  # pragma: no cover
@@ -787,6 +790,89 @@ class Item(object):
         return root
 
 
+@contextmanager
+def atomic_writer(file_path, mode):
+    """Atomic file writer.
+
+    :param file_path: path of file to write to.
+    :type file_path: ``unicode``
+    :param mode: sames as for `func:open`
+    :type mode: string
+
+    .. versionadded:: 1.12
+
+    Context manager that ensures the file is only written if the write
+    succeeds. The data is first written to a temporary file.
+
+    """
+
+    temp_suffix = '.aw.temp'
+    temp_file_path = file_path + temp_suffix
+    with open(temp_file_path, mode) as file_obj:
+        try:
+            yield file_obj
+            os.rename(temp_file_path, file_path)
+        finally:
+            try:
+                os.remove(temp_file_path)
+            except (OSError, IOError):
+                pass
+
+
+class uninterruptible(object):
+    """Decorator that postpones SIGTERM until wrapped function is complete.
+
+    .. versionadded:: 1.12
+
+    Since version 2.7, Alfred allows Script Filters to be killed. If
+    your workflow is killed in the middle of critical code (e.g.
+    writing data to disk), this may corrupt your workflow's data.
+
+    Use this decorator to wrap critical functions that *must* complete.
+    If the script is killed while a wrapped function is executing,
+    the SIGTERM will be caught and handled after your function has
+    finished executing.
+
+    Alfred-Workflow uses this internally to ensure its settings, data
+    and cache writes complete.
+
+    .. important::
+
+        This decorator is NOT thread-safe.
+
+    """
+
+    def __init__(self, func, class_name=''):
+        self.func = func
+        self._caught_signal = None
+
+    def signal_handler(self, signum, frame):
+        """Called when process receives SIGTERM."""
+        self._caught_signal = (signum, frame)
+
+    def __call__(self, *args, **kwargs):
+        # Register handler for SIGTERM, then call `self.func`
+        self.old_signal_handler = signal.getsignal(signal.SIGTERM)
+        signal.signal(signal.SIGTERM, self.signal_handler)
+
+        self.func(*args, **kwargs)
+
+        # Restore old signal handler
+        signal.signal(signal.SIGTERM, self.old_signal_handler)
+
+        # Handle any signal caught during execution
+        if self._caught_signal is not None:
+            signum, frame = self._caught_signal
+            if callable(self.old_signal_handler):
+                self.old_signal_handler(signum, frame)
+            elif self.old_signal_handler == signal.SIG_DFL:
+                sys.exit(0)
+
+    def __get__(self, obj=None, klass=None):
+        return self.__class__(self.func.__get__(obj, klass),
+                              klass.__name__)
+
+
 class Settings(dict):
     """A dictionary that saves itself when changed.
 
@@ -838,7 +924,7 @@ class Settings(dict):
         data = {}
         for key, value in self.items():
             data[key] = value
-        with open(self._filepath, 'wb') as file_obj:
+        with atomic_writer(self._filepath, 'wb') as file_obj:
             json.dump(data, file_obj, sort_keys=True, indent=2,
                       encoding='utf-8')
 
@@ -1503,9 +1589,9 @@ class Workflow(object):
 
         if serializer is None:
             raise ValueError(
-                'Unknown serializer `{0}`. Register a corresponding serializer '
-                'with `manager.register()` to load this data.'.format(
-                    serializer_name))
+                'Unknown serializer `{0}`. Register a corresponding '
+                'serializer with `manager.register()` '
+                'to load this data.'.format(serializer_name))
 
         self.logger.debug('Data `{0}` stored in `{1}` format'.format(
             name, serializer_name))
@@ -1534,6 +1620,8 @@ class Workflow(object):
 
         If ``data`` is ``None``, the datastore will be deleted.
 
+        Note that the datastore does NOT support mutliple threads.
+
         :param name: name of datastore
         :param data: object(s) to store. **Note:** some serializers
             can only handled certain types of data.
@@ -1543,6 +1631,15 @@ class Workflow(object):
         :returns: data in datastore or ``None``
 
         """
+
+        # Ensure deletion is not interrupted by SIGTERM
+        @uninterruptible
+        def delete_paths(paths):
+            """Clear one or more data stores"""
+            for path in paths:
+                if os.path.exists(path):
+                    os.unlink(path)
+                    self.logger.debug('Deleted data file : {0}'.format(path))
 
         serializer_name = serializer or self.data_serializer
 
@@ -1567,19 +1664,20 @@ class Workflow(object):
                 '`manager.register()` first.'.format(serializer_name))
 
         if data is None:  # Delete cached data
-            for path in (metadata_path, data_path):
-                if os.path.exists(path):
-                    os.unlink(path)
-                    self.logger.debug('Deleted data file : {0}'.format(path))
-
+            delete_paths((metadata_path, data_path))
             return
 
-        # Save file extension
-        with open(metadata_path, 'wb') as file_obj:
-            file_obj.write(serializer_name)
+        # Ensure write is not interrupted by SIGTERM
+        @uninterruptible
+        def _store():
+            # Save file extension
+            with atomic_writer(metadata_path, 'wb') as file_obj:
+                file_obj.write(serializer_name)
 
-        with open(data_path, 'wb') as file_obj:
-            serializer.dump(data, file_obj)
+            with atomic_writer(data_path, 'wb') as file_obj:
+                serializer.dump(data, file_obj)
+
+        _store()
 
         self.logger.debug('Stored data saved at : {0}'.format(data_path))
 
@@ -1640,7 +1738,7 @@ class Workflow(object):
                 self.logger.debug('Deleted cache file : %s', cache_path)
             return
 
-        with open(cache_path, 'wb') as file_obj:
+        with atomic_writer(cache_path, 'wb') as file_obj:
             serializer.dump(data, file_obj)
 
         self.logger.debug('Cached data saved at : %s', cache_path)
