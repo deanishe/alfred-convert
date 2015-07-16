@@ -32,13 +32,14 @@ with open(os.path.join(os.path.dirname(__file__),
     CURRENCIES = json.load(fp)
 
 HELP_URL = 'https://github.com/deanishe/alfred-convert/issues'
+README_URL = 'https://github.com/deanishe/alfred-convert'
 
 ICON_UPDATE = 'icons/update-available.png'
 ICON_CURRENCY = 'icons/money.png'
 
 REFERENCE_CURRENCY = 'EUR'
 
-YAHOO_BASE_URL = 'http://download.finance.yahoo.com/d/quotes.csv?f=sl1&s={}'
+YAHOO_BASE_URL = 'https://download.finance.yahoo.com/d/quotes.csv?f=sl1&s={}'
 
 SYMBOLS_PER_REQUEST = 50
 

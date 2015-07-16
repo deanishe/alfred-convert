@@ -112,7 +112,8 @@ def main(wf):
     # Notify of available update
     if wf.update_available:
         wf.add_item('A newer version is available',
-                    'Use query `workflow:update` to install the new version',
+                    'Action this item to download & install the new version',
+                    autocomplete='workflow:update',
                     icon=ICON_UPDATE)
 
     # Add custom units from workflow and user data

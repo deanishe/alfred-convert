@@ -32,7 +32,7 @@ ecb_currencies_file = os.path.join(os.path.dirname(__file__),
 yahoo_currencies_file = os.path.join(os.path.dirname(__file__),
                                      'currencies_yahoo.json')
 
-yahoo_base_url = 'http://download.finance.yahoo.com/d/quotes.csv?f=sl1&s={}'
+yahoo_base_url = 'https://download.finance.yahoo.com/d/quotes.csv?f=sl1&s={}'
 
 symbols_per_request = 50
 

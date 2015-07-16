@@ -43,7 +43,8 @@ from config import (ICON_CURRENCY,
                     CURRENCY_CACHE_NAME,
                     CUSTOM_DEFINITIONS_FILENAME,
                     CURRENCIES,
-                    DECIMAL_PLACES_DEFAULT)
+                    DECIMAL_PLACES_DEFAULT,
+                    README_URL)
 
 log = None
 
@@ -93,7 +94,7 @@ def main(wf):
     query = args.get('<query>')
 
     if args.get('--openhelp'):
-        subprocess.call(['open', wf.workflowfile('README.html')])
+        subprocess.call(['open', README_URL])
         return 0
 
     if args.get('--openunits'):
