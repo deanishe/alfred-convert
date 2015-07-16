@@ -81,6 +81,7 @@ You can also view (and search) the list from within Alfred using the keyword `co
 | BOB          | Bolivia Boliviano                                        |
 | BRL          | Brazil Real                                              |
 | BSD          | Bahamas Dollar                                           |
+| BTC          | Bitcoin                                                  |
 | BTN          | Bhutan Ngultrum                                          |
 | BWP          | Botswana Pula                                            |
 | BYR          | Belarus Ruble                                            |
