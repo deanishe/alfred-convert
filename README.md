@@ -32,24 +32,17 @@ The syntax is simple: the quantity, the unit you want to convert from then the u
 
 It doesn't matter if there is a space between the quantity and the units or not. Alfred-Convert will tell you if it doesn't understand your query or know the units.
 
-Actioning an item (selecting it and hitting `↩`) will copy it to the clipboard.
-Using `⌘+L` will display the result in Alfred's large text window, `⌘+C` will
-copy the selected result to the clipboard.
+Actioning an item (selecting it and hitting `↩`) will copy it to the clipboard. Using `⌘+L` will display the result in Alfred's large text window, `⌘+C` will copy the selected result to the clipboard.
 
 Use `convinfo` to view the built-in help file, view/search the list of
-supported currencies, change the number of decimal places shown in conversions,
-or edit your custom units.
+supported currencies, change the number of decimal places shown in conversions, or edit your custom units.
 
 
 ## Supported units ##
 
-Currently, Alfred-Convert only supports [the units][pintunits] understood
-by the underlying [Pint][pintdocs] library plus
-[currencies](#supported-currencies) and a handful of additional units.
+Currently, Alfred-Convert only supports [the units][pintunits] understood by the underlying [Pint][pintdocs] library plus [currencies](#supported-currencies) and a handful of additional units.
 
-You can [your own custom units](#adding-custom-units) to the workflow. If youthink they'd be useful to everyone, please create a corresponding
-[GitHub issue][ghissues] to request addition as a default unit or submit a
-[pull request][ghpulls].
+You can [your own custom units](#adding-custom-units) to the workflow. If you think they'd be useful to everyone, please create a corresponding [GitHub issue][ghissues] to request addition as a default unit or submit a [pull request][ghpulls].
 
 
 ### Supported currencies ###
@@ -220,15 +213,11 @@ You can also view (and search) the list from within Alfred using the keyword `co
 
 ### Adding custom units ###
 
-You can add your own custom units using the
-[format defined by Pint][pinthowto]. Add your definitions to the
-`unit_definitions.txt` file in the workflow's data directory.
+You can add your own custom units using the [format defined by Pint][pinthowto]. Add your definitions to the `unit_definitions.txt` file in the workflow's data directory.
 
-To edit this file, enter `convinfo` in Alfred and select `Edit Custom Units`.
-The `unit_definitions.txt` file will open in your default text editor.
+To edit this file, enter `convinfo` in Alfred and select `Edit Custom Units`. The `unit_definitions.txt` file will open in your default text editor.
 
-Please see the [Pint documentation][pinthowto] for the required format. See
-Pint's [default unit definitions][pintunits] for examples.
+Please see the [Pint documentation][pinthowto] for the required format. See Pint's [default unit definitions][pintunits] for examples.
 
 ## Thanks, copyright, licensing ##
 
