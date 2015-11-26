@@ -17,7 +17,7 @@ import os
 import shutil
 import sys
 
-from pint import UnitRegistry, UndefinedUnitError
+from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
 
 from workflow import Workflow, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
@@ -32,23 +32,35 @@ log = None
 
 # Pint objects
 ureg = UnitRegistry()
-Q = ureg.Quantity
+ureg.default_format = 'P'
+# Q = ureg.Quantity
+
+
+def register_exchange_rates(exchange_rates):
+    """Add currency definitions with exchange rates to unit registery.
+
+    Args:
+        exchange_rates (dict): `{symbol: rate}` mapping of currencies.
+    """
+    # EUR will be the baseline currency. All exchange rates are
+    # defined relative to the euro
+    ureg.define('euro = [currency] = eur = EUR')
+    for abbr, rate in exchange_rates.items():
+        ureg.define('{0} = eur / {1} = {2}'.format(abbr, rate,
+                                                   abbr.lower()))
 
 
 def convert(query, decimal_places=2):
     """Parse query, calculate and return conversion result
 
-    Raises a `ValueError` if the query is not understood or is invalid (e.g.
-    trying to convert between incompatible units).
+    Args:
+        query (unicode): Alfred's query.
+        decimal_places (int, optional): Number of decimal places in result.
 
-    :param query: the query entered into Alfred
-    :type query: `unicode`
-    :returns: the result of the conversion
-    :rtype: `unicode`
-
+    Raises:
+        ValueError: Raised if the query is incomplete or invalid.
     """
 
-    global log, ureg, Q
     # Parse number from start of query
     qty = []
     for c in query:
@@ -63,6 +75,7 @@ def convert(query, decimal_places=2):
     qty = float(''.join(qty))
     if not len(tail):
         raise ValueError('No units specified')
+
     log.debug('quantity : %s tail : %s', qty, tail)
 
     # Try to parse rest of query into a pair of units
@@ -81,8 +94,8 @@ def convert(query, decimal_places=2):
         if not len(q1) or not len(q2):  # an empty unit
             continue
         try:
-            from_unit = Q(qty, q1)
-            to_unit = Q(1, q2)
+            from_unit = ureg.Quantity(qty, q1)
+            to_unit = ureg.Quantity(1, q2)
         except UndefinedUnitError:  # Didn't make sense; try again
             continue
         log.debug("from '%s' to '%s'", from_unit.units, to_unit.units)
@@ -102,8 +115,14 @@ def convert(query, decimal_places=2):
 
 
 def main(wf):
-    global ureg, Q
-    # thread = None
+    """Run workflow Script Filter.
+
+    Args:
+        wf (workflow.Workflow): Current Workflow object.
+
+    Returns:
+        int: Exit status.
+    """
     if not len(wf.args):
         return 1
     query = wf.args[0]  # .lower()
@@ -132,10 +151,7 @@ def main(wf):
     exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME, max_age=0)
 
     if exchange_rates:  # Add exchange rates to conversion database
-        ureg.define('euro = [currency] = eur = EUR')
-        for abbr, rate in exchange_rates.items():
-            ureg.define('{0} = eur / {1} = {2}'.format(abbr, rate,
-                                                       abbr.lower()))
+        register_exchange_rates(exchange_rates)
 
     if not wf.cached_data_fresh(CURRENCY_CACHE_NAME, CURRENCY_CACHE_AGE):
         # Update currency rates
@@ -161,6 +177,11 @@ def main(wf):
     except UndefinedUnitError as err:
         log.critical('Unknown unit : %s', err.unit_names)
         error = 'Unknown unit : {}'.format(err.unit_names)
+
+    except DimensionalityError as err:
+        log.critical('Invalid conversion : %s', err)
+        error = "Can't convert from {} {} to {} {}".format(
+            err.units1, err.dim1, err.units2, err.dim2)
 
     except ValueError as err:
         log.critical('Invalid query : %s', err)
