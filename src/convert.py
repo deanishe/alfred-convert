@@ -128,11 +128,18 @@ def convert(query, decimal_places=2):
             continue
         try:
             from_unit = ureg.Quantity(qty, q1)
-            to_unit = ureg.Quantity(1, q2)
-        except UndefinedUnitError:  # Didn't make sense; try again
+        except UndefinedUnitError:
             continue
+        else:
+            log.debug('From unit : %s', q1)
+            try:
+                to_unit = ureg.Quantity(1, q2)
+            except UndefinedUnitError:  # Didn't make sense; try again
+                raise ValueError('Unknown unit : %s' % q2)
+
         log.debug("from '%s' to '%s'", from_unit.units, to_unit.units)
         break  # Got something!
+
     # Throw error if we arrive here with no units
     if from_unit is None:
         raise ValueError('Unknown unit : %s' % q1)
