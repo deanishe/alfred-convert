@@ -13,6 +13,7 @@
 
 from __future__ import print_function, unicode_literals
 
+import json
 import os
 import shutil
 import sys
@@ -28,6 +29,9 @@ from config import (CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME,
                     CUSTOM_DEFINITIONS_FILENAME,
                     HELP_URL)
 
+# Register currencies under their full names
+USE_CURRENCY_NAMES = False
+
 log = None
 
 # Pint objects
@@ -42,12 +46,41 @@ def register_exchange_rates(exchange_rates):
     Args:
         exchange_rates (dict): `{symbol: rate}` mapping of currencies.
     """
+    currency_names = {}
+
+    if USE_CURRENCY_NAMES:
+        with open(wf.workflowfile('currencies.json')) as fp:
+            currency_names = json.load(fp)
+
     # EUR will be the baseline currency. All exchange rates are
     # defined relative to the euro
-    ureg.define('euro = [currency] = eur = EUR')
+    if USE_CURRENCY_NAMES:
+        ureg.define('Euro = [currency] = eur = EUR')
+    else:
+        ureg.define('EUR = [currency] = eur')
+
     for abbr, rate in exchange_rates.items():
-        ureg.define('{0} = eur / {1} = {2}'.format(abbr, rate,
-                                                   abbr.lower()))
+        if USE_CURRENCY_NAMES:
+            name = currency_names.get(abbr)
+            definition = '{0} = eur / {1} = {2}'.format(name, rate, abbr)
+        else:
+            definition = '{0} = eur / {1}'.format(abbr, rate)
+
+        try:
+            ureg.Quantity(1, abbr)
+        except UndefinedUnitError:
+            pass  # Unit does not exist
+        else:
+            log.debug('Skipping currency %s : Unit is already defined', abbr)
+            continue
+
+        try:
+            ureg.Quantity(1, abbr.lower())
+        except UndefinedUnitError:
+            definition += ' = {0}'.format(abbr.lower())
+
+        log.debug('Registering currency : %r', definition)
+        ureg.define(definition)
 
 
 def convert(query, decimal_places=2):
