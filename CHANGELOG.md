@@ -4,9 +4,11 @@
 
 ### [2.4][v2.4] ###
 
-Released XXXX-XX-XX.
+Released 2015-11-28.
 
-- Poop
+- New money icon
+- Update pint, docopt and Alfred-Workflow libraries
+- Reorganise code and repo
 
 
 ### [2.3][v2.3] ###

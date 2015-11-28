@@ -50,7 +50,7 @@ def register_units():
         ureg.load_definitions(user_definitions)
     else:  # Copy template to data dir
         shutil.copy(
-            wf.workflowfile('{}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
+            wf.workflowfile('{0}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
             wf.datafile(CUSTOM_DEFINITIONS_FILENAME))
 
 
@@ -221,11 +221,11 @@ def main(wf):
                                                             2))
     except UndefinedUnitError as err:
         log.critical('Unknown unit : %s', err.unit_names)
-        error = 'Unknown unit : {}'.format(err.unit_names)
+        error = 'Unknown unit : {0}'.format(err.unit_names)
 
     except DimensionalityError as err:
         log.critical('Invalid conversion : %s', err)
-        error = "Can't convert from {} {} to {} {}".format(
+        error = "Can't convert from {0} {1} to {2} {3}".format(
             err.units1, err.dim1, err.units2, err.dim2)
 
     except ValueError as err:

@@ -42,7 +42,7 @@ yahoo_base_url = 'https://download.finance.yahoo.com/d/quotes.csv?f=sl1&s={}'
 # Max = 50
 symbols_per_request = 50
 
-parse_yahoo_response = re.compile(r'{}(.+)=X'.format(reference_currency)).match
+parse_yahoo_response = re.compile(r'{0}(.+)=X'.format(reference_currency)).match
 
 
 def grouper(n, iterable, fillvalue=None):
@@ -78,12 +78,12 @@ def load_yahoo_rates(symbols):
         if symbol == reference_currency:
             count -= 1
             continue
-        parts.append('{}{}=X'.format(reference_currency, symbol))
+        parts.append('{0}{1}=X'.format(reference_currency, symbol))
     query = ','.join(parts)
     url = yahoo_base_url.format(query)
 
     # Fetch data
-    print('Fetching {} ...'.format(url), file=sys.stderr)
+    print('Fetching {0} ...'.format(url), file=sys.stderr)
     r = requests.get(url)
     r.raise_for_status()
 
@@ -96,7 +96,7 @@ def load_yahoo_rates(symbols):
         name, rate = row
         m = parse_yahoo_response(name)
         if not m:
-            print('Invalid currency : {}'.format(name), file=sys.stderr)
+            print('Invalid currency : {0}'.format(name), file=sys.stderr)
             continue
         symbol = m.group(1)
         try:
@@ -108,7 +108,7 @@ def load_yahoo_rates(symbols):
         ycount += 1
         # print(row)
 
-    assert ycount == count, 'Yahoo! returned {} results, not {}'.format(
+    assert ycount == count, 'Yahoo! returned {0} results, not {1}'.format(
         ycount, count)
 
     return rates
@@ -158,7 +158,7 @@ def main():
     all_currencies = load_currencies(*currency_source_files)
 
     to_check = all_currencies
-    print('{} currencies to check ...'.format(len(to_check)), file=sys.stderr)
+    print('{0} currencies to check ...'.format(len(to_check)), file=sys.stderr)
 
     rates = get_exchange_rates(to_check)
     for symbol in sorted(rates):
@@ -166,12 +166,12 @@ def main():
         if rate == 0:
             unknown_currencies.append(symbol)
         else:
-            print('{}\t{}'.format(symbol, rate))
+            print('{0}\t{1}'.format(symbol, rate))
 
     print('\n\nUnsupported currencies:')
     print('-----------------------')
     for symbol in unknown_currencies:
-        print('{}\t{}'.format(symbol, all_currencies[symbol]))
+        print('{0}\t{1}'.format(symbol, all_currencies[symbol]))
 
     supported_currencies = {k: v for k, v in all_currencies.items()
                             if k not in unknown_currencies}

@@ -12,7 +12,7 @@
 
 from __future__ import print_function, unicode_literals
 
-import json
+import csv
 import os
 
 # ----------------------------------------------------------------------
@@ -38,13 +38,17 @@ SYMBOLS_PER_REQUEST = 50
 # ----------------------------------------------------------------------
 # Unit definition files
 # ----------------------------------------------------------------------
+CURRENCIES = {}
 CUSTOM_DEFINITIONS_FILENAME = 'unit_definitions.txt'
 BUILTIN_UNIT_DEFINITIONS = os.path.join(os.path.dirname(__file__),
                                         CUSTOM_DEFINITIONS_FILENAME)
 
 with open(os.path.join(os.path.dirname(__file__),
-                       'currencies.json'), 'rb') as fp:
-    CURRENCIES = json.load(fp)
+                       'currencies.tsv'), 'rb') as fp:
+    reader = csv.reader(fp, delimiter=b'\t')
+    for sym, rate in reader:
+        sym = unicode(sym, 'utf-8')
+        CURRENCIES[sym] = rate
 
 # ----------------------------------------------------------------------
 # Help/support URLs

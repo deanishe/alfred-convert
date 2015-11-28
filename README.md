@@ -85,7 +85,7 @@ See [CHANGELOG][changelog] for more information.
 
 |   Release   |      Date      |
 |-------------|----------------|
-| [2.4][v2.4] | XXXX-XX-XX     |
+| [2.4][v2.4] | 2015-11-28     |
 | [2.3][v2.3] | 2015-11-26     |
 | [2.2][v2.2] | 2015-07-16     |
 | 2.1         | Never released |

@@ -124,7 +124,7 @@ def main(wf):
         path = wf.datafile(CUSTOM_DEFINITIONS_FILENAME)
         if not os.path.exists(path):
             shutil.copy(
-                wf.workflowfile('{}.sample'.format(
+                wf.workflowfile('{0}.sample'.format(
                                 CUSTOM_DEFINITIONS_FILENAME)),
                 path)
 
@@ -148,15 +148,15 @@ def main(wf):
 
         wf.add_item('View Supported Currencies',
                     'View and search list of supported currencies',
-                    autocomplete=' currencies {} '.format(DELIMITER),
+                    autocomplete=' currencies {0} '.format(DELIMITER),
                     icon=ICON_CURRENCY)
 
         wf.add_item(('Decimal Places in Results '
-                    '(current : {})'.format(wf.settings.get(
+                    '(current : {0})'.format(wf.settings.get(
                                             'decimal_places',
                                             DECIMAL_PLACES_DEFAULT))),
                     'View and search list of supported currencies',
-                    autocomplete=' places {} '.format(DELIMITER),
+                    autocomplete=' places {0} '.format(DELIMITER),
                     icon=ICON_SETTINGS)
 
         wf.add_item('Edit Custom Units',
@@ -200,8 +200,8 @@ def main(wf):
                             icon=ICON_WARNING)
 
             for name, symbol in currencies:
-                wf.add_item('{} // {}'.format(name, symbol),
-                            'Use `{}` in conversions'.format(symbol),
+                wf.add_item('{0} // {1}'.format(name, symbol),
+                            'Use `{0}` in conversions'.format(symbol),
                             icon=ICON_CURRENCY)
 
             wf.send_feedback()
@@ -210,18 +210,18 @@ def main(wf):
 
             if query:
                 if not query.isdigit():
-                    wf.add_item('Invalid number : {}'.format(query),
+                    wf.add_item('Invalid number : {0}'.format(query),
                                 'Please enter a number',
                                 icon=ICON_WARNING)
                 else:
-                    wf.add_item('Set decimal places to : {}'.format(query),
+                    wf.add_item('Set decimal places to : {0}'.format(query),
                                 'Hit `ENTER` to save',
                                 valid=True,
-                                arg='--places {}'.format(query),
+                                arg='--places {0}'.format(query),
                                 icon=ICON_SETTINGS)
             else:
                 wf.add_item('Enter a number of decimal places',
-                            'Current number is {}'.format(
+                            'Current number is {0}'.format(
                                 wf.settings.get('decimal_places',
                                                 DECIMAL_PLACES_DEFAULT)),
                             icon=ICON_INFO)

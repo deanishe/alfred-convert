@@ -8,9 +8,7 @@
 # Created on 2014-02-24
 #
 
-"""
-Script to update exchange rates from Yahoo! in the background.
-"""
+"""Script to update exchange rates from Yahoo! in the background."""
 
 from __future__ import print_function, unicode_literals
 
@@ -31,7 +29,7 @@ from config import (CURRENCY_CACHE_NAME,
 
 log = None
 
-parse_yahoo_response = re.compile(r'{}(.+)=X'.format(REFERENCE_CURRENCY)).match
+parse_yahoo_response = re.compile(r'{0}(.+)=X'.format(REFERENCE_CURRENCY)).match
 
 
 def grouper(n, iterable, fillvalue=None):
@@ -71,13 +69,13 @@ def load_yahoo_rates(symbols):
         if symbol == REFERENCE_CURRENCY:
             count -= 1
             continue
-        parts.append('{}{}=X'.format(REFERENCE_CURRENCY, symbol))
+        parts.append('{0}{1}=X'.format(REFERENCE_CURRENCY, symbol))
 
     query = ','.join(parts)
     url = YAHOO_BASE_URL.format(query)
 
     # Fetch data
-    # log.debug('Fetching {} ...'.format(url))
+    # log.debug('Fetching {0} ...'.format(url))
     r = web.get(url)
     r.raise_for_status()
 
@@ -92,21 +90,32 @@ def load_yahoo_rates(symbols):
         m = parse_yahoo_response(name)
 
         if not m:  # Couldn't get symbol
-            log.error('Invalid currency : {}'.format(name))
+            log.error('Invalid currency : {0}'.format(name))
             ycount += 1
             continue
         symbol = m.group(1)
-        rate = float(rate)
 
-        if rate == 0:  # Yahoo! returns 0.0 as rate for unsupported currencies
-            log.error('No exchange rate for : {}'.format(name))
+        # Yahoo! returns 0.0 as rate for unsupported currencies
+        # NOTE: This has changed. "N/A" is now returned for
+        # unsupported currencies. That's handled in the script
+        # that generates the currency list, however: an invalid
+        # currency should never end up here.
+
+        try:
+            rate = float(rate)
+        except ValueError:
+            log.error('No exchange rate for : {0}'.format(name))
+            continue
+
+        if rate == 0:
+            log.error('No exchange rate for : {0}'.format(name))
             ycount += 1
             continue
 
         rates[symbol] = rate
         ycount += 1
 
-    assert ycount == count, 'Yahoo! returned {} results, not {}'.format(
+    assert ycount == count, 'Yahoo! returned {0} results, not {1}'.format(
         ycount, count)
 
     return rates

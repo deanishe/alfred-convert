@@ -1,3 +1,12 @@
+# This file contains additional units for the Pint library.
+# These units are registered automatically when the workflow
+# is run.
+#
+# If you want to add your own units, *don't* add them here!
+# Add them to the `unit_definitions.txt` file in the workflow's
+# data directory. You can edit this file by entering "convinfo"
+# in Alfred and selecting "Edit Custom Units".
+
 # Barrel of oil equivalent
 barrel_of_oil_equivalent = 169.902 m**3 = boe
 
