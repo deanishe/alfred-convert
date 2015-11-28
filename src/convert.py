@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # encoding: utf-8
 #
-# Copyright © 2014 deanishe@deanishe.net
+# Copyright  (c) 2014 deanishe@deanishe.net
 #
 # MIT Licence. See http://opensource.org/licenses/MIT
 #
 # Created on 2014-02-24
 #
 
-"""
-"""
+"""Drives Script Filter to show unit conversions in Alfred 2."""
 
 from __future__ import print_function, unicode_literals
 
@@ -18,7 +17,7 @@ import os
 import shutil
 import sys
 
-from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
+from vendor.pint import UnitRegistry, UndefinedUnitError, DimensionalityError
 
 from workflow import Workflow, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
@@ -38,6 +37,21 @@ log = None
 ureg = UnitRegistry()
 ureg.default_format = 'P'
 # Q = ureg.Quantity
+
+
+def register_units():
+    """Add built-in and user units to unit registry."""
+    # Add custom units from workflow and user data
+    ureg.load_definitions(BUILTIN_UNIT_DEFINITIONS)
+    user_definitions = wf.datafile(CUSTOM_DEFINITIONS_FILENAME)
+
+    # User's custom units
+    if os.path.exists(user_definitions):
+        ureg.load_definitions(user_definitions)
+    else:  # Copy template to data dir
+        shutil.copy(
+            wf.workflowfile('{}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
+            wf.datafile(CUSTOM_DEFINITIONS_FILENAME))
 
 
 def register_exchange_rates(exchange_rates):
@@ -84,7 +98,7 @@ def register_exchange_rates(exchange_rates):
 
 
 def convert(query, decimal_places=2):
-    """Parse query, calculate and return conversion result
+    """Parse query, calculate and return conversion result.
 
     Args:
         query (unicode): Alfred's query.
@@ -168,24 +182,15 @@ def main(wf):
     query = wf.args[0]  # .lower()
     log.debug('query : %s', query)
 
+    # Add workflow and user units to unit registry
+    register_units()
+
     # Notify of available update
     if wf.update_available:
         wf.add_item('A newer version is available',
                     'Action this item to download & install the new version',
                     autocomplete='workflow:update',
                     icon=ICON_UPDATE)
-
-    # Add custom units from workflow and user data
-    ureg.load_definitions(BUILTIN_UNIT_DEFINITIONS)
-    user_definitions = wf.datafile(CUSTOM_DEFINITIONS_FILENAME)
-
-    # User's custom units
-    if os.path.exists(user_definitions):
-        ureg.load_definitions(user_definitions)
-    else:  # Copy template to data dir
-        shutil.copy(
-            wf.workflowfile('{}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
-            wf.datafile(CUSTOM_DEFINITIONS_FILENAME))
 
     # Load cached data
     exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME, max_age=0)

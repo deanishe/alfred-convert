@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # encoding: utf-8
 #
-# Copyright © 2014 deanishe@deanishe.net
+# Copyright  (c) 2014 deanishe@deanishe.net
 #
 # MIT Licence. See http://opensource.org/licenses/MIT
 #
@@ -9,6 +9,8 @@
 #
 
 """info.py [options] [<query>]
+
+View/manage workflow settings.
 
 Usage:
     info.py [<query>]
@@ -35,30 +37,46 @@ import shutil
 import subprocess
 import sys
 
-from workflow import (Workflow,
-                      ICON_HELP, ICON_WARNING, ICON_INFO, ICON_SETTINGS,
-                      MATCH_ALL, MATCH_ALLCHARS)
+from vendor.docopt import docopt
 
-from config import (ICON_CURRENCY,
-                    CURRENCY_CACHE_NAME,
-                    CUSTOM_DEFINITIONS_FILENAME,
-                    CURRENCIES,
-                    DECIMAL_PLACES_DEFAULT,
-                    README_URL)
+from workflow import (
+    ICON_HELP,
+    ICON_INFO,
+    ICON_SETTINGS,
+    ICON_WARNING,
+    MATCH_ALL,
+    MATCH_ALLCHARS,
+    Workflow,
+)
+
+from config import (
+    CURRENCIES,
+    CURRENCY_CACHE_NAME,
+    CUSTOM_DEFINITIONS_FILENAME,
+    DECIMAL_PLACES_DEFAULT,
+    ICON_CURRENCY,
+    KEYWORD_SETTINGS,
+    README_URL,
+)
 
 log = None
 
-DELIMITER = '⟩'
+DELIMITER = '\u203a'  # SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
 
-ALFRED_AS = 'tell application "Alfred 2" to search "convinfo"'
+ALFRED_AS = 'tell application "Alfred 2" to search "{0}"'.format(
+    KEYWORD_SETTINGS)
 
 
 def human_timedelta(td):
-    """Return relative time (past) in human-readable format
+    """Return relative time (past) in human-readable format.
 
-    :param td: :class:`datetime.timedelta`
-    :returns: Human-readable Unicode string
+    Example: "10 minutes ago"
 
+    Args:
+        td (datetime.timedelta): Time delta to convert.
+
+    Returns:
+        unicode: Human-readable time delta.
     """
 
     output = []
@@ -84,9 +102,14 @@ def human_timedelta(td):
 
 
 def main(wf):
+    """Run Script Filter.
 
-    from docopt import docopt
+    Args:
+        wf (workflow.Workflow): Workflow object.
 
+    Returns:
+        int: Exit status.
+    """
     args = docopt(__doc__, wf.args)
 
     log.debug('args : {!r}'.format(args))

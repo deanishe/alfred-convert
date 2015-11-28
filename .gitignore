@@ -1,0 +1,58 @@
+# Python snippets from gitignore on github
+
+*.py[co]
+
+# Packages
+*.egg
+*.egg-info
+*.dist-info
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+
+# Translations
+#*.mo
+
+#Mr Developer
+.mr.developer.cfg
+
+# Mine own
+*.sublime-project
+*.sublime-workspace
+.idea
+.tags
+.tags_sorted_by_file
+.ropeproject
+.project
+.pydevproject
+.settings
+build
+dist
+*.esproj/
+.svn
+*.swp
+*.swo
+*.bak
+*~
+.DS_Store
+._*
+nbproject
+PYSMELLTAGS
+PYSMELLTAGS*
+.sass-cache
+
+# Dropbox
+.dropbox.attr
+

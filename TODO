@@ -1,9 +1,14 @@
-Currency conversion:
-	- Add additional currencies
-	- Add Yahoo! lookup for currencies not in ECB list
+Features:
+	- Show list of conversions before destination unit is entered/complete.
 
+Currency conversion:
+	- "Favourite" currencies
+		If no destination unit is supplied, and the current unit is a currency, show a list of conversions to user's favourite currencies.
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+	- Update Alfred-Workflow to fix logging rotation bug @done(15-11-28 18:30) @project(Currency conversion)
+	- Add additional currencies @done(15-11-26 12:42) @project(Currency conversion)
+	- Add Yahoo! lookup for currencies not in ECB list @done(15-11-26 12:42) @project(Currency conversion)
 	- Test on McLovin without Internet connection @done(14-12-26 13:58) @project(Currency conversion)
 	- Replace symlinked workflow directory with copy of package @done(14-12-26 13:57) @project(Deployment)
 	- Alter workflow so currencies are loaded from cache if it exists, and updated in the background. @done(14-02-25 19:18) @project(Currency conversion)

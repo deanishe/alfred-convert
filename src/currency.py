@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 #
-# Copyright © 2014 deanishe@deanishe.net
+# Copyright  (c) 2014 deanishe@deanishe.net
 #
 # MIT Licence. See http://opensource.org/licenses/MIT
 #
@@ -9,6 +9,7 @@
 #
 
 """
+Script to update exchange rates from Yahoo! in the background.
 """
 
 from __future__ import print_function, unicode_literals
@@ -16,6 +17,7 @@ from __future__ import print_function, unicode_literals
 import csv
 from itertools import izip_longest
 import re
+import time
 
 from workflow import Workflow, web
 
@@ -33,15 +35,16 @@ parse_yahoo_response = re.compile(r'{}(.+)=X'.format(REFERENCE_CURRENCY)).match
 
 
 def grouper(n, iterable, fillvalue=None):
-    """Return iterable that groups ``iterable`` into groups of length ``n``
+    """Return iterable that splits `iterable` into groups of size `n`.
 
-    :param n: Size of group
-    :type n: ``int``
-    :param iterable: Iterable to split into groups
-    :param fillvalue: Value to pad groups with if there aren't enough values
-        in ``iterable``
-    :returns: Iterator
+    Args:
+        n (int): Size of each group.
+        iterable (iterable): The iterable to split into groups.
+        fillvalue (object, optional): Value to pad short sequences with.
 
+    Returns:
+        iterator: Yields tuples of length `n` containing items
+            from `iterable`.
     """
 
     args = [iter(iterable)] * n
@@ -49,11 +52,14 @@ def grouper(n, iterable, fillvalue=None):
 
 
 def load_yahoo_rates(symbols):
-    """Return dict of exchange rates from Yahoo!
+    """Return dict of exchange rates from Yahoo! Finance.
 
-    :param symbols: List of symbols, e.g. ``['GBP', 'USD', ...]``
-    :returns: Dictionary of rates: ``{'GBP': 1.12, 'USD': 3.2}``
+    Args:
+        symbols (sequence): Abbreviations of currencies to fetch
+            exchange rates for, e.g. 'USD' or 'GBP'.
 
+    Returns:
+        dict: `{symbol: rate}` mapping of exchange rates.
     """
 
     rates = {}
@@ -107,10 +113,13 @@ def load_yahoo_rates(symbols):
 
 
 def fetch_currency_rates():
-    """Retrieve today's currency rates from the ECB's homepage
+    """Retrieve all currency exchange rates.
 
-    :returns: `dict` {abbr : ``float``} of currency value in EUR
+    Batch currencies into requests of `SYMBOLS_PER_REQUEST` currencies each.
 
+    Returns:
+        list: List of `{abbr : n.nn}` dicts of exchange rates
+            (relative to EUR).
     """
 
     rates = {}
@@ -124,14 +133,21 @@ def fetch_currency_rates():
 
 
 def main(wf):
+    """Update exchange rates from Yahoo! Finance.
 
-    log.debug('Fetching exchange rates from Yahoo! ...')
+    Args:
+        wf (workflow.Workflow): Workflow object.
+    """
+    start_time = time.time()
+    log.info('Fetching exchange rates from Yahoo! ...')
 
     exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME,
                                     fetch_currency_rates,
                                     CURRENCY_CACHE_AGE)
 
-    log.debug('Exchange rates updated.')
+    elapsed = time.time() - start_time
+    log.info('%d exchange rates updated in %0.2f seconds.',
+             len(exchange_rates), elapsed)
 
     for currency, rate in exchange_rates.items():
         wf.logger.debug('1 EUR = {0} {1}'.format(rate, currency))
