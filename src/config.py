@@ -46,9 +46,10 @@ BUILTIN_UNIT_DEFINITIONS = os.path.join(os.path.dirname(__file__),
 with open(os.path.join(os.path.dirname(__file__),
                        'currencies.tsv'), 'rb') as fp:
     reader = csv.reader(fp, delimiter=b'\t')
-    for sym, rate in reader:
+    for sym, name in reader:
         sym = unicode(sym, 'utf-8')
-        CURRENCIES[sym] = rate
+        name = unicode(name, 'utf-8')
+        CURRENCIES[sym] = name
 
 # ----------------------------------------------------------------------
 # Help/support URLs
