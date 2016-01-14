@@ -32,7 +32,7 @@ Download from [GitHub][ghreleases] or [Packal.org][packal].
 
 The syntax is simple: the quantity, the unit you want to convert from then the unit you want to convert to. For example:
 
-- `conv 128 mph km`
+- `conv 128 mph kph`
 - `conv 72in cm`
 - `conv 100psi bar`
 - `conv 20.5 m/s mph`
