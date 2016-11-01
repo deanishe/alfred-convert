@@ -1,7 +1,7 @@
 
 # Alfred-Convert #
 
-Convert between different units offline in [Alfred 2][alfred].
+Convert between different units offline in [Alfred 2 & 3][alfred].
 
 ![][demo]
 
