@@ -15,6 +15,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 			<dict>
 				<key>destinationuid</key>
@@ -23,6 +25,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 		<key>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</key>
@@ -34,6 +38,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 		<key>EF92F243-C49B-4DFC-B0A4-72317B2457A7</key>
@@ -45,6 +51,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 	</dict>
@@ -61,13 +69,19 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
 				<key>argumenttype</key>
 				<integer>0</integer>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
 				<string>conv</string>
-				<key>queuedelay</key>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
 				<integer>0</integer>
 				<key>queuemode</key>
 				<integer>1</integer>
@@ -75,6 +89,10 @@
 				<string>Convertifying…</string>
 				<key>script</key>
 				<string>/usr/bin/python convert.py "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>subtext</key>
 				<string>Convert a free-form quantity to other units</string>
 				<key>title</key>
@@ -89,7 +107,7 @@
 			<key>uid</key>
 			<string>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -98,13 +116,15 @@
 				<false/>
 				<key>clipboardtext</key>
 				<string>{query}</string>
+				<key>transient</key>
+				<false/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.clipboard</string>
 			<key>uid</key>
 			<string>607FA0B2-94A5-48E4-96E9-0BFA8872F7EE</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -113,11 +133,7 @@
 				<false/>
 				<key>onlyshowifquerypopulated</key>
 				<false/>
-				<key>output</key>
-				<integer>0</integer>
 				<key>removeextension</key>
-				<false/>
-				<key>sticky</key>
 				<false/>
 				<key>text</key>
 				<string>{query}</string>
@@ -129,23 +145,79 @@
 			<key>uid</key>
 			<string>67960284-5834-4BB2-849E-E5CF3254D3CF</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string></string>
+				<key>title</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>14C63701-669A-43A3-BF6A-65A23759DA5F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>/usr/bin/python info.py {query}</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
 				<string>convinfo</string>
-				<key>queuedelay</key>
+				<key>queuedelaycustom</key>
+				<integer>1</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
 				<integer>0</integer>
 				<key>queuemode</key>
 				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
 				<key>script</key>
 				<string>/usr/bin/python info.py "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>subtext</key>
 				<string>View help file and supported currencies</string>
 				<key>title</key>
@@ -160,47 +232,7 @@
 			<key>uid</key>
 			<string>EF92F243-C49B-4DFC-B0A4-72317B2457A7</string>
 			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>output</key>
-				<integer>0</integer>
-				<key>removeextension</key>
-				<false/>
-				<key>sticky</key>
-				<false/>
-				<key>title</key>
-				<string>{query}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>14C63701-669A-43A3-BF6A-65A23759DA5F</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>escaping</key>
-				<integer>0</integer>
-				<key>script</key>
-				<string>/usr/bin/python info.py {query}</string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</string>
-			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 	</array>
 	<key>readme</key>
@@ -209,33 +241,45 @@
 	<dict>
 		<key>14C63701-669A-43A3-BF6A-65A23759DA5F</key>
 		<dict>
+			<key>xpos</key>
+			<integer>440</integer>
 			<key>ypos</key>
-			<real>250</real>
+			<integer>270</integer>
 		</dict>
 		<key>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</key>
 		<dict>
+			<key>xpos</key>
+			<integer>40</integer>
 			<key>ypos</key>
-			<real>10</real>
+			<integer>30</integer>
 		</dict>
 		<key>607FA0B2-94A5-48E4-96E9-0BFA8872F7EE</key>
 		<dict>
+			<key>xpos</key>
+			<integer>440</integer>
 			<key>ypos</key>
-			<real>10</real>
+			<integer>30</integer>
 		</dict>
 		<key>67960284-5834-4BB2-849E-E5CF3254D3CF</key>
 		<dict>
+			<key>xpos</key>
+			<integer>440</integer>
 			<key>ypos</key>
-			<real>130</real>
+			<integer>150</integer>
 		</dict>
 		<key>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</key>
 		<dict>
+			<key>xpos</key>
+			<integer>240</integer>
 			<key>ypos</key>
-			<real>250</real>
+			<integer>270</integer>
 		</dict>
 		<key>EF92F243-C49B-4DFC-B0A4-72317B2457A7</key>
 		<dict>
+			<key>xpos</key>
+			<integer>40</integer>
 			<key>ypos</key>
-			<real>250</real>
+			<integer>270</integer>
 		</dict>
 	</dict>
 	<key>webaddress</key>

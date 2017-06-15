@@ -51,11 +51,11 @@ def register_units():
     else:  # Copy template to data dir
         shutil.copy(
             wf.workflowfile('{0}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
-            wf.datafile(CUSTOM_DEFINITIONS_FILENAME))
+            user_definitions)
 
 
 def register_exchange_rates(exchange_rates):
-    """Add currency definitions with exchange rates to unit registery.
+    """Add currency definitions with exchange rates to unit registry.
 
     Args:
         exchange_rates (dict): `{symbol: rate}` mapping of currencies.
@@ -135,8 +135,8 @@ def convert(query, decimal_places=2):
     q1 = q2 = ''
     for i in range(len(atoms)):
         from_unit = to_unit = None  # reset so no old values spill over
-        q1 = ' '.join(atoms[:i]).strip()
-        q2 = ' '.join(atoms[i:]).strip()
+        q1 = ' '.join(atoms[:i+1]).strip()
+        q2 = ' '.join(atoms[i+1:]).strip()
         log.debug('atoms : %r  i : %d  q1 : %s  q2 : %s', atoms, i, q1, q2)
         if not len(q1) or not len(q2):  # an empty unit
             continue

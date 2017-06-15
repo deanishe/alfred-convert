@@ -1,5 +1,19 @@
 
-# Changelog #
+Changelog
+=========
+
+### [2.6][v2.6] ###
+
+Released 2017-06-15.
+
+- Fix Sierra forking issue
+
+
+### [2.5][v2.5] ###
+
+Released 2015-12-11.
+
+- Fix decoding error
 
 
 ### [2.4][v2.4] ###
@@ -74,3 +88,5 @@ Released 2014-08-09.
 [v2.2]: https://github.com/deanishe/alfred-convert/releases/tag/v2.2
 [v2.3]: https://github.com/deanishe/alfred-convert/releases/tag/v2.3
 [v2.4]: https://github.com/deanishe/alfred-convert/releases/tag/v2.4
+[v2.5]: https://github.com/deanishe/alfred-convert/releases/tag/v2.5
+[v2.6]: https://github.com/deanishe/alfred-convert/releases/tag/v2.6
