@@ -18,14 +18,12 @@ Usage:
     info.py --openhelp
     info.py --openunits
     info.py --currencies [<query>]
-    info.py --places <query>
 
 Options:
     -h, --help    Show this message
     --openhelp    Open help file in default browser
     --openunits   Open custom units file in default editor
     --currencies  View/search supported currencies
-    --places      Set decimal places
 
 """
 
@@ -40,7 +38,6 @@ import sys
 from docopt import docopt
 
 from workflow import (
-    ICON_HELP,
     ICON_INFO,
     ICON_SETTINGS,
     ICON_WARNING,
@@ -54,8 +51,8 @@ from config import (
     CRYPTO_CURRENCIES,
     CURRENCY_CACHE_NAME,
     CUSTOM_DEFINITIONS_FILENAME,
-    DECIMAL_PLACES_DEFAULT,
     ICON_CURRENCY,
+    ICON_HELP,
     KEYWORD_SETTINGS,
     README_URL,
 )
@@ -143,28 +140,6 @@ def handle_delimited_query(query):
 
         wf.send_feedback()
 
-    elif mode == 'places':
-
-        if query:
-            if not query.isdigit():
-                wf.add_item(u'Invalid number : {}'.format(query),
-                            'Please enter a number',
-                            icon=ICON_WARNING)
-            else:
-                wf.add_item(u'Set decimal places to : {}'.format(query),
-                            u'↩ to save',
-                            valid=True,
-                            arg='--places {}'.format(query),
-                            icon=ICON_SETTINGS)
-        else:
-            wf.add_item('Enter a number of decimal places',
-                        'Current number is {}'.format(
-                            wf.settings.get('decimal_places',
-                                            DECIMAL_PLACES_DEFAULT)),
-                        icon=ICON_INFO)
-
-        wf.send_feedback()
-
 
 def main(wf):
     """Run Script Filter.
@@ -196,14 +171,6 @@ def main(wf):
         subprocess.call(['open', path])
         return 0
 
-    if args.get('--places'):
-        value = int(query)
-        log.debug('setting `decimal_places` to %r', value)
-        wf.settings['decimal_places'] = value
-        print('Set decimal places to {}'.format(value))
-        # subprocess.call(['osascript', '-e', ALFRED_AS])
-        return
-
     # Parse query ------------------------------------------------------
 
     if DELIMITER in query:
@@ -224,14 +191,6 @@ def main(wf):
              subtitle='View and search list of supported currencies',
              autocomplete=u'currencies {} '.format(DELIMITER),
              icon=ICON_CURRENCY),
-
-        dict(title=('Decimal Places in Results '
-                    '(current : {})'.format(
-                        wf.settings.get('decimal_places',
-                                        DECIMAL_PLACES_DEFAULT))),
-             subtitle='View and search list of supported currencies',
-             autocomplete=u'places {} '.format(DELIMITER),
-             icon=ICON_SETTINGS),
 
         dict(title='Edit Custom Units',
              subtitle='Add and edit your own custom units',

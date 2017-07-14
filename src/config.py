@@ -23,7 +23,8 @@ KEYWORD_SETTINGS = 'convinfo'
 # ----------------------------------------------------------------------
 # Result display
 # ----------------------------------------------------------------------
-DECIMAL_PLACES_DEFAULT = 2
+DECIMAL_PLACES = int(os.getenv('DECIMAL_PLACES') or '2')
+DECIMAL_SEPARATOR = os.getenv('DECIMAL_SEPARATOR') or '.'
 
 # ----------------------------------------------------------------------
 # Currency settings
@@ -1464,13 +1465,12 @@ README_URL = 'https://github.com/deanishe/alfred-convert#alfred-convert'
 # ----------------------------------------------------------------------
 # Icons
 # ----------------------------------------------------------------------
-ICON_UPDATE = 'icons/update-available.png'
 ICON_CURRENCY = 'icons/money.png'
+ICON_HELP = 'icons/help.png'
+ICON_UPDATE = 'icons/update-available.png'
 
 # ----------------------------------------------------------------------
 # Update and default user settings
 # ----------------------------------------------------------------------
 UPDATE_SETTINGS = {'github_slug': 'deanishe/alfred-convert'}
-DEFAULT_SETTINGS = {
-    'decimal_places': DECIMAL_PLACES_DEFAULT,
-}
+DEFAULT_SETTINGS = {}

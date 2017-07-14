@@ -20,13 +20,18 @@ from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
 
 from workflow import Workflow3, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
-from config import (CURRENCIES, CRYPTO_CURRENCIES,
-                    CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME,
-                    ICON_UPDATE,
-                    UPDATE_SETTINGS, DEFAULT_SETTINGS,
-                    BUILTIN_UNIT_DEFINITIONS,
-                    CUSTOM_DEFINITIONS_FILENAME,
-                    HELP_URL)
+from config import (
+    BUILTIN_UNIT_DEFINITIONS,
+    CURRENCY_CACHE_AGE,
+    CURRENCY_CACHE_NAME,
+    CUSTOM_DEFINITIONS_FILENAME,
+    DECIMAL_PLACES,
+    DECIMAL_SEPARATOR,
+    DEFAULT_SETTINGS,
+    HELP_URL,
+    ICON_UPDATE,
+    UPDATE_SETTINGS,
+)
 
 log = None
 
@@ -82,12 +87,11 @@ def register_exchange_rates(exchange_rates):
         ureg.define(definition)
 
 
-def convert(query, decimal_places=2):
+def convert(query):
     """Parse query, calculate and return conversion result.
 
     Args:
         query (unicode): Alfred's query.
-        decimal_places (int, optional): Number of decimal places in result.
 
     Raises:
         ValueError: Raised if the query is incomplete or invalid.
@@ -117,14 +121,17 @@ def convert(query, decimal_places=2):
     # of units that `pint` understands
     if len(atoms) == 1:
         raise ValueError('No destination unit specified')
+
     q1 = q2 = ''
     for i in range(len(atoms)):
         from_unit = to_unit = None  # reset so no old values spill over
         q1 = ' '.join(atoms[:i + 1]).strip()
         q2 = ' '.join(atoms[i + 1:]).strip()
         log.debug('atoms : %r  i : %d  q1 : %s  q2 : %s', atoms, i, q1, q2)
+
         if not len(q1) or not len(q2):  # an empty unit
             continue
+
         try:
             from_unit = ureg.Quantity(qty, q1)
         except UndefinedUnitError:
@@ -144,11 +151,14 @@ def convert(query, decimal_places=2):
         raise ValueError('Unknown unit : %s' % q1)
     if to_unit is None:
         raise ValueError('Unknown unit : %s' % q2)
+
     conv = from_unit.to(to_unit)
     log.debug('%f %s' % (conv.magnitude, conv.units))
 
-    fmt = '%%0.%df %%s' % decimal_places
-    result = fmt % (conv.magnitude, conv.units)
+    fmt = '%%0.%df' % DECIMAL_PLACES
+    number = fmt % conv.magnitude
+    number = number.replace('.', DECIMAL_SEPARATOR)
+    result = '{} {}'.format(number, conv.units)
 
     return result
 
@@ -202,9 +212,7 @@ def main(wf):
     conversion = None
 
     try:
-        conversion = convert(query,
-                             decimal_places=wf.settings.get('decimal_places',
-                                                            2))
+        conversion = convert(query)
     except UndefinedUnitError as err:
         log.critical('unknown unit : %s', err.unit_names)
         error = 'Unknown unit : {}'.format(err.unit_names)
