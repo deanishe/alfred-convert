@@ -82,7 +82,7 @@ def register_exchange_rates(exchange_rates):
         ureg.define(definition)
 
 
-def convert(query, decimal_places=2):
+def convert(query, decimal_places=2, auto_convert=None):
     """Parse query, calculate and return conversion result.
 
     Args:
@@ -114,9 +114,14 @@ def convert(query, decimal_places=2):
     atoms = tail.split()
     from_unit = to_unit = None
     # Try splitting tail at every space until we arrive at a pair
-    # of units that `pint` understands
+    # of units that `pint` understands. If we only have a single unit,
+    # then check to see if perhaps we have a default conversion set
     if len(atoms) == 1:
-        raise ValueError('No destination unit specified')
+        if atoms[0] not in auto_convert:
+            raise ValueError('No destination unit specified')
+        else:
+            atoms += auto_convert[atoms[0]]
+
     q1 = q2 = ''
     for i in range(len(atoms)):
         from_unit = to_unit = None  # reset so no old values spill over
@@ -202,9 +207,11 @@ def main(wf):
     conversion = None
 
     try:
-        conversion = convert(query,
-                             decimal_places=wf.settings.get('decimal_places',
-                                                            2))
+        conversion = convert(
+            query,
+            decimal_places=wf.settings.get('decimal_places', 2),
+            auto_convert=wf.settings.get('auto_convert', {})
+        )
     except UndefinedUnitError as err:
         log.critical('unknown unit : %s', err.unit_names)
         error = 'Unknown unit : {}'.format(err.unit_names)
