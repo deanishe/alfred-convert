@@ -30,6 +30,7 @@ from config import (
     DEFAULT_SETTINGS,
     HELP_URL,
     ICON_UPDATE,
+    THOUSANDS_SEPARATOR,
     UPDATE_SETTINGS,
 )
 
@@ -39,6 +40,26 @@ log = None
 ureg = UnitRegistry()
 ureg.default_format = 'P'
 # Q = ureg.Quantity
+
+
+def format_number(n):
+    """Format a floating point number with thousands/decimal separators.
+
+    Args:
+        n (float): Number to format
+
+    """
+    sep = ''
+    if THOUSANDS_SEPARATOR:
+        sep = ','
+    fmt = '{{:0{}.{:d}f}}'.format(sep, DECIMAL_PLACES)
+    num = fmt.format(n)
+    # log.debug('n=%r, fmt=%r, num=%r', n, fmt, num)
+    num = num.replace(',', '||comma||')
+    num = num.replace('.', '||point||')
+    num = num.replace('||comma||', THOUSANDS_SEPARATOR)
+    num = num.replace('||point||', DECIMAL_SEPARATOR)
+    return num
 
 
 def register_units():
@@ -153,11 +174,12 @@ def convert(query):
         raise ValueError('Unknown unit : %s' % q2)
 
     conv = from_unit.to(to_unit)
-    log.debug('%f %s' % (conv.magnitude, conv.units))
+    number = format_number(conv.magnitude)
+    log.debug('%s %s' % (number, conv.units))
 
-    fmt = '%%0.%df' % DECIMAL_PLACES
-    number = fmt % conv.magnitude
-    number = number.replace('.', DECIMAL_SEPARATOR)
+    # fmt = '%%0.%df' % DECIMAL_PLACES
+    # number = fmt % conv.magnitude
+    # number = number.replace('.', DECIMAL_SEPARATOR)
     result = '{} {}'.format(number, conv.units)
 
     return result
@@ -169,8 +191,6 @@ def main(wf):
     Args:
         wf (workflow.Workflow): Current Workflow object.
 
-    Returns:
-        int: Exit status.
     """
     if not len(wf.args):
         return 1

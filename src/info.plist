@@ -309,6 +309,8 @@ DECIMAL_SEPARATOR is the character used to separate whole numbers from decimal f
 		<string>2</string>
 		<key>DECIMAL_SEPARATOR</key>
 		<string>.</string>
+		<key>THOUSANDS_SEPARATOR</key>
+		<string></string>
 		<key>UPDATE_INTERVAL</key>
 		<string>360</string>
 	</dict>
