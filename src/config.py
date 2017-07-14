@@ -27,6 +27,8 @@ DECIMAL_PLACES = int(os.getenv('DECIMAL_PLACES') or '2')
 DECIMAL_SEPARATOR = os.getenv('DECIMAL_SEPARATOR') or '.'
 THOUSANDS_SEPARATOR = os.getenv('THOUSANDS_SEPARATOR') or ''
 
+COPY_UNIT = os.getenv('COPY_UNIT', '') not in ('', '0')
+
 # ----------------------------------------------------------------------
 # Currency settings
 # ----------------------------------------------------------------------

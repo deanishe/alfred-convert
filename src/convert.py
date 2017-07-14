@@ -22,6 +22,7 @@ from workflow import Workflow3, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
 from config import (
     BUILTIN_UNIT_DEFINITIONS,
+    COPY_UNIT,
     CURRENCY_CACHE_AGE,
     CURRENCY_CACHE_NAME,
     CUSTOM_DEFINITIONS_FILENAME,
@@ -117,6 +118,9 @@ def convert(query):
     Raises:
         ValueError: Raised if the query is incomplete or invalid.
 
+    Returns:
+        tuple: (value, unit)
+
     """
     # Parse number from start of query
     qty = []
@@ -180,9 +184,8 @@ def convert(query):
     # fmt = '%%0.%df' % DECIMAL_PLACES
     # number = fmt % conv.magnitude
     # number = number.replace('.', DECIMAL_SEPARATOR)
-    result = '{} {}'.format(number, conv.units)
 
-    return result
+    return number, conv.units
 
 
 def main(wf):
@@ -229,10 +232,10 @@ def main(wf):
                         icon=ICON_INFO)
 
     error = None
-    conversion = None
+    number = None
 
     try:
-        conversion = convert(query)
+        number, unit = convert(query)
     except UndefinedUnitError as err:
         log.critical('unknown unit : %s', err.unit_names)
         error = 'Unknown unit : {}'.format(err.unit_names)
@@ -250,7 +253,7 @@ def main(wf):
         log.exception('%s : %s', err.__class__, err)
         error = err.message
 
-    if not error and not conversion:
+    if not error and not number:
         error = 'Conversion input not understood'
 
     if error:  # Show error
@@ -258,11 +261,15 @@ def main(wf):
                     'For example: 2.5cm in  |  178lb kg  |  200m/s mph',
                     valid=False, icon=ICON_WARNING)
     else:  # Show result
-        wf.add_item(conversion,
+        value = copytext = '{} {}'.format(number, unit)
+        if not COPY_UNIT:
+            copytext = number
+
+        wf.add_item(value,
                     valid=True,
-                    arg=conversion,
-                    copytext=conversion,
-                    largetext=conversion,
+                    arg=copytext,
+                    copytext=copytext,
+                    largetext=value,
                     icon='icon.png')
 
     wf.send_feedback()

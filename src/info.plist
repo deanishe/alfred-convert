@@ -253,11 +253,15 @@ You can also add your own custom units.
 Configuration
 -------------
 
-UPDATE_INTERVAL is the number of minutes between exchange rate updates.
+COPY_UNIT determines whether the unit is also copied when you press CMD+C. 0 or no value means the unit won't be copied. Any other value means the unit will also be copied.
 
 DECIMAL_PLACES is the number of decimal places to show in conversion results.
 
-DECIMAL_SEPARATOR is the character used to separate whole numbers from decimal fraction.</string>
+DECIMAL_SEPARATOR is the character used to separate whole numbers from decimal fraction.
+
+THOUSANDS_SEPARATOR is the character used to separate thousands.
+
+UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 	<key>uidata</key>
 	<dict>
 		<key>14C63701-669A-43A3-BF6A-65A23759DA5F</key>
@@ -305,6 +309,8 @@ DECIMAL_SEPARATOR is the character used to separate whole numbers from decimal f
 	</dict>
 	<key>variables</key>
 	<dict>
+		<key>COPY_UNIT</key>
+		<string></string>
 		<key>DECIMAL_PLACES</key>
 		<string>2</string>
 		<key>DECIMAL_SEPARATOR</key>
