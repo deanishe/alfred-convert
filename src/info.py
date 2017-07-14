@@ -29,7 +29,7 @@ Options:
 
 """
 
-from __future__ import print_function, unicode_literals, absolute_import
+from __future__ import print_function, absolute_import
 
 from datetime import timedelta
 import os
@@ -37,7 +37,7 @@ import shutil
 import subprocess
 import sys
 
-from vendor.docopt import docopt
+from docopt import docopt
 
 from workflow import (
     ICON_HELP,
@@ -51,6 +51,7 @@ from workflow import (
 
 from config import (
     CURRENCIES,
+    CRYPTO_CURRENCIES,
     CURRENCY_CACHE_NAME,
     CUSTOM_DEFINITIONS_FILENAME,
     DECIMAL_PLACES_DEFAULT,
@@ -61,9 +62,9 @@ from config import (
 
 log = None
 
-DELIMITER = '\u203a'  # SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+DELIMITER = u'\u203a'  # SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
 
-ALFRED_AS = 'tell application "Alfred 2" to search "{0}"'.format(
+ALFRED_AS = 'tell application "Alfred 3" to search "{}"'.format(
     KEYWORD_SETTINGS)
 
 
@@ -77,8 +78,8 @@ def human_timedelta(td):
 
     Returns:
         unicode: Human-readable time delta.
-    """
 
+    """
     output = []
     d = {'day': td.days}
     d['hour'], rem = divmod(td.seconds, 3600)
@@ -101,14 +102,76 @@ def human_timedelta(td):
     return ' '.join(output)
 
 
+def handle_delimited_query(query):
+    # Currencies or decimal places
+    if query.endswith(DELIMITER):  # User deleted trailing space
+        subprocess.call(['osascript', '-e', ALFRED_AS])
+        return
+
+    mode, query = [s.strip() for s in query.split(DELIMITER)]
+
+    if mode == 'currencies':
+
+        currencies = sorted([(name, symbol) for (symbol, name)
+                            in CURRENCIES.items()] +
+                            [(name, symbol) for (symbol, name)
+                            in CRYPTO_CURRENCIES.items()])
+
+        if query:
+            currencies = wf.filter(query, currencies,
+                                   key=lambda t: ' '.join(t),
+                                   match_on=MATCH_ALL ^ MATCH_ALLCHARS,
+                                   min_score=30)
+
+        else:  # Show last update time
+            age = wf.cached_data_age(CURRENCY_CACHE_NAME)
+            if age > 0:  # Exchange rates in cache
+                td = timedelta(seconds=age)
+                wf.add_item('Exchange rates updated {}'.format(
+                            human_timedelta(td)),
+                            icon=ICON_INFO)
+
+        if not currencies:
+            wf.add_item('No matching currencies',
+                        'Try a different query',
+                        icon=ICON_WARNING)
+
+        for name, symbol in currencies:
+            wf.add_item(u'{} // {}'.format(name, symbol),
+                        u'Use `{}` in conversions'.format(symbol),
+                        icon=ICON_CURRENCY)
+
+        wf.send_feedback()
+
+    elif mode == 'places':
+
+        if query:
+            if not query.isdigit():
+                wf.add_item(u'Invalid number : {}'.format(query),
+                            'Please enter a number',
+                            icon=ICON_WARNING)
+            else:
+                wf.add_item(u'Set decimal places to : {}'.format(query),
+                            u'↩ to save',
+                            valid=True,
+                            arg='--places {}'.format(query),
+                            icon=ICON_SETTINGS)
+        else:
+            wf.add_item('Enter a number of decimal places',
+                        'Current number is {}'.format(
+                            wf.settings.get('decimal_places',
+                                            DECIMAL_PLACES_DEFAULT)),
+                        icon=ICON_INFO)
+
+        wf.send_feedback()
+
+
 def main(wf):
     """Run Script Filter.
 
     Args:
         wf (workflow.Workflow): Workflow object.
 
-    Returns:
-        int: Exit status.
     """
     args = docopt(__doc__, wf.args)
 
@@ -116,15 +179,17 @@ def main(wf):
 
     query = args.get('<query>')
 
+    # Alternative actions ----------------------------------------------
+
     if args.get('--openhelp'):
         subprocess.call(['open', README_URL])
-        return 0
+        return
 
     if args.get('--openunits'):
         path = wf.datafile(CUSTOM_DEFINITIONS_FILENAME)
         if not os.path.exists(path):
             shutil.copy(
-                wf.workflowfile('{0}.sample'.format(
+                wf.workflowfile('{}.sample'.format(
                                 CUSTOM_DEFINITIONS_FILENAME)),
                 path)
 
@@ -133,100 +198,61 @@ def main(wf):
 
     if args.get('--places'):
         value = int(query)
-        log.debug('Setting `decimal_places` to {!r}'.format(value))
+        log.debug('setting `decimal_places` to %r', value)
         wf.settings['decimal_places'] = value
         print('Set decimal places to {}'.format(value))
         # subprocess.call(['osascript', '-e', ALFRED_AS])
-        return 0
+        return
 
-    if not query or not query.strip():
-        wf.add_item('View Help File',
-                    'Open help file in your browser',
-                    valid=True,
-                    arg='--openhelp',
-                    icon=ICON_HELP)
+    # Parse query ------------------------------------------------------
 
-        wf.add_item('View Supported Currencies',
-                    'View and search list of supported currencies',
-                    autocomplete=' currencies {0} '.format(DELIMITER),
-                    icon=ICON_CURRENCY)
+    if DELIMITER in query:
+        return handle_delimited_query(query)
 
-        wf.add_item(('Decimal Places in Results '
-                    '(current : {0})'.format(wf.settings.get(
-                                            'decimal_places',
-                                            DECIMAL_PLACES_DEFAULT))),
-                    'View and search list of supported currencies',
-                    autocomplete=' places {0} '.format(DELIMITER),
-                    icon=ICON_SETTINGS)
+    # Filter options ---------------------------------------------------
 
-        wf.add_item('Edit Custom Units',
-                    'Add and edit your own custom units',
-                    valid=True,
-                    arg='--openunits',
-                    icon='icon.png')
+    query = query.strip()
 
-        wf.send_feedback()
-        return 0
+    options = [
+        dict(title='View Help File',
+             subtitle='Open help file in your browser',
+             valid=True,
+             arg='--openhelp',
+             icon=ICON_HELP),
 
-    else:  # Currencies or decimal places
-        if query.endswith(DELIMITER):  # User deleted trailing space
-            subprocess.call(['osascript', '-e', ALFRED_AS])
-            return 0
+        dict(title='View Supported Currencies',
+             subtitle='View and search list of supported currencies',
+             autocomplete=u'currencies {} '.format(DELIMITER),
+             icon=ICON_CURRENCY),
 
-        mode, query = [s.strip() for s in query.split(DELIMITER)]
+        dict(title=('Decimal Places in Results '
+                    '(current : {})'.format(
+                        wf.settings.get('decimal_places',
+                                        DECIMAL_PLACES_DEFAULT))),
+             subtitle='View and search list of supported currencies',
+             autocomplete=u'places {} '.format(DELIMITER),
+             icon=ICON_SETTINGS),
 
-        if mode == 'currencies':
+        dict(title='Edit Custom Units',
+             subtitle='Add and edit your own custom units',
+             valid=True,
+             arg='--openunits',
+             icon='icon.png')
+    ]
 
-            currencies = sorted([(name, symbol) for (symbol, name)
-                                in CURRENCIES.items()])
+    if query:
+        options = wf.filter(query, options, key=lambda d: d['title'],
+                            min_score=30)
 
-            if query:
-                currencies = wf.filter(query, currencies,
-                                       key=lambda t: ' '.join(t),
-                                       match_on=MATCH_ALL ^ MATCH_ALLCHARS,
-                                       min_score=30)
+    if not options:
+        wf.add_item('No matching options', 'Try a different query?',
+                    icon=ICON_WARNING)
 
-            else:  # Show last update time
-                age = wf.cached_data_age(CURRENCY_CACHE_NAME)
-                if age > 0:  # Exchange rates in cache
-                    td = timedelta(seconds=age)
-                    wf.add_item('Exchange rates updated {}'.format(
-                                human_timedelta(td)),
-                                icon=ICON_INFO)
+    for d in options:
+        wf.add_item(**d)
 
-            if not currencies:
-                wf.add_item('No matching currencies',
-                            'Try a different query',
-                            icon=ICON_WARNING)
-
-            for name, symbol in currencies:
-                wf.add_item('{0} // {1}'.format(name, symbol),
-                            'Use `{0}` in conversions'.format(symbol),
-                            icon=ICON_CURRENCY)
-
-            wf.send_feedback()
-
-        elif mode == 'places':
-
-            if query:
-                if not query.isdigit():
-                    wf.add_item('Invalid number : {0}'.format(query),
-                                'Please enter a number',
-                                icon=ICON_WARNING)
-                else:
-                    wf.add_item('Set decimal places to : {0}'.format(query),
-                                'Hit `ENTER` to save',
-                                valid=True,
-                                arg='--places {0}'.format(query),
-                                icon=ICON_SETTINGS)
-            else:
-                wf.add_item('Enter a number of decimal places',
-                            'Current number is {0}'.format(
-                                wf.settings.get('decimal_places',
-                                                DECIMAL_PLACES_DEFAULT)),
-                            icon=ICON_INFO)
-
-            wf.send_feedback()
+    wf.send_feedback()
+    return
 
 
 if __name__ == '__main__':

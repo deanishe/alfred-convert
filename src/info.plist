@@ -71,6 +71,8 @@
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>0</integer>
 				<key>escaping</key>
@@ -84,13 +86,13 @@
 				<key>queuedelaymode</key>
 				<integer>0</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Convertifying…</string>
 				<key>script</key>
-				<string>/usr/bin/python convert.py "{query}"</string>
+				<string>/usr/bin/python convert.py "$1"</string>
 				<key>scriptargtype</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
@@ -176,9 +178,9 @@
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>/usr/bin/python info.py {query}</string>
+				<string>/usr/bin/python info.py $1</string>
 				<key>scriptargtype</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>type</key>
@@ -196,6 +198,8 @@
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
@@ -213,9 +217,9 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>/usr/bin/python info.py "{query}"</string>
+				<string>/usr/bin/python info.py "$1"</string>
 				<key>scriptargtype</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
@@ -225,7 +229,7 @@
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -236,7 +240,20 @@
 		</dict>
 	</array>
 	<key>readme</key>
-	<string></string>
+	<string>Offline Conversions
+===================
+
+Based on the awesome Pint library.
+
+In addition to all units supported by Pint, all the currencies supported by Yahoo! Finance and cryptocurrencies supported by CryptoCompare.com are supported.
+
+You can also add your own custom units.
+
+
+Configuration
+-------------
+
+UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 	<key>uidata</key>
 	<dict>
 		<key>14C63701-669A-43A3-BF6A-65A23759DA5F</key>
@@ -282,6 +299,13 @@
 			<integer>270</integer>
 		</dict>
 	</dict>
+	<key>variables</key>
+	<dict>
+		<key>UPDATE_INTERVAL</key>
+		<string>360</string>
+	</dict>
+	<key>version</key>
+	<string>3.0</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

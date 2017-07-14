@@ -3,16 +3,17 @@
     pint.measurement
     ~~~~~~~~~~~~~~~~
 
-    :copyright: 2013 by Pint Authors, see AUTHORS for more details.
+    :copyright: 2016 by Pint Authors, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
 from __future__ import division, unicode_literals, print_function, absolute_import
 
 from .compat import ufloat
-from .formatting import _FORMATS
+from .formatting import _FORMATS, siunitx_format_unit
 
 MISSING = object()
+
 
 class _Measurement(object):
     """Implements a class to describe a quantity with uncertainty.
@@ -28,21 +29,28 @@ class _Measurement(object):
             try:
                 value, units = value.magnitude, value.units
             except AttributeError:
-                try:
-                    value, error, units = value.nominal_value, value.std_dev, error
-                except AttributeError:
+                #if called with two arguments and the first looks like a ufloat
+                # then assume the second argument is the units, keep value intact
+                if hasattr(value,"nominal_value"):
+                    units = error
+                    error = MISSING #used for check below
+                else:
                     units = ''
         try:
             error = error.to(units).magnitude
         except AttributeError:
             pass
-
-        inst = super(_Measurement, cls).__new__(cls, ufloat(value, error), units)
-
-        if error < 0:
+        
+        if error is MISSING:
+            mag = value
+        elif error < 0:
             raise ValueError('The magnitude of the error cannot be negative'.format(value, error))
+        else:
+            mag = ufloat(value,error)
+            
+        inst = super(_Measurement, cls).__new__(cls, mag, units)
         return inst
-
+    
     @property
     def value(self):
         return self._REGISTRY.Quantity(self.magnitude.nominal_value, self.units)
@@ -64,6 +72,22 @@ class _Measurement(object):
         return '{0}'.format(self)
 
     def __format__(self, spec):
+        # special cases
+        if 'Lx' in spec: # the LaTeX siunitx code
+            # the uncertainties module supports formatting
+            # numbers in value(unc) notation (i.e. 1.23(45) instead of 1.23 +/- 0.45),
+            # which siunitx actually accepts as input. we just need to give the 'S'
+            # formatting option for the uncertainties module.
+            spec = spec.replace('Lx','S')
+            # todo: add support for extracting options
+            opts = 'separate-uncertainty=true'
+            mstr = format( self.magnitude, spec )
+            ustr = siunitx_format_unit(self.units)
+            ret = r'\SI[%s]{%s}{%s}'%( opts, mstr, ustr )
+            return ret
+
+
+        # standard cases
         if 'L' in spec:
             newpm = pm = r'  \pm  '
             pars = _FORMATS['L']['parentheses_fmt']
@@ -92,10 +116,30 @@ class _Measurement(object):
         if 'L' in newspec and 'S' in newspec:
             mag = mag.replace('(', r'\left(').replace(')', r'\right)')
 
-        if 'uS' in newspec or 'ue' in newspec or 'u%' in newspec:
-            return mag + ' ' + format(self.units, spec)
+        if 'L' in newspec:
+            space = r'\ '
         else:
-            return pars.format(mag) + ' ' + format(self.units, spec)
+            space = ' '
+
+        if 'uS' in newspec or 'ue' in newspec or 'u%' in newspec:
+            return mag + space + format(self.units, spec)
+        else:
+            return pars.format(mag) + space + format(self.units, spec)
 
 
+def build_measurement_class(registry, force_ndarray=False):
 
+    if ufloat is None:
+        class Measurement(object):
+
+            def __init__(self, *args):
+                raise RuntimeError("Pint requires the 'uncertainties' package to create a Measurement object.")
+
+    else:
+        class Measurement(_Measurement, registry.Quantity):
+            pass
+
+    Measurement._REGISTRY = registry
+    Measurement.force_ndarray = force_ndarray
+
+    return Measurement

@@ -8,28 +8,25 @@
 # Created on 2014-02-24
 #
 
-"""Drives Script Filter to show unit conversions in Alfred 2."""
+"""Drives Script Filter to show unit conversions in Alfred 3."""
 
 from __future__ import print_function, unicode_literals
 
-import json
 import os
 import shutil
 import sys
 
-from vendor.pint import UnitRegistry, UndefinedUnitError, DimensionalityError
+from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
 
-from workflow import Workflow, ICON_WARNING, ICON_INFO
+from workflow import Workflow3, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
-from config import (CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME,
+from config import (CURRENCIES, CRYPTO_CURRENCIES,
+                    CURRENCY_CACHE_AGE, CURRENCY_CACHE_NAME,
                     ICON_UPDATE,
                     UPDATE_SETTINGS, DEFAULT_SETTINGS,
                     BUILTIN_UNIT_DEFINITIONS,
                     CUSTOM_DEFINITIONS_FILENAME,
                     HELP_URL)
-
-# Register currencies under their full names
-USE_CURRENCY_NAMES = False
 
 log = None
 
@@ -50,7 +47,7 @@ def register_units():
         ureg.load_definitions(user_definitions)
     else:  # Copy template to data dir
         shutil.copy(
-            wf.workflowfile('{0}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
+            wf.workflowfile('{}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
             user_definitions)
 
 
@@ -59,41 +56,29 @@ def register_exchange_rates(exchange_rates):
 
     Args:
         exchange_rates (dict): `{symbol: rate}` mapping of currencies.
+
     """
-    currency_names = {}
-
-    if USE_CURRENCY_NAMES:
-        with open(wf.workflowfile('currencies.json')) as fp:
-            currency_names = json.load(fp)
-
     # EUR will be the baseline currency. All exchange rates are
     # defined relative to the euro
-    if USE_CURRENCY_NAMES:
-        ureg.define('Euro = [currency] = eur = EUR')
-    else:
-        ureg.define('EUR = [currency] = eur')
+    ureg.define('EUR = [currency] = eur')
 
     for abbr, rate in exchange_rates.items():
-        if USE_CURRENCY_NAMES:
-            name = currency_names.get(abbr)
-            definition = '{0} = eur / {1} = {2}'.format(name, rate, abbr)
-        else:
-            definition = '{0} = eur / {1}'.format(abbr, rate)
+        definition = '{} = eur / {}'.format(abbr, rate)
 
         try:
             ureg.Quantity(1, abbr)
         except UndefinedUnitError:
             pass  # Unit does not exist
         else:
-            log.debug('Skipping currency %s : Unit is already defined', abbr)
+            log.debug('skipping currency %s : Unit is already defined', abbr)
             continue
 
         try:
             ureg.Quantity(1, abbr.lower())
         except UndefinedUnitError:
-            definition += ' = {0}'.format(abbr.lower())
+            definition += ' = {}'.format(abbr.lower())
 
-        log.debug('Registering currency : %r', definition)
+        log.debug('registering currency : %r', definition)
         ureg.define(definition)
 
 
@@ -106,8 +91,8 @@ def convert(query, decimal_places=2):
 
     Raises:
         ValueError: Raised if the query is incomplete or invalid.
-    """
 
+    """
     # Parse number from start of query
     qty = []
     for c in query:
@@ -135,8 +120,8 @@ def convert(query, decimal_places=2):
     q1 = q2 = ''
     for i in range(len(atoms)):
         from_unit = to_unit = None  # reset so no old values spill over
-        q1 = ' '.join(atoms[:i+1]).strip()
-        q2 = ' '.join(atoms[i+1:]).strip()
+        q1 = ' '.join(atoms[:i + 1]).strip()
+        q2 = ' '.join(atoms[i + 1:]).strip()
         log.debug('atoms : %r  i : %d  q1 : %s  q2 : %s', atoms, i, q1, q2)
         if not len(q1) or not len(q2):  # an empty unit
             continue
@@ -145,7 +130,7 @@ def convert(query, decimal_places=2):
         except UndefinedUnitError:
             continue
         else:
-            log.debug('From unit : %s', q1)
+            log.debug('from unit : %s', q1)
             try:
                 to_unit = ureg.Quantity(1, q2)
             except UndefinedUnitError:  # Didn't make sense; try again
@@ -204,12 +189,13 @@ def main(wf):
         run_in_background('update', cmd)
 
     if is_running('update'):
+        wf.rerun = 0.5
         if exchange_rates is None:  # No data cached yet
-            wf.add_item('Fetching exchange rates…',
+            wf.add_item(u'Fetching exchange rates…',
                         'Currency conversions will be momentarily possible',
                         icon=ICON_INFO)
         else:
-            wf.add_item('Updating exchange rates…',
+            wf.add_item(u'Updating exchange rates…',
                         icon=ICON_INFO)
 
     error = None
@@ -220,16 +206,16 @@ def main(wf):
                              decimal_places=wf.settings.get('decimal_places',
                                                             2))
     except UndefinedUnitError as err:
-        log.critical('Unknown unit : %s', err.unit_names)
-        error = 'Unknown unit : {0}'.format(err.unit_names)
+        log.critical('unknown unit : %s', err.unit_names)
+        error = 'Unknown unit : {}'.format(err.unit_names)
 
     except DimensionalityError as err:
-        log.critical('Invalid conversion : %s', err)
-        error = "Can't convert from {0} {1} to {2} {3}".format(
+        log.critical('invalid conversion : %s', err)
+        error = "Can't convert from {} {} to {} {}".format(
             err.units1, err.dim1, err.units2, err.dim2)
 
     except ValueError as err:
-        log.critical('Invalid query : %s', err)
+        log.critical('invalid query : %s', err)
         error = err.message
 
     except Exception as err:
@@ -257,8 +243,8 @@ def main(wf):
 
 
 if __name__ == '__main__':
-    wf = Workflow(update_settings=UPDATE_SETTINGS,
-                  default_settings=DEFAULT_SETTINGS,
-                  help_url=HELP_URL)
+    wf = Workflow3(update_settings=UPDATE_SETTINGS,
+                   default_settings=DEFAULT_SETTINGS,
+                   help_url=HELP_URL)
     log = wf.logger
     sys.exit(wf.run(main))

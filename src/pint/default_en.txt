@@ -3,6 +3,11 @@
 # Language: english
 # :copyright: 2013 by Pint Authors, see AUTHORS for more details.
 
+@defaults
+    group = international
+    system = mks
+@end
+
 # decimal prefixes
 yocto- = 1e-24 = y-
 zepto- = 1e-21 = z-
@@ -14,7 +19,7 @@ micro- = 1e-6  = u- = µ-
 milli- = 1e-3  = m-
 centi- = 1e-2  = c-
 deci- =  1e-1  = d-
-deca- =  1e+1  = da-
+deca- =  1e+1  = da- = deka
 hecto- = 1e2   = h-
 kilo- =  1e3   = k-
 mega- =  1e6   = M-
@@ -65,8 +70,7 @@ are = 100 * m**2
 barn = 1e-28 * m ** 2 = b
 cmil = 5.067075e-10 * m ** 2 = circular_mils
 darcy = 9.869233e-13 * m ** 2
-acre = 4046.8564224 * m ** 2 = international_acre
-US_survey_acre = 160 * rod ** 2
+hectare = 100 * are = ha
 
 # EM
 esu = 1 * erg**0.5 * centimeter**0.5 = statcoulombs = statC = franklin = Fr
@@ -101,14 +105,16 @@ unit_pole = 1.256637e-7 * weber
 joule = newton * meter = J
 erg = dyne * centimeter
 btu = 1.05505585262e3 * joule = Btu = BTU = british_thermal_unit
-eV = 1.60217653e-19 * J = electron_volt
+electron_volt = 1.60217653e-19 * J = eV
+quadrillion_btu = 10**15 * btu = quad
 thm = 100000 * BTU = therm = EC_therm
-cal = 4.184 * joule = calorie = thermochemical_calorie
+calorie = 4.184 * joule = cal = thermochemical_calorie
 international_steam_table_calorie = 4.1868 * joule
 ton_TNT = 4.184e9 * joule = tTNT
 US_therm = 1.054804e8 * joule
 watt_hour = watt * hour = Wh = watthour
-E_h = 4.35974394e-18 * joule = hartree = hartree_energy
+hartree = 4.35974394e-18 * joule = E_h = hartree_energy
+toe = 41.868e9 * joule = tonne_of_oil_equivalent
 
 # Force
 [force] = [mass] * [acceleration]
@@ -134,57 +140,33 @@ counts_per_second = count / second = cps
 #R_value = foot ** 2 * degF * hour / btu
 
 # Information
-byte = 8 * bit = Bo = octet
+byte = 8 * bit = B = octet
 baud = bit / second = Bd = bps
 
+# Irradiance
+peak_sun_hour = 1000 * watt_hour / meter**2 = PSH
+langley = thermochemical_calorie / centimeter**2 = Langley
+
 # Length
-angstrom = 1e-10 * meter = ångström = Å
-inch = 2.54 * centimeter = in = international_inch = inches = international_inches 
-foot = 12 * inch = ft = international_foot = feet = international_feet
-mile = 5280 * foot = mi = international_mile
-yard = 3 * feet = yd = international_yard
-mil = inch / 1000 = thou
+angstrom = 1e-10 * meter = Å = ångström = Å
 parsec = 3.08568025e16 * meter = pc
 light_year = speed_of_light * julian_year = ly = lightyear
 astronomical_unit = 149597870691 * meter = au
-nautical_mile = 1.852e3 * meter = nmi
-printers_point = 127 * millimeter / 360 = point
-printers_pica = 12 * printers_point = pica
-US_survey_foot = 1200 * meter / 3937
-US_survey_yard =  3 * US_survey_foot
-US_survey_mile = 5280 * US_survey_foot = US_statute_mile
-rod = 16.5 * US_survey_foot = pole = perch
-furlong = 660 * US_survey_foot
-fathom = 6 * US_survey_foot
-chain = 66 * US_survey_foot
-barleycorn = inch / 3
-arpentlin = 191.835 * feet
-kayser = 1 / centimeter = wavenumber
 
 # Mass
-dram = oz / 16 = dr = avoirdupois_dram
-ounce = 28.349523125 * gram = oz = avoirdupois_ounce
-pound = 0.45359237 * kilogram = lb = avoirdupois_pound
-stone = 14 * lb = st
 carat = 200 * milligram
-grain = 64.79891 * milligram = gr
-long_hundredweight = 112 * lb
-short_hundredweight = 100 * lb
 metric_ton = 1000 * kilogram = t = tonne
-pennyweight = 24 * gram = dwt
-slug = 14.59390 * kilogram
-troy_ounce = 480 * gram = toz = apounce = apothecary_ounce
-troy_pound = 12 * toz = tlb = appound = apothecary_pound
-drachm = 60 * gram = apdram = apothecary_dram
 atomic_mass_unit = 1.660538782e-27 * kilogram =  u = amu = dalton = Da
-scruple = 20 * gram
 bag = 94 * lb
-ton = 2000 * lb = short_ton
 
 # Textile
 denier =  gram / (9000 * meter)
-tex = gram/ (1000 * meter)
+tex = gram / (1000 * meter)
 dtex = decitex
+
+# Photometry
+lumen = candela * steradian = lm
+lux = lumen / meter ** 2 = lx
 
 # Power
 [power] = [energy] / [time]
@@ -208,12 +190,12 @@ bar = 100000 * pascal
 atmosphere = 101325 * pascal = atm = standard_atmosphere
 technical_atmosphere = kilogram * gravity / centimeter ** 2 = at
 torr = atm / 760
-psi = pound * gravity / inch ** 2 = pound_force_per_square_inch
-ksi = kip / inch ** 2 = kip_per_square_inch
+pound_force_per_square_inch = pound * gravity / inch ** 2 = psi
+kip_per_square_inch = kip / inch ** 2 = ksi
 barye = 0.1 * newton / meter ** 2 = barie = barad = barrie = baryd = Ba
-mmHg = millimeter * Hg = mm_Hg = millimeter_Hg = millimeter_Hg_0C
-cmHg = centimeter * Hg = cm_Hg = centimeter_Hg
-inHg = inch * Hg = in_Hg = inch_Hg = inch_Hg_32F
+mm_Hg = millimeter * Hg = mmHg = millimeter_Hg = millimeter_Hg_0C
+cm_Hg = centimeter * Hg = cmHg = centimeter_Hg
+in_Hg = inch * Hg = inHg = inch_Hg = inch_Hg_32F
 inch_Hg_60F = inch * mercury_60F
 inch_H2O_39F = inch * water_39F
 inch_H2O_60F = inch * water_60F
@@ -225,7 +207,7 @@ standard_liter_per_minute = 1.68875 * Pa * m ** 3 / s = slpm = slm
 # Radiation
 Bq = Hz = becquerel
 curie = 3.7e10 * Bq = Ci
-rutherford = 1e6*Bq = rd = Rd
+rutherford = 1e6*Bq = Rd
 Gy = joule / kilogram = gray = Sv = sievert
 rem = 1e-2 * sievert
 rads = 1e-2 * gray
@@ -243,12 +225,12 @@ day = 24 * hour
 week = 7 * day
 fortnight = 2 * week
 year = 31556925.9747 * second
-month = year/12
+month = year / 12
 shake = 1e-8 * second
 sidereal_day = day / 1.00273790935079524
-sidereal_hour = sidereal_day/24
-sidereal_minute=sidereal_hour/60
-sidereal_second =sidereal_minute/60
+sidereal_hour = sidereal_day / 24
+sidereal_minute = sidereal_hour / 60
+sidereal_second = sidereal_minute / 60
 sidereal_year = 366.25636042 * sidereal_day
 sidereal_month = 27.321661 * sidereal_day
 tropical_month = 27.321661 * day
@@ -260,10 +242,11 @@ gregorian_year = 365.2425 * day
 millenium = 1000 * year = millenia = milenia = milenium
 eon = 1e9 * year
 work_year = 2056 * hour
-work_month = work_year/12
+work_month = work_year / 12
 
 # Velocity
 [speed] = [length] / [time]
+nautical_mile = 1852 m = nmi # exact
 knot = nautical_mile / hour = kt = knot_international = international_knot = nautical_miles_per_hour
 mph = mile / hour = MPH
 kph = kilometer / hour = KPH
@@ -279,32 +262,6 @@ rhe = 10 / (Pa * s)
 liter = 1e-3 * m ** 3 = l = L = litre
 cc = centimeter ** 3 = cubic_centimeter
 stere = meter ** 3
-gross_register_ton = 100 * foot ** 3 = register_ton = GRT
-acre_foot = acre * foot = acre_feet
-board_foot = foot ** 2 * inch = FBM
-bushel = 2150.42 * inch ** 3 = bu = US_bushel
-dry_gallon = bushel / 8 = US_dry_gallon
-dry_quart = dry_gallon / 4 = US_dry_quart
-dry_pint = dry_quart / 2 = US_dry_pint
-gallon = 231 * inch ** 3 = liquid_gallon = US_liquid_gallon
-quart = gallon / 4 = liquid_quart = US_liquid_quart
-pint = quart / 2 = pt = liquid_pint = US_liquid_pint
-cup = pint / 2 = liquid_cup = US_liquid_cup
-gill = cup / 2 = liquid_gill = US_liquid_gill
-fluid_ounce = gill / 4 = floz = US_fluid_ounce = US_liquid_ounce
-imperial_bushel = 36.36872 * liter = UK_bushel
-imperial_gallon = imperial_bushel / 8 = UK_gallon
-imperial_quart = imperial_gallon / 4 = UK_quart
-imperial_pint = imperial_quart / 2 = UK_pint
-imperial_cup = imperial_pint / 2 = UK_cup
-imperial_gill = imperial_cup / 2 = UK_gill
-imperial_floz = imperial_gill / 5 = UK_fluid_ounce = imperial_fluid_ounce
-barrel = 42 * gallon = bbl
-tablespoon = floz / 2 = tbsp = Tbsp = Tblsp = tblsp = tbs = Tbl
-teaspoon = tablespoon / 3 = tsp
-peck = bushel / 4 = pk
-fluid_dram = floz / 8 = fldr = fluidram
-firkin = barrel / 4
 
 
 @context(n=1) spectroscopy = sp
@@ -312,6 +269,8 @@ firkin = barrel / 4
     [length] <-> [frequency]: speed_of_light / n / value
     [frequency] -> [energy]: planck_constant * value
     [energy] -> [frequency]: value / planck_constant
+    # allow wavenumber / kayser
+    1 / [length] <-> [length]: 1 / value
 @end
 
 @context boltzmann
@@ -323,12 +282,12 @@ firkin = barrel / 4
     # mw is the molecular weight of the species
     # volume is the volume of the solution
     # solvent_mass is the mass of solvent in the solution
-    
+
     # moles -> mass require the molecular weight
     [substance] -> [mass]: value * mw
     [mass] -> [substance]: value / mw
 
-    # moles/volume -> mass/volume and moles/mass -> mass / mass 
+    # moles/volume -> mass/volume and moles/mass -> mass / mass
     # require the  molecular weight
     [substance] / [volume] -> [mass] / [volume]: value * mw
     [mass] / [volume] -> [substance] / [volume]: value / mw
@@ -347,4 +306,156 @@ firkin = barrel / 4
     [substance] / [mass] -> [substance]/[volume]: value * solvent_mass / volume
     [substance] / [volume] -> [substance] / [mass]: value / solvent_mass * volume
 
+@end
+
+# Most of the definitions that follows are derived from:
+# See http://www.nist.gov/pml/wmd/pubs/hb44.cfm
+@group USCSLengthInternational
+    inch = yard / 36 = in = international_inch = inches = international_inches
+    foot = yard / 3 = ft = international_foot = feet = international_feet
+    yard = 0.9144 metres = yd = international_yard
+    mile = 1760 yard = mi = international_mile
+
+    square_inch = 1 inch ** 2 = sq_in = square_inches
+    square_foot = 1 foot ** 2 = sq_ft = square_feet
+    square_yard = 1 yard ** 2 = sq_yd
+    square_mile = 1 mile ** 2 = sq_mi
+
+    cubic_inch = 1 in ** 3 = cu_in
+    cubic_foot = 1 ft ** 3 = cu_ft = cubic_feet
+    cubic_yard = 1 yd ** 3 = cu_yd
+
+    acre_foot = acre * foot = acre_feet
+@end
+
+@group USCSLengthSurvey
+    link = 0.66 survey_foot = li = survey_link
+    survey_foot = foot / 0.999998 = sft
+    rod = 16.5 survey_foot = rd = pole = perch
+    chain = 66 survey_foot
+    survey_mile = 5280 survey_foot
+
+    acre = 43560 survey_foot ** 2
+    square_rod = 1 rod ** 2 = sq_rod = sq_pole = sq_perch
+
+    fathom = 6 survey_foot
+    us_statute_mile = 5280 survey_foot
+    league = 3 us_statute_mile
+    furlong = us_statute_mile / 8
+@end
+
+@group USCSDryVolume
+    dry_pint = 33.6003125 cubic_inch  = dpi = US_dry_pint
+    dry_quart = 2 dry_pint = dqt = US_dry_quart
+    dry_gallon = 8 dry_pint = dgal = US_dry_gallon
+    peck = 16 dry_pint = pk
+    bushel = 64 dry_pint = bu
+    dry_barrel = 7065 cubic_inch = US_dry_barrel
+@end
+
+@group USCSLiquidVolume
+    minim = liquid_pint / 7680
+    fluid_dram = liquid_pint / 128 = fldr = fluidram = US_fluid_dram
+    fluid_ounce = liquid_pint / 16 = floz = US_fluid_ounce = US_liquid_ounce
+    gill = liquid_pint / 4 = gi = liquid_gill = US_liquid_gill
+
+    pint = 28.875 cubic_inch = pt = liquid_pint = US_pint
+
+    quart = 2 liquid_pint = qt = liquid_quart = US_liquid_quart
+    gallon = 8 liquid_pint = gal = liquid_gallon = US_liquid_gallon
+@end
+
+@group USCSVolumeOther
+    teaspoon = tablespoon / 3 = tsp
+    tablespoon = floz / 2 = tbsp = Tbsp = Tblsp = tblsp = tbs = Tbl
+    shot = 3 * tablespoon = jig = US_shot
+    cup = 8 fluid_ounce = cp = liquid_cup = US_liquid_cup
+    barrel = 31.5 * gallon = bbl
+    oil_barrel = 42 * gallon = oil_bbl
+    beer_barrel = 31 * gallon = beer_bbl
+    hogshead = 63 * gallon
+@end
+
+@group Avoirdupois
+    grain = avdp_pound / 7000 = gr
+    drachm = pound / 256 = dr = avoirdupois_dram = avdp_dram = dram
+    ounce = pound / 16 = oz = avoirdupois_ounce = avdp_ounce
+    pound = 453.59237 gram = lb = avoirdupois_pound = avdp_pound
+
+    short_hunderdweight = 100 avoirdupois_pound = ch_cwt
+    long_hunderweight = 112 avoirdupois_pound = lg_cwt
+    short_ton = 2000 avoirdupois_pound
+    long_ton = 2240 avoirdupois_pound
+@end
+
+@group Troy
+    pennyweight = 24 grain = dwt
+    troy_ounce = 480 grain = toz
+    troy_pound = 12 troy_ounce = tlb
+@end
+
+@group Apothecary
+    scruple = 20 grain
+    apothecary_dram = 3 scruple = ap_dr
+    apothecary_ounce = 8 apothecary_dram = ap_oz
+    apothecary_pound = 12 apothecary_ounce = ap_lb
+@end
+
+@group AvoirdupoisUK using Avoirdupois
+    stone = 14 pound
+    quarter = 28 stone
+    UK_hundredweight = long_hunderweight = UK_cwt
+    UK_ton = long_ton
+@end
+
+@group AvoirdupoisUS using Avoirdupois
+    US_hundredweight = short_hunderdweight = US_cwt
+    US_ton = short_ton = ton
+@end
+
+@group Printer
+    # Length
+    pixel = [printing_unit] = dot = px = pel = picture_element
+    pixels_per_centimeter = pixel / cm = PPCM
+    pixels_per_inch = pixel / inch = dots_per_inch = PPI = ppi = DPI = printers_dpi
+    bits_per_pixel = bit / pixel = bpp
+
+    point = yard / 216 / 12 = pp = printers_point
+    thou = yard / 36000 = th = mil
+    pica = yard / 216 = P̸ = printers_pica
+@end
+
+@group ImperialVolume
+    imperial_fluid_ounce = imperial_pint / 20 = imperial_floz = UK_fluid_ounce
+    imperial_fluid_drachm = imperial_fluid_ounce / 8 = imperial_fluid_dram
+    imperial_gill = imperial_pint / 4 = imperial_gi = UK_gill
+    imperial_cup = imperial_pint / 2 = imperial_cp = UK_cup
+    imperial_pint = 568.26125 * milliliter = imperial_pt = UK_pint
+    imperial_quart = 2 * imperial_pint = imperial_qt = UK_quart
+    imperial_gallon = 8 * imperial_pint = imperial_gal = UK_gallon
+    imperial_peck = 16 * imperial_pint = imperial_pk = UK_pk
+    imperial_bushel = 64 * imperial_pint = imperial_bu = UK_bushel
+    imperial_barrel = 288 * imperial_pint = imperial_bbl = UK_bbl
+@end
+
+@system mks using international
+    meter
+    kilogram
+    second
+@end
+
+@system cgs using international
+    centimeter
+    gram
+    second
+@end
+
+@system imperial using ImperialVolume, USCSLengthInternational, AvoirdupoisUK
+    yard
+    pound
+@end
+
+@system US using USCSLiquidVolume, USCSDryVolume, USCSVolumeOther, USCSLengthInternational, USCSLengthSurvey, AvoirdupoisUS
+    yard
+    pound
 @end
