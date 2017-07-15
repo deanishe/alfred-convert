@@ -181,11 +181,9 @@ def convert(query):
     number = format_number(conv.magnitude)
     log.debug('%s %s' % (number, conv.units))
 
-    # fmt = '%%0.%df' % DECIMAL_PLACES
-    # number = fmt % conv.magnitude
-    # number = number.replace('.', DECIMAL_SEPARATOR)
+    # log.debug('%r', str(conv.units))
 
-    return number, conv.units
+    return number, str(conv.units), str(conv.dimensionality)
 
 
 def main(wf):
@@ -220,6 +218,7 @@ def main(wf):
         # Update currency rates
         cmd = ['/usr/bin/python', wf.workflowfile('currency.py')]
         run_in_background('update', cmd)
+        wf.rerun = 0.5
 
     if is_running('update'):
         wf.rerun = 0.5
@@ -235,7 +234,7 @@ def main(wf):
     number = None
 
     try:
-        number, unit = convert(query)
+        number, unit, dim = convert(query)
     except UndefinedUnitError as err:
         log.critical('unknown unit : %s', err.unit_names)
         error = 'Unknown unit : {}'.format(err.unit_names)
@@ -265,12 +264,17 @@ def main(wf):
         if not COPY_UNIT:
             copytext = number
 
-        wf.add_item(value,
-                    valid=True,
-                    arg=copytext,
-                    copytext=copytext,
-                    largetext=value,
-                    icon='icon.png')
+        it = wf.add_item(value,
+                         valid=True,
+                         arg=copytext,
+                         copytext=copytext,
+                         largetext=value,
+                         icon='icon.png')
+
+        mod = it.add_modifier('cmd', 'Save {} as default unit for {}'.format(
+            unit, dim))
+        mod.setvar('unit', unit)
+        mod.setvar('dimensionality', dim)
 
     wf.send_feedback()
     log.debug('finished')

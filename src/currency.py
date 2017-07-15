@@ -13,15 +13,15 @@
 from __future__ import print_function
 
 import csv
-from itertools import izip_longest
+from itertools import chain, izip_longest
 from multiprocessing.dummy import Pool
 import re
 import time
 
 from workflow import Workflow, web
 
-from config import (CURRENCY_CACHE_NAME,
-                    CURRENCY_CACHE_AGE,
+from config import (CURRENCY_CACHE_AGE,
+                    CURRENCY_CACHE_NAME,
                     REFERENCE_CURRENCY,
                     CURRENCIES,
                     CRYPTO_CURRENCIES,
@@ -35,21 +35,40 @@ log = None
 parse_yahoo_response = re.compile(REFERENCE_CURRENCY + '(.+)=X').match
 
 
-def grouper(n, iterable, fillvalue=None):
+def grouper(n, iterable):
     """Return iterable that splits `iterable` into groups of size `n`.
 
     Args:
         n (int): Size of each group.
         iterable (iterable): The iterable to split into groups.
-        fillvalue (object, optional): Value to pad short sequences with.
 
     Returns:
-        iterator: Yields tuples of length `n` containing items
+        list: Tuples of length `n` containing items
             from `iterable`.
 
     """
+    sentinel = object()
     args = [iter(iterable)] * n
-    return izip_longest(fillvalue=fillvalue, *args)
+    groups = []
+    for l in izip_longest(*args, fillvalue=sentinel):
+        groups.append([v for v in l if v is not sentinel])
+    return groups
+
+
+def interleave(*iterables):
+    """Interleave elements of ``iterables``.
+
+    Args:
+        *iterables: Iterables to interleave
+
+    Returns:
+        list: Elements of ``iterables`` interleaved
+
+    """
+    sentinel = object()
+    it = izip_longest(*iterables, fillvalue=sentinel)
+    c = chain.from_iterable(it)
+    return list(filter(lambda v: v is not sentinel, c))
 
 
 def load_cryptocurrency_rates(symbols):
@@ -69,8 +88,7 @@ def load_cryptocurrency_rates(symbols):
     r.raise_for_status()
 
     data = r.json()
-    log.debug('url=%r', url)
-    log.debug('data=%r', data)
+    log.debug('fetching %s ...', url)
     return data
 
 
@@ -101,6 +119,7 @@ def load_yahoo_rates(symbols):
 
     # Fetch data
     # log.debug('Fetching %s ...', url)
+    log.debug('fetching %s ...', url)
     r = web.get(url)
     r.raise_for_status()
 
@@ -145,7 +164,7 @@ def load_yahoo_rates(symbols):
     return rates
 
 
-def fetch_currency_rates():
+def fetch_exchange_rates():
     """Retrieve all currency exchange rates.
 
     Batch currencies into requests of `SYMBOLS_PER_REQUEST` currencies each.
@@ -157,14 +176,17 @@ def fetch_currency_rates():
     """
     rates = {}
     futures = []
-    pool = Pool(6)
+    yjobs = []
     for symbols in grouper(SYMBOLS_PER_REQUEST, CURRENCIES.keys()):
-        symbols = [s for s in symbols if s]
-        futures.append(pool.apply_async(load_yahoo_rates, (symbols,)))
+        yjobs.append((load_yahoo_rates, (symbols,)))
 
+    cjobs = []
     for symbols in grouper(SYMBOLS_PER_REQUEST, CRYPTO_CURRENCIES.keys()):
-        symbols = [s for s in symbols if s]
-        futures.append(pool.apply_async(load_cryptocurrency_rates, (symbols,)))
+        cjobs.append((load_cryptocurrency_rates, (symbols,)))
+
+    pool = Pool(4)
+    for job in interleave(yjobs, cjobs):
+        futures.append(pool.apply_async(*job))
 
     pool.close()
     pool.join()
@@ -185,16 +207,16 @@ def main(wf):
     start_time = time.time()
     log.info('fetching exchange rates from Yahoo! and CryptoCompare.com ...')
 
-    exchange_rates = wf.cached_data(CURRENCY_CACHE_NAME,
-                                    fetch_currency_rates,
-                                    CURRENCY_CACHE_AGE)
+    rates = wf.cached_data(CURRENCY_CACHE_NAME,
+                           fetch_exchange_rates,
+                           CURRENCY_CACHE_AGE)
 
     elapsed = time.time() - start_time
     log.info('%d exchange rates updated in %0.2f seconds.',
-             len(exchange_rates), elapsed)
+             len(rates), elapsed)
 
-    for currency, rate in exchange_rates.items():
-        wf.logger.debug('1 EUR = %s %s', rate, currency)
+    for currency, rate in sorted(rates.items()):
+        log.debug('1 EUR = %s %s', rate, currency)
 
 
 if __name__ == '__main__':
