@@ -2,6 +2,14 @@
 Changelog
 =========
 
+### [3.0][v3.0] ###
+
+Released XXX.
+
+- Add cryptocurrencies
+- Update Alfred-Workflow
+- Update Pint
+
 ### [2.6][v2.6] ###
 
 Released 2017-06-15.
@@ -90,3 +98,4 @@ Released 2014-08-09.
 [v2.4]: https://github.com/deanishe/alfred-convert/releases/tag/v2.4
 [v2.5]: https://github.com/deanishe/alfred-convert/releases/tag/v2.5
 [v2.6]: https://github.com/deanishe/alfred-convert/releases/tag/v2.6
+[v3.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.0

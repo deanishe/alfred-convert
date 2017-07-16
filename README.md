@@ -57,7 +57,8 @@ supported currencies, change the number of decimal places shown in conversions, 
 See [Adding custom units](#adding-custom-units).
 
 
-## Supported units ##
+Supported units
+---------------
 
 Currently, Alfred-Convert only supports [the units][pintunits] understood by the underlying [Pint][pintdocs] library plus [currencies](#supported-currencies) and a handful of additional units.
 
@@ -87,17 +88,18 @@ Releases
 
 See [CHANGELOG][changelog] for more information.
 
-| Release       | Date             |
-| ------------- | ---------------- |
-| [2.6][v2.6]   | 2017-06-15       |
-| [2.5][v2.5]   | 2015-12-11       |
-| [2.4][v2.4]   | 2015-11-28       |
-| [2.3][v2.3]   | 2015-11-26       |
-| [2.2][v2.2]   | 2015-07-16       |
-| 2.1           | Never released   |
-| [2.0][v2.0]   | 2014-12-26       |
-| [1.2][v1.2]   | 2014-08-19       |
-| [1.1][v1.1]   | 2014-08-09       |
+|   Release   |      Date      |
+|-------------|----------------|
+| [3.0][v3.0] |                |
+| [2.6][v2.6] | 2017-06-15     |
+| [2.5][v2.5] | 2015-12-11     |
+| [2.4][v2.4] | 2015-11-28     |
+| [2.3][v2.3] | 2015-11-26     |
+| [2.2][v2.2] | 2015-07-16     |
+| 2.1         | Never released |
+| [2.0][v2.0] | 2014-12-26     |
+| [1.2][v1.2] | 2014-08-19     |
+| [1.1][v1.1] | 2014-08-09     |
 
 
 Thanks, copyright, licensing
@@ -105,7 +107,7 @@ Thanks, copyright, licensing
 
 - The Python [Pint][pintdocs] library does all the heavy lifting. See the [Pint GitHub repo][pintrepo] for Pint licensing or `LICENSE.txt` and `AUTHORS.txt` in the `vendor/pint` subdirectory.
 - The workflow icons are from [Font Awesome][fontawesome]
-- Exchange rates are downloaded from the [Yahoo! Finance][yahoo-finance].
+- Exchange rates are downloaded from [Yahoo! Finance][yahoo-finance] and [CryptoCompare][cryptocompare] (for cryptocurrencies).
 - The [Alfred-Workflow][alfred-workflow] library is used heavily.
 
 All other code/media are released under the [MIT Licence](http://opensource.org/licenses/MIT).
@@ -133,4 +135,6 @@ All other code/media are released under the [MIT Licence](http://opensource.org/
 [v2.4]: https://github.com/deanishe/alfred-convert/releases/tag/v2.4
 [v2.5]: https://github.com/deanishe/alfred-convert/releases/tag/v2.5
 [v2.6]: https://github.com/deanishe/alfred-convert/releases/tag/v2.6
+[v3.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.0
 [yahoo-finance]: https://finance.yahoo.com/
+[cryptocompare]: https://www.cryptocompare.com/
