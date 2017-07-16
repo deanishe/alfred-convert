@@ -4,9 +4,13 @@ Changelog
 
 ### [3.0][v3.0] ###
 
-Released XXX.
+Released 2017-07-16.
 
-- Add cryptocurrencies
+- Option to exclude units when copying #12
+- Add per-dimensionality defaults #13
+- Option to specify thousands separator #15
+- Option to specify custom decimal separator #16
+- Add cryptocurrencies #21
 - Update Alfred-Workflow
 - Update Pint
 
