@@ -16,22 +16,22 @@ Usage:
     info.py [<query>]
     info.py (-h|--help)
     info.py --openhelp
+    info.py --openactive
     info.py --openunits
     info.py --currencies [<query>]
 
 Options:
     -h, --help    Show this message
     --openhelp    Open help file in default browser
+    --openactive  Open active currency file in default editor
     --openunits   Open custom units file in default editor
     --currencies  View/search supported currencies
 
 """
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import
 
 from datetime import timedelta
-import os
-import shutil
 import subprocess
 import sys
 
@@ -39,7 +39,6 @@ from docopt import docopt
 
 from workflow import (
     ICON_INFO,
-    ICON_SETTINGS,
     ICON_WARNING,
     MATCH_ALL,
     MATCH_ALLCHARS,
@@ -47,6 +46,8 @@ from workflow import (
 )
 
 from config import (
+    bootstrap,
+    ACTIVE_CURRENCIES_FILENAME,
     CURRENCIES,
     CRYPTO_CURRENCIES,
     CURRENCY_CACHE_NAME,
@@ -100,6 +101,12 @@ def human_timedelta(td):
 
 
 def handle_delimited_query(query):
+    """Process sub-commands.
+
+    Args:
+        query (str): User query
+
+    """
     # Currencies or decimal places
     if query.endswith(DELIMITER):  # User deleted trailing space
         subprocess.call(['osascript', '-e', ALFRED_AS])
@@ -136,6 +143,8 @@ def handle_delimited_query(query):
         for name, symbol in currencies:
             wf.add_item(u'{} // {}'.format(name, symbol),
                         u'Use `{}` in conversions'.format(symbol),
+                        copytext=symbol,
+                        valid=False,
                         icon=ICON_CURRENCY)
 
         wf.send_feedback()
@@ -154,6 +163,8 @@ def main(wf):
 
     query = args.get('<query>')
 
+    bootstrap(wf)
+
     # Alternative actions ----------------------------------------------
 
     if args.get('--openhelp'):
@@ -162,12 +173,11 @@ def main(wf):
 
     if args.get('--openunits'):
         path = wf.datafile(CUSTOM_DEFINITIONS_FILENAME)
-        if not os.path.exists(path):
-            shutil.copy(
-                wf.workflowfile('{}.sample'.format(
-                                CUSTOM_DEFINITIONS_FILENAME)),
-                path)
+        subprocess.call(['open', path])
+        return 0
 
+    if args.get('--openactive'):
+        path = wf.datafile(ACTIVE_CURRENCIES_FILENAME)
         subprocess.call(['open', path])
         return 0
 
@@ -187,10 +197,16 @@ def main(wf):
              arg='--openhelp',
              icon=ICON_HELP),
 
-        dict(title='View Supported Currencies',
+        dict(title='View All Supported Currencies',
              subtitle='View and search list of supported currencies',
              autocomplete=u'currencies {} '.format(DELIMITER),
              icon=ICON_CURRENCY),
+
+        dict(title='Edit Active Currencies',
+             subtitle='Edit the list of active currencies',
+             valid=True,
+             arg='--openactive',
+             icon='icon.png'),
 
         dict(title='Edit Custom Units',
              subtitle='Add and edit your own custom units',

@@ -15,19 +15,25 @@ from __future__ import print_function
 import csv
 from itertools import chain, izip_longest
 from multiprocessing.dummy import Pool
+import os
 import re
+import shutil
 import time
 
 from workflow import Workflow, web
 
-from config import (CURRENCY_CACHE_AGE,
-                    CURRENCY_CACHE_NAME,
-                    REFERENCE_CURRENCY,
-                    CURRENCIES,
-                    CRYPTO_CURRENCIES,
-                    CRYPTO_COMPARE_BASE_URL,
-                    YAHOO_BASE_URL,
-                    SYMBOLS_PER_REQUEST)
+from config import (
+    bootstrap,
+    ACTIVE_CURRENCIES_FILENAME,
+    CURRENCY_CACHE_AGE,
+    CURRENCY_CACHE_NAME,
+    REFERENCE_CURRENCY,
+    CURRENCIES,
+    CRYPTO_CURRENCIES,
+    CRYPTO_COMPARE_BASE_URL,
+    YAHOO_BASE_URL,
+    SYMBOLS_PER_REQUEST,
+)
 
 
 log = None
@@ -164,6 +170,30 @@ def load_yahoo_rates(symbols):
     return rates
 
 
+def load_active_currencies():
+    """Load active currencies from user settings (or defaults).
+
+    Returns:
+        set: Symbols for active currencies.
+
+    """
+    symbols = set()
+
+    user_currencies = wf.datafile(ACTIVE_CURRENCIES_FILENAME)
+    if not os.path.exists(user_currencies):
+        return symbols
+
+    with open(user_currencies) as fp:
+        for line in fp:
+            line = line.strip()
+            if line.startswith('#'):
+                continue
+
+            symbols.add(line.upper())
+
+    return symbols
+
+
 def fetch_exchange_rates():
     """Retrieve all currency exchange rates.
 
@@ -176,14 +206,21 @@ def fetch_exchange_rates():
     """
     rates = {}
     futures = []
+    active = load_active_currencies()
+
+    # batch symbols into groups and interleave requests to the
+    # different services
     yjobs = []
-    for symbols in grouper(SYMBOLS_PER_REQUEST, CURRENCIES.keys()):
+    syms = [s for s in CURRENCIES.keys() if s in active]
+    for symbols in grouper(SYMBOLS_PER_REQUEST, syms):
         yjobs.append((load_yahoo_rates, (symbols,)))
 
     cjobs = []
-    for symbols in grouper(SYMBOLS_PER_REQUEST, CRYPTO_CURRENCIES.keys()):
+    syms = [sym for sym in CRYPTO_CURRENCIES.keys() if sym in active]
+    for symbols in grouper(SYMBOLS_PER_REQUEST, syms):
         cjobs.append((load_cryptocurrency_rates, (symbols,)))
 
+    # fetch data in a thread pool
     pool = Pool(4)
     for job in interleave(yjobs, cjobs):
         futures.append(pool.apply_async(*job))
@@ -205,6 +242,8 @@ def main(wf):
 
     """
     start_time = time.time()
+    bootstrap(wf)
+
     log.info('fetching exchange rates from Yahoo! and CryptoCompare.com ...')
 
     rates = wf.cached_data(CURRENCY_CACHE_NAME,

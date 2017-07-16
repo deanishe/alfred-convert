@@ -13,7 +13,6 @@
 from __future__ import print_function, unicode_literals
 
 import os
-import shutil
 import sys
 
 from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
@@ -21,6 +20,7 @@ from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
 from workflow import Workflow3, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
 from config import (
+    bootstrap,
     BUILTIN_UNIT_DEFINITIONS,
     COPY_UNIT,
     CURRENCY_CACHE_AGE,
@@ -34,6 +34,7 @@ from config import (
     THOUSANDS_SEPARATOR,
     UPDATE_SETTINGS,
 )
+from defaults import Defaults
 
 log = None
 
@@ -72,10 +73,6 @@ def register_units():
     # User's custom units
     if os.path.exists(user_definitions):
         ureg.load_definitions(user_definitions)
-    else:  # Copy template to data dir
-        shutil.copy(
-            wf.workflowfile('{}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
-            user_definitions)
 
 
 def register_exchange_rates(exchange_rates):
@@ -194,9 +191,13 @@ def main(wf):
 
     """
     if not len(wf.args):
-        return 1
+        return
+
     query = wf.args[0]  # .lower()
     log.debug('query : %s', query)
+
+    # Create data files if necessary
+    bootstrap(wf)
 
     # Add workflow and user units to unit registry
     register_units()
@@ -259,7 +260,9 @@ def main(wf):
         wf.add_item(error,
                     'For example: 2.5cm in  |  178lb kg  |  200m/s mph',
                     valid=False, icon=ICON_WARNING)
+
     else:  # Show result
+        defs = Defaults(wf)
         value = copytext = '{} {}'.format(number, unit)
         if not COPY_UNIT:
             copytext = number
@@ -271,8 +274,15 @@ def main(wf):
                          largetext=value,
                          icon='icon.png')
 
-        mod = it.add_modifier('cmd', 'Save {} as default unit for {}'.format(
-            unit, dim))
+        action = 'save'
+        name = 'Save'
+        if defs.is_default(dim, unit):
+            action = 'delete'
+            name = 'Remove'
+
+        mod = it.add_modifier('cmd', '{} {} as default unit for {}'.format(
+            name, unit, dim))
+        mod.setvar('action', action)
         mod.setvar('unit', unit)
         mod.setvar('dimensionality', dim)
 
