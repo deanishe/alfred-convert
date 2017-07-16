@@ -13,7 +13,6 @@
 from __future__ import print_function, unicode_literals
 
 import os
-import shutil
 import sys
 
 from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
@@ -21,6 +20,7 @@ from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
 from workflow import Workflow3, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
 from config import (
+    bootstrap,
     BUILTIN_UNIT_DEFINITIONS,
     COPY_UNIT,
     CURRENCY_CACHE_AGE,
@@ -34,6 +34,7 @@ from config import (
     THOUSANDS_SEPARATOR,
     UPDATE_SETTINGS,
 )
+from defaults import Defaults
 
 log = None
 
@@ -72,10 +73,6 @@ def register_units():
     # User's custom units
     if os.path.exists(user_definitions):
         ureg.load_definitions(user_definitions)
-    else:  # Copy template to data dir
-        shutil.copy(
-            wf.workflowfile('{}.sample'.format(CUSTOM_DEFINITIONS_FILENAME)),
-            user_definitions)
 
 
 def register_exchange_rates(exchange_rates):
@@ -181,11 +178,9 @@ def convert(query):
     number = format_number(conv.magnitude)
     log.debug('%s %s' % (number, conv.units))
 
-    # fmt = '%%0.%df' % DECIMAL_PLACES
-    # number = fmt % conv.magnitude
-    # number = number.replace('.', DECIMAL_SEPARATOR)
+    # log.debug('%r', str(conv.units))
 
-    return number, conv.units
+    return number, str(conv.units), str(conv.dimensionality)
 
 
 def main(wf):
@@ -196,9 +191,13 @@ def main(wf):
 
     """
     if not len(wf.args):
-        return 1
+        return
+
     query = wf.args[0]  # .lower()
     log.debug('query : %s', query)
+
+    # Create data files if necessary
+    bootstrap(wf)
 
     # Add workflow and user units to unit registry
     register_units()
@@ -220,6 +219,7 @@ def main(wf):
         # Update currency rates
         cmd = ['/usr/bin/python', wf.workflowfile('currency.py')]
         run_in_background('update', cmd)
+        wf.rerun = 0.5
 
     if is_running('update'):
         wf.rerun = 0.5
@@ -235,7 +235,7 @@ def main(wf):
     number = None
 
     try:
-        number, unit = convert(query)
+        number, unit, dim = convert(query)
     except UndefinedUnitError as err:
         log.critical('unknown unit : %s', err.unit_names)
         error = 'Unknown unit : {}'.format(err.unit_names)
@@ -260,17 +260,31 @@ def main(wf):
         wf.add_item(error,
                     'For example: 2.5cm in  |  178lb kg  |  200m/s mph',
                     valid=False, icon=ICON_WARNING)
+
     else:  # Show result
+        defs = Defaults(wf)
         value = copytext = '{} {}'.format(number, unit)
         if not COPY_UNIT:
             copytext = number
 
-        wf.add_item(value,
-                    valid=True,
-                    arg=copytext,
-                    copytext=copytext,
-                    largetext=value,
-                    icon='icon.png')
+        it = wf.add_item(value,
+                         valid=True,
+                         arg=copytext,
+                         copytext=copytext,
+                         largetext=value,
+                         icon='icon.png')
+
+        action = 'save'
+        name = 'Save'
+        if defs.is_default(dim, unit):
+            action = 'delete'
+            name = 'Remove'
+
+        mod = it.add_modifier('cmd', '{} {} as default unit for {}'.format(
+            name, unit, dim))
+        mod.setvar('action', action)
+        mod.setvar('unit', unit)
+        mod.setvar('dimensionality', dim)
 
     wf.send_feedback()
     log.debug('finished')

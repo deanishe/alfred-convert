@@ -10,7 +10,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>607FA0B2-94A5-48E4-96E9-0BFA8872F7EE</string>
+				<string>54F0C711-EDE6-4387-B397-34AB8A8FFCB2</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -20,7 +20,20 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>67960284-5834-4BB2-849E-E5CF3254D3CF</string>
+				<string>CFE51A32-D227-42BA-966C-DBDED818F1D4</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>54F0C711-EDE6-4387-B397-34AB8A8FFCB2</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>607FA0B2-94A5-48E4-96E9-0BFA8872F7EE</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -42,11 +55,37 @@
 				<false/>
 			</dict>
 		</array>
+		<key>CFE51A32-D227-42BA-966C-DBDED818F1D4</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F738EA53-3486-4210-B03B-CFB792FD1798</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>EF92F243-C49B-4DFC-B0A4-72317B2457A7</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F738EA53-3486-4210-B03B-CFB792FD1798</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>03379773-30CB-4371-BC49-8E2EA4C9947A</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -84,9 +123,9 @@
 				<key>queuedelayimmediatelyinitially</key>
 				<false/>
 				<key>queuedelaymode</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>queuemode</key>
-				<integer>2</integer>
+				<integer>1</integer>
 				<key>runningsubtext</key>
 				<string>Convertifying…</string>
 				<key>script</key>
@@ -131,21 +170,82 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>inputstring</key>
+				<string>{var:action}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>54F0C711-EDE6-4387-B397-34AB8A8FFCB2</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
-				<false/>
+				<true/>
 				<key>removeextension</key>
 				<false/>
 				<key>text</key>
 				<string>{query}</string>
 				<key>title</key>
-				<string>Copied to Clipboard</string>
+				<string>Updated Default Units</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
-			<string>67960284-5834-4BB2-849E-E5CF3254D3CF</string>
+			<string>03379773-30CB-4371-BC49-8E2EA4C9947A</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>/usr/bin/python defaults.py $action $dimensionality $unit</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>F738EA53-3486-4210-B03B-CFB792FD1798</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:action}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>1</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>CFE51A32-D227-42BA-966C-DBDED818F1D4</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -169,29 +269,6 @@
 			<string>14C63701-669A-43A3-BF6A-65A23759DA5F</string>
 			<key>version</key>
 			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>0</integer>
-				<key>script</key>
-				<string>/usr/bin/python info.py $1</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</string>
-			<key>version</key>
-			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -238,6 +315,29 @@
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>/usr/bin/python info.py $1</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Offline Conversions
@@ -264,12 +364,19 @@ THOUSANDS_SEPARATOR is the character used to separate thousands.
 UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 	<key>uidata</key>
 	<dict>
+		<key>03379773-30CB-4371-BC49-8E2EA4C9947A</key>
+		<dict>
+			<key>xpos</key>
+			<integer>610</integer>
+			<key>ypos</key>
+			<integer>160</integer>
+		</dict>
 		<key>14C63701-669A-43A3-BF6A-65A23759DA5F</key>
 		<dict>
 			<key>xpos</key>
 			<integer>440</integer>
 			<key>ypos</key>
-			<integer>270</integer>
+			<integer>300</integer>
 		</dict>
 		<key>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</key>
 		<dict>
@@ -278,6 +385,15 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 			<key>ypos</key>
 			<integer>30</integer>
 		</dict>
+		<key>54F0C711-EDE6-4387-B397-34AB8A8FFCB2</key>
+		<dict>
+			<key>note</key>
+			<string>Default action</string>
+			<key>xpos</key>
+			<integer>250</integer>
+			<key>ypos</key>
+			<integer>60</integer>
+		</dict>
 		<key>607FA0B2-94A5-48E4-96E9-0BFA8872F7EE</key>
 		<dict>
 			<key>xpos</key>
@@ -285,26 +401,35 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 			<key>ypos</key>
 			<integer>30</integer>
 		</dict>
-		<key>67960284-5834-4BB2-849E-E5CF3254D3CF</key>
-		<dict>
-			<key>xpos</key>
-			<integer>440</integer>
-			<key>ypos</key>
-			<integer>150</integer>
-		</dict>
 		<key>96CC03AC-25D6-4FDB-AA8B-FCF145F4D597</key>
 		<dict>
 			<key>xpos</key>
 			<integer>240</integer>
 			<key>ypos</key>
-			<integer>270</integer>
+			<integer>300</integer>
+		</dict>
+		<key>CFE51A32-D227-42BA-966C-DBDED818F1D4</key>
+		<dict>
+			<key>note</key>
+			<string>Save/delete unit</string>
+			<key>xpos</key>
+			<integer>250</integer>
+			<key>ypos</key>
+			<integer>190</integer>
 		</dict>
 		<key>EF92F243-C49B-4DFC-B0A4-72317B2457A7</key>
 		<dict>
 			<key>xpos</key>
 			<integer>40</integer>
 			<key>ypos</key>
-			<integer>270</integer>
+			<integer>300</integer>
+		</dict>
+		<key>F738EA53-3486-4210-B03B-CFB792FD1798</key>
+		<dict>
+			<key>xpos</key>
+			<integer>440</integer>
+			<key>ypos</key>
+			<integer>160</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
@@ -316,7 +441,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<key>DECIMAL_SEPARATOR</key>
 		<string>.</string>
 		<key>THOUSANDS_SEPARATOR</key>
-		<string></string>
+		<string>,</string>
 		<key>UPDATE_INTERVAL</key>
 		<string>360</string>
 	</dict>
