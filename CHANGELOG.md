@@ -46,7 +46,7 @@ Released 2015-11-26.
 - Better query parsing
 
 
-### [2.2.1][v2.2.1] ###
+### [2.2.1][v2.2.1] ###
 
 Released 2015-07-16.
 
@@ -80,7 +80,7 @@ Released 2014-12-26.
 - Automatically check for updates (and offer to install them)
 
 
-### [1.2][v1.2] ###
+### [1.2][v1.2] ###
 
 Released 2014-08-19.
 
