@@ -42,7 +42,7 @@ from workflow import (
     ICON_WARNING,
     MATCH_ALL,
     MATCH_ALLCHARS,
-    Workflow,
+    Workflow3,
 )
 
 from config import (
@@ -231,6 +231,6 @@ def main(wf):
 
 
 if __name__ == '__main__':
-    wf = Workflow()
+    wf = Workflow3()
     log = wf.logger
     sys.exit(wf.run(main))

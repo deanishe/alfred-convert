@@ -1,3 +1,5 @@
+.cache
+
 # Python snippets from gitignore on github
 
 *.py[co]

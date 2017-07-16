@@ -61,7 +61,7 @@ class Defaults(object):
         """
         return self._defs[dimensionality][:]
 
-    def save(self, dimensionality, unit):
+    def add(self, dimensionality, unit):
         """Save ``unit`` as default for ``dimensionality``.
 
         Args:
@@ -119,7 +119,7 @@ def main(wf):
     unit = args['<unit>']
 
     if args['save']:
-        defs.save(dimensionality, unit)
+        defs.add(dimensionality, unit)
         print(u'Saved {} as default unit for {}'.format(unit, dimensionality))
         return
 
