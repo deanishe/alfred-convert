@@ -627,7 +627,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>360</string>
 	</dict>
 	<key>version</key>
-	<string>3.0</string>
+	<string>3.0.1</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

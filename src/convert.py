@@ -337,7 +337,7 @@ def convert(query):
                 action = 'delete'
                 name = 'Remove'
 
-            mod = it.add_modifier('cmd', '{} {} as default unit for {}'.format(
+            mod = it.add_modifier('cmd', u'{} {} as default unit for {}'.format(
                 name, conv.to_unit, conv.dimensionality))
             mod.setvar('action', action)
             mod.setvar('unit', conv.to_unit)
