@@ -21,6 +21,7 @@ from workflow import Workflow3, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
 from config import (
     bootstrap,
+    DEFAULT_UNIT_DEFINITIONS,
     BUILTIN_UNIT_DEFINITIONS,
     COPY_UNIT,
     CURRENCY_CACHE_AGE,
@@ -39,8 +40,7 @@ from defaults import Defaults
 log = None
 
 # Pint objects
-ureg = UnitRegistry()
-ureg.default_format = 'P'
+ureg = None
 # Q = ureg.Quantity
 
 
@@ -242,6 +242,7 @@ def register_units():
     """Add built-in and user units to unit registry."""
     # Add custom units from workflow and user data
     ureg.load_definitions(BUILTIN_UNIT_DEFINITIONS)
+
     user_definitions = wf.datafile(CUSTOM_DEFINITIONS_FILENAME)
 
     # User's custom units
@@ -355,6 +356,10 @@ def main(wf):
         wf (workflow.Workflow): Current Workflow object.
 
     """
+    global ureg
+    ureg = UnitRegistry(wf.decode(DEFAULT_UNIT_DEFINITIONS))
+    ureg.default_format = 'P'
+
     if not len(wf.args):
         return
 

@@ -208,6 +208,8 @@
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -360,6 +362,8 @@ variables={allvars}</string>
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -627,7 +631,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>360</string>
 	</dict>
 	<key>version</key>
-	<string>3.0.1</string>
+	<string>3.0.2</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

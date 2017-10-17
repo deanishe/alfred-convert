@@ -43,6 +43,8 @@ SYMBOLS_PER_REQUEST = 20
 # ----------------------------------------------------------------------
 # Unit definition files
 # ----------------------------------------------------------------------
+DEFAULT_UNIT_DEFINITIONS = os.path.join(os.path.dirname(__file__),
+                                        'pint/default_en.txt')
 CUSTOM_DEFINITIONS_FILENAME = 'unit_definitions.txt'
 BUILTIN_UNIT_DEFINITIONS = os.path.join(os.path.dirname(__file__),
                                         CUSTOM_DEFINITIONS_FILENAME)
