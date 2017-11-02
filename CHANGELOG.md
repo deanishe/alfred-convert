@@ -2,6 +2,20 @@
 Changelog
 =========
 
+### [3.2][v3.2] ###
+
+Released 2017-11-02.
+
+- Add support for Pint's contexts #18
+
+
+### [3.1][v3.1] ###
+
+Released 2017-11-02.
+
+- Replace Yahoo! Finance with [openexchangerates.org][openx] #27
+
+
 ### [3.0][v3.0] ###
 
 Released 2017-07-16.
@@ -13,6 +27,7 @@ Released 2017-07-16.
 - Add cryptocurrencies #21
 - Update Alfred-Workflow
 - Update Pint
+
 
 ### [2.6][v2.6] ###
 
@@ -103,3 +118,6 @@ Released 2014-08-09.
 [v2.5]: https://github.com/deanishe/alfred-convert/releases/tag/v2.5
 [v2.6]: https://github.com/deanishe/alfred-convert/releases/tag/v2.6
 [v3.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.0
+[v3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.1
+[v3.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2
+[openx]: https://openexchangerates.org/

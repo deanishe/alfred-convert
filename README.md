@@ -54,22 +54,26 @@ Usage
 <a name="conversions"></a>
 ### Conversions ###
 
-**NOTE**: To perform conversions between fiat currencies, you must set a key for the [openexchangerates.org][openx] API in the workflow's [configuration sheet](#configuration). You can sign up for a free account [here][openx-free].
+**NOTE**: To perform conversions between fiat currencies, you must set a key for the [openexchangerates.org][openx] API in the workflow's [configuration sheet](#configuration). You can sign up for a free account [here][openx-free]. When you're signed up, copy the **App ID** from the email you receive or [this page][openx-appid] into the `APP_KEY` field in the [configuration sheet](#configuration).
 
-- `conv <quantity> <from unit> [<to unit>]` — Perform a conversion
+- `conv [<context>] <quantity> <from unit> [<to unit>]` — Perform a conversion
     - `↩` or `⌘C` — Copy the result to the pasteboard
     - `⌘↩` — Add/remove destination unit as default for this dimensionality
     - `⌘L` — Show result in Alfred's Large Type window
 
 If no destination unit is specified, any defaults you've saved will be used (that aren't the same as the source unit).
 
-The syntax is simple: the quantity, the unit you want to convert from then (optionally) the unit you want to convert to. For example:
+The syntax is simple: an optional context, the quantity, the unit you want to convert from then (optionally) the unit you want to convert to. For example:
 
 - `conv 128 mph kph`
 - `conv 72in cm`
 - `conv 100psi bar`
 - `conv 20.5 m/s mph`
 - `conv 100 eur gbp`
+
+Or with a context:
+
+- `conv spectroscopy 1Å eV` (or `conv sp 1Å eV`)
 
 It doesn't matter if there is a space between the quantity and the units or not. Alfred-Convert will tell you if it doesn't understand your query or know the units.
 
@@ -151,6 +155,7 @@ See [CHANGELOG][changelog] for more information.
 
 |   Release   |      Date      |
 |-------------|----------------|
+| [3.1][v3.2] | 2017-11-02     |
 | [3.1][v3.1] | 2017-11-02     |
 | [3.0][v3.0] | 2017-07-16     |
 | [2.6][v2.6] | 2017-06-15     |
@@ -200,6 +205,8 @@ All other code/media are released under the [MIT Licence][mit].
 [v2.6]: https://github.com/deanishe/alfred-convert/releases/tag/v2.6
 [v3.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.0
 [v3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.1
+[v3.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2
 [cryptocompare]: https://www.cryptocompare.com/
 [openx]: https://openexchangerates.org/
 [openx-free]: https://openexchangerates.org/signup/free
+[openx-appid]: https://openexchangerates.org/account/app-ids

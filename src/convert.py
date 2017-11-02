@@ -60,8 +60,8 @@ class Input(object):
     def __repr__(self):
         return ('Input(number={!r}, dimensionality={!r}, '
                 'from_unit={!r}, to_unit={!r})').format(
-                    self.number,
-                    self.dimensionality, self.from_unit, self.to_unit)
+                    self.number, self.dimensionality, self.from_unit,
+                    self.to_unit)
 
     def __str__(self):
         return self.__repr__()
@@ -160,7 +160,7 @@ class Converter(object):
         for u in units:
             to_unit = ureg.Quantity(1, u)
             conv = qty.to(to_unit)
-            log.debug('%s -> %s = %s', i.from_unit, u, conv)
+            log.debug('[convert] %s -> %s = %s', i.from_unit, u, conv)
             results.append(Conversion(i.number, i.from_unit,
                                       conv.magnitude, u, i.dimensionality))
 
@@ -168,14 +168,32 @@ class Converter(object):
 
     def parse(self, query):
         """Parse user query into `Input`."""
-        # Parse number from start of query
+        ctx = []
         qty = []
+
+        # Parse optional context
+        for c in query:
+            if c in 'abcdefghijklmnopqrstuvwxyz':
+                ctx.append(c)
+            else:
+                break
+
+        if ctx:
+            ctx = ''.join(ctx)
+            ureg.enable_contexts(ctx)
+            log.debug('[parser] context=%s', ctx)
+            query = query[len(ctx):].strip()
+
+        # Parse from quantity
         for c in query:
             if c in '1234567890.,':
                 qty.append(c)
             else:
                 break
         if not len(qty):
+            if ctx:
+                raise ValueError('No quantity')
+
             raise ValueError('Start your query with a number')
 
         tail = query[len(qty):].strip()
@@ -184,14 +202,16 @@ class Converter(object):
         if not len(tail):
             raise ValueError('No units specified')
 
-        log.debug('quantity : %s tail : %s', qty, tail)
+        log.debug('[parser] quantity=%s, tail=%s', qty, tail)
 
         # Try to parse rest of query into a pair of units
         from_unit = to_unit = None
         units = [s.strip() for s in tail.split()]
         from_unit = units[0]
+        log.debug('[parser] from_unit=%s', from_unit)
         if len(units) > 1:
             to_unit = units[1]
+            log.debug('[parser] to_unit=%s', to_unit)
         if len(units) > 2:
             raise ValueError('More than 2 units specified')
 
@@ -212,7 +232,7 @@ class Converter(object):
         i = Input(from_unit.magnitude, unicode(from_unit.dimensionality),
                   unicode(from_unit.units), tu)
 
-        log.debug(i)
+        log.debug('[parser] %s', i)
 
         return i
 
@@ -298,7 +318,7 @@ def convert(query):
     else:
         try:
             results = c.convert(i)
-            log.debug('results=%r', results)
+            # log.debug('results=%r', results)
         except NoToUnits:
             log.critical(u'No to_units (or defaults) for %s', i.dimensionality)
             error = u'No destination units (or defaults) for {}'.format(
@@ -308,6 +328,10 @@ def convert(query):
             log.critical(u'invalid conversion (%s): %s', query, err)
             error = u"Can't convert from {} {} to {} {}".format(
                 err.units1, err.dim1, err.units2, err.dim2)
+
+        except KeyError as err:
+            log.critical(u'invalid context (%s): %s', i.context, err)
+            error = u'Unknown context: {}'.format(i.context)
 
     if not error and not results:
         error = 'Conversion input not understood'
