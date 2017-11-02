@@ -1,0 +1,43 @@
+#!/usr/bin/env zsh
+
+# Reject if APP_KEY is set
+
+# _error <arg>.. | Write red "error" and args to STDERR
+_error() {
+  echo $(print -P '%F{red}error%f') "$@" >&2
+}
+
+# _fail <arg>.. | Write red "error" and args to STDERR, then exit with status 1
+_fail() {
+  _error "$@"
+  exit 1
+}
+
+# _staged <path> | Is path staged
+_staged() {
+  local p="$1"
+  git diff --name-only --cached | grep --silent "$p"
+  return $?
+}
+
+exec 1>&2 # Redirect output to stderr.
+
+_staged info.plist || exit 0
+
+root="$( git rev-parse --show-toplevel )"
+ip="${root}/src/info.plist"
+
+# _getvar <name> | Retrieve value for variable <name>
+_getvar() {
+  local n=$1
+  /usr/libexec/PlistBuddy -c "Print :variables:$n" "$ip"
+}
+
+# Fail if info.plist can't be found
+test -f "$ip" || { _fail "$ip not found"; }
+
+api_key="$( _getvar APP_KEY )"
+
+test -n "$api_key" && _fail "[info.plist] APP_KEY is not empty"
+
+exit 0

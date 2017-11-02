@@ -1,18 +1,19 @@
 
-# Currencies #
+Currencies
+==========
 
-`currencies_yahoo.py` throws a whole bunch of currencies at Yahoo! Finance, and saves a list of the ones it appears to know about.
+Lists of currencies and scripts to generate them.
 
-|            File           |             Description             |
-|---------------------------|-------------------------------------|
-| `currencies_iso_4217.tsv` | All ISO 4217 currency codes         |
-| `currencies_custom.tsv`   | Special currencies, e.g. Bitcoin    |
-| `currencies_yahoo.tsv`    | Exchange rates offered by Yahoo!    |
-| `currencies_yahoo.py`     | Script to generate above list       |
-| `ISO 4217 List One.xlsx`  | Source list from the [ISO][iso4217] |
+|              File             |                        Description                        |
+|-------------------------------|-----------------------------------------------------------|
+| `currencies_crypto.tsv`       | Cryptocurrencies supported by [cryptocompare.com][crypto] |
+| `currencies_crypto.py`        | Script to generate above list                             |
+| `currencies_iso_4217.tsv`     | Most ISO 4217 currency codes                              |
+| `currencies_custom.tsv`       | Unofficial currencies                                          |
+| `currencies_openexchange.tsv` | Exchange rates offered by [openexchangerates.org][openx]  |
+| `currencies_openexchange.py`  | Script to generate above list                             |
+| `ISO 4217 List One.xlsx`      | Source list from the [ISO][iso4217]                       |
 
-The first two TSV files are the input list of currencies. `currencies_yahoo.tsv` is the list of currencies that Yahoo! Finance has exchange rates for.
-
-This file is the `currencies.tsv` file distributed with the workflow.
-
-[iso4217]: http://www.iso.org/iso/home/standards/currency_codes.htm
+[iso4217]: https://www.iso.org/iso-4217-currency-codes.html
+[openx]: https://openexchangerates.org/
+[crypto]: https://www.cryptocompare.com/

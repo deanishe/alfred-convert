@@ -18,6 +18,7 @@ Usage:
     info.py --openhelp
     info.py --openactive
     info.py --openunits
+    info.py --openapi
     info.py --currencies [<query>]
 
 Options:
@@ -25,6 +26,7 @@ Options:
     --openhelp    Open help file in default browser
     --openactive  Open active currency file in default editor
     --openunits   Open custom units file in default editor
+    --openapi     Open the openexchangerates.org signup page
     --currencies  View/search supported currencies
 
 """
@@ -40,6 +42,7 @@ from docopt import docopt
 from workflow import (
     ICON_INFO,
     ICON_WARNING,
+    ICON_WEB,
     MATCH_ALL,
     MATCH_ALLCHARS,
     Workflow3,
@@ -57,6 +60,9 @@ from config import (
     KEYWORD_SETTINGS,
     README_URL,
 )
+
+# Signup page for free API key
+SIGNUP_URL = 'https://openexchangerates.org/signup/free'
 
 log = None
 
@@ -167,6 +173,10 @@ def main(wf):
 
     # Alternative actions ----------------------------------------------
 
+    if args.get('--openapi'):
+        subprocess.call(['open', SIGNUP_URL])
+        return
+
     if args.get('--openhelp'):
         subprocess.call(['open', README_URL])
         return
@@ -174,12 +184,12 @@ def main(wf):
     if args.get('--openunits'):
         path = wf.datafile(CUSTOM_DEFINITIONS_FILENAME)
         subprocess.call(['open', path])
-        return 0
+        return
 
     if args.get('--openactive'):
         path = wf.datafile(ACTIVE_CURRENCIES_FILENAME)
         subprocess.call(['open', path])
-        return 0
+        return
 
     # Parse query ------------------------------------------------------
 
@@ -212,7 +222,13 @@ def main(wf):
              subtitle='Add and edit your own custom units',
              valid=True,
              arg='--openunits',
-             icon='icon.png')
+             icon='icon.png'),
+
+        dict(title='Get API key',
+             subtitle='Sign up for free openexchangerates.org account',
+             valid=True,
+             arg='--openapi',
+             icon=ICON_WEB),
     ]
 
     if query:

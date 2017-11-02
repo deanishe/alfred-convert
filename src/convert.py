@@ -259,10 +259,10 @@ def register_exchange_rates(exchange_rates):
     """
     # EUR will be the baseline currency. All exchange rates are
     # defined relative to the euro
-    ureg.define('EUR = [currency] = eur')
+    ureg.define('USD = [currency] = usd')
 
     for abbr, rate in exchange_rates.items():
-        definition = '{} = eur / {}'.format(abbr, rate)
+        definition = '{} = usd / {}'.format(abbr, rate)
 
         try:
             ureg.Quantity(1, abbr)

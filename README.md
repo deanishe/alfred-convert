@@ -12,19 +12,22 @@ You can also add your own custom units.
 
 **Note:** Currency conversions do require occasional Internet connectivity to update exchange rates. Alfred-Convert will otherwise work just fine without an Internet connection.
 
+<!-- MarkdownTOC autolink="true" bracket="round" depth="2" autoanchor="true" -->
+
 - [Downloading](#downloading)
 - [Usage](#usage)
     - [Conversions](#conversions)
     - [Configuration](#configuration)
-    - [Active currencies](#active-currencies)
-    - [Custom units](#custom-units)
 - [Supported units](#supported-units)
     - [Supported currencies](#supported-currencies)
     - [Adding custom units](#adding-custom-units)
 - [Releases](#releases)
 - [Thanks, copyright, licensing](#thanks-copyright-licensing)
 
+<!-- /MarkdownTOC -->
 
+
+<a name="downloading"></a>
 Downloading
 -----------
 
@@ -33,6 +36,7 @@ Download from [GitHub releases][ghreleases].
 **Note**: Version 3.0 and above only supports Alfred 3. If you're still using Alfred 2, please download [v2.6][v2.6].
 
 
+<a name="usage"></a>
 Usage
 -----
 
@@ -47,7 +51,10 @@ Usage
     - `Edit Custom Units` — Edit the list of custom currencies in your default text editor
 
 
+<a name="conversions"></a>
 ### Conversions ###
+
+**NOTE**: To perform conversions between fiat currencies, you must set a key for the [openexchangerates.org][openx] API in the workflow's [configuration sheet](#configuration). You can sign up for a free account [here][openx-free].
 
 - `conv <quantity> <from unit> [<to unit>]` — Perform a conversion
     - `↩` or `⌘C` — Copy the result to the pasteboard
@@ -69,6 +76,7 @@ It doesn't matter if there is a space between the quantity and the units or not.
 Actioning an item (selecting it and hitting `↩`) will copy it to the clipboard. Using `⌘+L` will display the result in Alfred's large text window, `⌘+C` will copy the selected result to the clipboard.
 
 
+<a name="configuration"></a>
 ### Configuration ###
 
 The workflow is configured via the configuration sheet (`[𝓍]`) in Alfred Preferences and via a couple of text files in its data directory.
@@ -80,6 +88,7 @@ Basic configuration is performed in the configuration sheet:
 
 |         Option        |                                           Meaning                                            |
 |-----------------------|----------------------------------------------------------------------------------------------|
+| `APP_KEY` | API key for [openexchangerates.org][openx] |
 | `COPY_UNIT`           | Include unit when copying conversion result. Any value but `0` or empty turns this option on |
 | `DECIMAL_PLACES`      | Number of decimal places to show in results                                                  |
 | `DECIMAL_SEPARATOR`   | Character to separate whole numbers and decimal fractions                                    |
@@ -89,7 +98,7 @@ Basic configuration is performed in the configuration sheet:
 
 #### Active currencies ####
 
-By default, all supported fiat currencies and a handful of the most popular cryptocurrencies are active.
+By default, all supported fiat currencies (provided you've set `APP_KEY` in the [configuration sheet](#configuration)) and a handful of the most popular cryptocurrencies are active.
 
 - `convinfo`
     - `View All Supported Currencies`
@@ -105,6 +114,7 @@ You can use `View All Supported Currencies` to search for the currency you'd lik
 See [Adding custom units](#adding-custom-units).
 
 
+<a name="supported-units"></a>
 Supported units
 ---------------
 
@@ -113,6 +123,7 @@ Currently, Alfred-Convert only supports [the units][pintunits] understood by the
 You can [add your own custom units](#adding-custom-units) to the workflow. If you think they'd be useful to everyone, please create a corresponding [GitHub issue][ghissues] to request addition as a default unit or submit a [pull request][ghpulls].
 
 
+<a name="supported-currencies"></a>
 ### Supported currencies ###
 
 To convert, use the appropriate **abbreviation** for the relevant currencies, e.g. `conv 100 eur gbp`.
@@ -122,6 +133,7 @@ You can also view (and search) the list from within Alfred by using the keyword 
 [All supported currencies](./docs/currencies.md).
 
 
+<a name="adding-custom-units"></a>
 ### Adding custom units ###
 
 You can add your own custom units using the [format defined by Pint][pinthowto]. Add your definitions to the `unit_definitions.txt` file in the workflow's data directory.
@@ -131,6 +143,7 @@ To edit this file, enter `convinfo` in Alfred and select `Edit Custom Units`. Th
 Please see the [Pint documentation][pinthowto] for the required format. See Pint's [default unit definitions][pintunits] for examples.
 
 
+<a name="releases"></a>
 Releases
 --------
 
@@ -138,6 +151,7 @@ See [CHANGELOG][changelog] for more information.
 
 |   Release   |      Date      |
 |-------------|----------------|
+| [3.1][v3.1] | 2017-11-02     |
 | [3.0][v3.0] | 2017-07-16     |
 | [2.6][v2.6] | 2017-06-15     |
 | [2.5][v2.5] | 2015-12-11     |
@@ -150,12 +164,13 @@ See [CHANGELOG][changelog] for more information.
 | [1.1][v1.1] | 2014-08-09     |
 
 
+<a name="thanks-copyright-licensing"></a>
 Thanks, copyright, licensing
 ----------------------------
 
-- The Python [Pint][pintdocs] library does all the heavy lifting. See the [Pint GitHub repo][pintrepo] for Pint licensing or `LICENSE.txt` and `AUTHORS.txt` in the `vendor/pint` subdirectory.
+- The Python [Pint][pintdocs] library does all the heavy lifting. See the [Pint GitHub repo][pintrepo] for Pint licensing or `LICENSE.txt` and `AUTHORS.txt` in the `pint` subdirectory.
 - The workflow icons are from [Font Awesome][fontawesome]
-- Exchange rates are downloaded from [Yahoo! Finance][yahoo-finance] and [CryptoCompare][cryptocompare] (for cryptocurrencies).
+- Exchange rates are downloaded from [openexchangerates.org][openx] and [CryptoCompare][cryptocompare] (for cryptocurrencies).
 - The [Alfred-Workflow][alfred-workflow] library is used heavily.
 
 All other code/media are released under the [MIT Licence][mit].
@@ -184,5 +199,7 @@ All other code/media are released under the [MIT Licence][mit].
 [v2.5]: https://github.com/deanishe/alfred-convert/releases/tag/v2.5
 [v2.6]: https://github.com/deanishe/alfred-convert/releases/tag/v2.6
 [v3.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.0
-[yahoo-finance]: https://finance.yahoo.com/
+[v3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.1
 [cryptocompare]: https://www.cryptocompare.com/
+[openx]: https://openexchangerates.org/
+[openx-free]: https://openexchangerates.org/signup/free

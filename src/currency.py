@@ -8,16 +8,13 @@
 # Created on 2014-02-24
 #
 
-"""Script to update exchange rates from Yahoo! in the background."""
+"""Script to update exchange rates in the background."""
 
 from __future__ import print_function
 
-import csv
-from itertools import chain, izip_longest
+from itertools import izip_longest
 from multiprocessing.dummy import Pool
 import os
-import re
-import shutil
 import time
 
 from workflow import Workflow, web
@@ -31,14 +28,14 @@ from config import (
     CURRENCIES,
     CRYPTO_CURRENCIES,
     CRYPTO_COMPARE_BASE_URL,
-    YAHOO_BASE_URL,
+    OPENX_API_URL,
+    OPENX_APP_KEY,
     SYMBOLS_PER_REQUEST,
+    USER_AGENT,
 )
 
 
 log = None
-
-parse_yahoo_response = re.compile(REFERENCE_CURRENCY + '(.+)=X').match
 
 
 def grouper(n, iterable):
@@ -61,20 +58,20 @@ def grouper(n, iterable):
     return groups
 
 
-def interleave(*iterables):
-    """Interleave elements of ``iterables``.
+# def interleave(*iterables):
+#     """Interleave elements of ``iterables``.
 
-    Args:
-        *iterables: Iterables to interleave
+#     Args:
+#         *iterables: Iterables to interleave
 
-    Returns:
-        list: Elements of ``iterables`` interleaved
+#     Returns:
+#         list: Elements of ``iterables`` interleaved
 
-    """
-    sentinel = object()
-    it = izip_longest(*iterables, fillvalue=sentinel)
-    c = chain.from_iterable(it)
-    return list(filter(lambda v: v is not sentinel, c))
+#     """
+#     sentinel = object()
+#     it = izip_longest(*iterables, fillvalue=sentinel)
+#     c = chain.from_iterable(it)
+#     return list(filter(lambda v: v is not sentinel, c))
 
 
 def load_cryptocurrency_rates(symbols):
@@ -90,7 +87,7 @@ def load_cryptocurrency_rates(symbols):
     """
     url = CRYPTO_COMPARE_BASE_URL.format(REFERENCE_CURRENCY, ','.join(symbols))
 
-    r = web.get(url)
+    r = web.get(url, headers={'User-Agent': USER_AGENT})
     r.raise_for_status()
 
     data = r.json()
@@ -98,8 +95,8 @@ def load_cryptocurrency_rates(symbols):
     return data
 
 
-def load_yahoo_rates(symbols):
-    """Return dict of exchange rates from Yahoo! Finance.
+def load_openx_rates(symbols):
+    """Return dict of exchange rates from openexchangerates.org.
 
     Args:
         symbols (sequence): Abbreviations of currencies to fetch
@@ -110,62 +107,26 @@ def load_yahoo_rates(symbols):
 
     """
     rates = {}
-    count = len(symbols)
+    wanted = set(symbols)
+    if not OPENX_APP_KEY:
+        log.warning(
+            'Not fetching fiat currency exchange rates: '
+            'APP_KEY for openexchangerates.org not set. '
+            'Please sign up for a free account here: '
+            'https://openexchangerates.org/signup/free'
+        )
+        return rates
 
-    # Build URL
-    parts = []
-    for symbol in symbols:
-        if symbol == REFERENCE_CURRENCY:
-            count -= 1
-            continue
-        parts.append('{}{}=X'.format(REFERENCE_CURRENCY, symbol))
-
-    query = ','.join(parts)
-    url = YAHOO_BASE_URL.format(query)
-
-    # Fetch data
-    # log.debug('Fetching %s ...', url)
-    log.debug('fetching %s ...', url)
-    r = web.get(url)
+    url = OPENX_API_URL.format(OPENX_APP_KEY)
+    r = web.get(url, headers={'User-Agent': USER_AGENT})
     r.raise_for_status()
+    log.debug('[%s] %s', r.status_code, OPENX_API_URL.format('XXX'))
+    data = r.json()
 
-    # Parse response
-    lines = r.content.split('\n')
-    ycount = 0
-    for row in csv.reader(lines):
-        if not row:
+    for sym, rate in data['rates'].items():
+        if sym not in wanted:
             continue
-
-        name, rate = row
-        m = parse_yahoo_response(name)
-
-        if not m:  # Couldn't get symbol
-            log.error(u'invalid currency : %s', name)
-            ycount += 1
-            continue
-        symbol = m.group(1)
-
-        # Yahoo! returns "N/A" for unsupported currencies.
-        # That's handled in the script that generates the
-        # currency list, however: an invalid currency shouldn't end up here
-        # unless Yahoo! has changed the supported currencies.
-
-        try:
-            rate = float(rate)
-        except ValueError:
-            log.error(u'no exchange rate: %s', name)
-            continue
-
-        if rate == 0:
-            log.error(u'no exchange rate: %s', name)
-            ycount += 1
-            continue
-
-        rates[symbol] = rate
-        ycount += 1
-
-    assert ycount == count, 'Yahoo! returned {} results, not {}'.format(
-        ycount, count)
+        rates[sym] = rate
 
     return rates
 
@@ -208,21 +169,17 @@ def fetch_exchange_rates():
     futures = []
     active = load_active_currencies()
 
-    # batch symbols into groups and interleave requests to the
-    # different services
-    yjobs = []
     syms = [s for s in CURRENCIES.keys() if s in active]
-    for symbols in grouper(SYMBOLS_PER_REQUEST, syms):
-        yjobs.append((load_yahoo_rates, (symbols,)))
+    # rates.update(load_openx_rates(syms))
+    jobs = [(load_openx_rates, (syms,))]
 
-    cjobs = []
-    syms = [sym for sym in CRYPTO_CURRENCIES.keys() if sym in active]
+    syms = [s for s in CRYPTO_CURRENCIES.keys() if s in active]
     for symbols in grouper(SYMBOLS_PER_REQUEST, syms):
-        cjobs.append((load_cryptocurrency_rates, (symbols,)))
+        jobs.append((load_cryptocurrency_rates, (symbols,)))
 
     # fetch data in a thread pool
-    pool = Pool(4)
-    for job in interleave(yjobs, cjobs):
+    pool = Pool(2)
+    for job in jobs:
         futures.append(pool.apply_async(*job))
 
     pool.close()
@@ -255,7 +212,7 @@ def main(wf):
              len(rates), elapsed)
 
     for currency, rate in sorted(rates.items()):
-        log.debug('1 EUR = %s %s', rate, currency)
+        log.debug('1 %s = %s %s', REFERENCE_CURRENCY, rate, currency)
 
 
 if __name__ == '__main__':
