@@ -1,0 +1,121 @@
+#!/usr/bin/env zsh
+
+set -e
+
+# Paths to this script's directory and workflow root
+here="$( cd "$( dirname "$0" )"; pwd )"
+root="$( cd "$here/../"; pwd )"
+builddir="${root}/build"
+srcdir="${root}/src"
+
+noexport=(APP_KEY)
+
+verbose=false
+
+# log <arg>... | Echo arguments to STDERR
+log() {
+  echo "$@" >&2
+}
+
+# info <arg>.. | Write args to STDERR if VERBOSE is true
+info() {
+  $verbose && log $(print -P "%F{blue}..%f") "$@"
+  return 0
+}
+
+# success <arg>.. | Write green "ok" and args to STDERR if VERBOSE is true
+success() {
+  $verbose && log $(print -P "%F{green}ok%f") "$@"
+  return 0
+}
+
+# error <arg>.. | Write red "error" and args to STDERR
+error() {
+  log $(print -P '%F{red}error%f') "$@"
+}
+
+# fail <arg>.. | Write red "error" and args to STDERR, then exit with status 1
+fail() {
+  error "$@"
+  exit 1
+}
+
+# setvar <name> <value> | Set value for variable <name>
+setvar() {
+  local n=$1
+  local v=$2
+  /usr/libexec/PlistBuddy -c "Set :variables:$n $v" "info.plist"
+}
+
+usage() {
+    cat <<EOS
+build [options]
+
+Usage:
+    build [-v]
+    build -h
+
+Options:
+    -h      Show this help message and exit
+    -v      Be verbose
+EOS
+}
+
+while getopts ":hv" opt; do
+  case $opt in
+    h)
+      usage
+      exit 0
+      ;;
+    v)
+      verbose=true
+      vopt="-v"
+      ;;
+    \?)
+      log "Invalid option: -$OPTARG"
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
+
+hash workflow-build &>/dev/null || fail "workflow-build script not found"
+
+test -d "$builddir" && {
+  info "cleaning builddir ..."
+  rm -rf $vopt "$builddir/"*
+  success "cleaned builddir"
+} || {
+  mkdir $vopt "$builddir"
+}
+
+# mkdir $vopt "$builddir"
+
+info "copying workflow to builddir ..."
+rsync --archive $vopt \
+  -f '- *.pyc' \
+  -f '- .*' \
+  -f '- *.egg-info' \
+  -f '- *.dist-info' \
+  -f '- __pycache__' \
+  "$srcdir/" "$builddir/"
+success "copied workflow source to builddir"
+
+cd "$builddir"
+
+info "cleaning info.plist ..."
+for v in $noexport; do
+  setvar "$v" ""
+  success "unset $v"
+done
+
+cd -
+
+info "building workflow ..."
+workflow-build -f $vopt "$builddir"
+success "built workflow"
+
+info "clearing builddir ..."
+rm -rf $vopt "$builddir/"*
+success "done"

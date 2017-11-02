@@ -10,7 +10,6 @@
 *.egg-info
 *.dist-info
 dist
-build
 eggs
 parts
 var
@@ -41,7 +40,6 @@ pip-log.txt
 .project
 .pydevproject
 .settings
-build
 dist
 *.esproj/
 .svn
