@@ -153,20 +153,21 @@ Releases
 
 See [CHANGELOG][changelog] for more information.
 
-|   Release   |      Date      |
-|-------------|----------------|
-| [3.1][v3.2] | 2017-11-02     |
-| [3.1][v3.1] | 2017-11-02     |
-| [3.0][v3.0] | 2017-07-16     |
-| [2.6][v2.6] | 2017-06-15     |
-| [2.5][v2.5] | 2015-12-11     |
-| [2.4][v2.4] | 2015-11-28     |
-| [2.3][v2.3] | 2015-11-26     |
-| [2.2][v2.2] | 2015-07-16     |
-| 2.1         | Never released |
-| [2.0][v2.0] | 2014-12-26     |
-| [1.2][v1.2] | 2014-08-19     |
-| [1.1][v1.1] | 2014-08-09     |
+|     Release     |      Date      |
+|-----------------|----------------|
+| [3.2.1][v3.2.1] | 2017-11-04     |
+| [3.2][v3.2]     | 2017-11-02     |
+| [3.1][v3.1]     | 2017-11-02     |
+| [3.0][v3.0]     | 2017-07-16     |
+| [2.6][v2.6]     | 2017-06-15     |
+| [2.5][v2.5]     | 2015-12-11     |
+| [2.4][v2.4]     | 2015-11-28     |
+| [2.3][v2.3]     | 2015-11-26     |
+| [2.2][v2.2]     | 2015-07-16     |
+| 2.1             | Never released |
+| [2.0][v2.0]     | 2014-12-26     |
+| [1.2][v1.2]     | 2014-08-19     |
+| [1.1][v1.1]     | 2014-08-09     |
 
 
 <a name="thanks-copyright-licensing"></a>
@@ -206,6 +207,7 @@ All other code/media are released under the [MIT Licence][mit].
 [v3.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.0
 [v3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.1
 [v3.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2
+[v3.2.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2.1
 [cryptocompare]: https://www.cryptocompare.com/
 [openx]: https://openexchangerates.org/
 [openx-free]: https://openexchangerates.org/signup/free

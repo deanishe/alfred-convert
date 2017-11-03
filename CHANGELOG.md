@@ -2,6 +2,13 @@
 Changelog
 =========
 
+### [3.2.1][v3.2.1] ###
+
+Released 2017-11-04
+
+- Clear cached data when updated from v<3.1 or when `APP_KEY` is set.
+
+
 ### [3.2][v3.2] ###
 
 Released 2017-11-02.
@@ -120,4 +127,5 @@ Released 2014-08-09.
 [v3.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.0
 [v3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.1
 [v3.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2
+[v3.2.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2.1
 [openx]: https://openexchangerates.org/

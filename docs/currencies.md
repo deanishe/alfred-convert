@@ -8,175 +8,200 @@ Supported Currencies
 Fiat currencies
 ---------------
 
-Exchange rates are downloaded from [Yahoo! Finance][yahoo-finance].
+Exchange rates are downloaded from [OpenExchangeRates.org][openx].
 
 The following fiat currencies are supported by the workflow:
 
-| Symbol   | Name                                |
-| -------- | ----------------------------------- |
-| AED      | UAE Dirham                          |
-| AFN      | Afghani                             |
-| ALL      | Lek                                 |
-| AMD      | Armenian Dram                       |
-| ANG      | Netherlands Antillean Guilder       |
-| AOA      | Kwanza                              |
-| ARS      | Argentine Peso                      |
-| AUD      | Australian Dollar                   |
-| AWG      | Aruban Florin                       |
-| AZN      | Azerbaijanian Manat                 |
-| BAM      | Convertible Mark                    |
-| BBD      | Barbados Dollar                     |
-| BDT      | Taka                                |
-| BGN      | Bulgarian Lev                       |
-| BHD      | Bahraini Dinar                      |
-| BIF      | Burundi Franc                       |
-| BMD      | Bermudian Dollar                    |
-| BND      | Brunei Dollar                       |
-| BOB      | Boliviano                           |
-| BRL      | Brazilian Real                      |
-| BSD      | Bahamian Dollar                     |
-| BTN      | Ngultrum                            |
-| BWP      | Pula                                |
-| BYR      | Belarussian Ruble                   |
-| BZD      | Belize Dollar                       |
-| CAD      | Canadian Dollar                     |
-| CDF      | Congolese Franc                     |
-| CHF      | Swiss Franc                         |
-| CLF      | Unidad de Fomento                   |
-| CLP      | Chilean Peso                        |
-| CNY      | Yuan Renminbi                       |
-| COP      | Colombian Peso                      |
-| CRC      | Costa Rican Colon                   |
-| CUC      | Peso Convertible                    |
-| CUP      | Cuban Peso                          |
-| CVE      | Cabo Verde Escudo                   |
-| CZK      | Czech Koruna                        |
-| DJF      | Djibouti Franc                      |
-| DKK      | Danish Krone                        |
-| DOP      | Dominican Peso                      |
-| DZD      | Algerian Dinar                      |
-| EGP      | Egyptian Pound                      |
-| ERN      | Nakfa                               |
-| ETB      | Ethiopian Birr                      |
-| EUR      | Euro                                |
-| FJD      | Fiji Dollar                         |
-| FKP      | Falkland Islands Pound              |
-| GBP      | Pound Sterling                      |
-| GEL      | Lari                                |
-| GHS      | Ghana Cedi                          |
-| GIP      | Gibraltar Pound                     |
-| GMD      | Dalasi                              |
-| GNF      | Guinea Franc                        |
-| GTQ      | Quetzal                             |
-| GYD      | Guyana Dollar                       |
-| HKD      | Hong Kong Dollar                    |
-| HNL      | Lempira                             |
-| HRK      | Kuna                                |
-| HTG      | Gourde                              |
-| HUF      | Forint                              |
-| IDR      | Rupiah                              |
-| ILS      | New Israeli Sheqel                  |
-| INR      | Indian Rupee                        |
-| IQD      | Iraqi Dinar                         |
-| IRR      | Iranian Rial                        |
-| ISK      | Iceland Krona                       |
-| JMD      | Jamaican Dollar                     |
-| JOD      | Jordanian Dinar                     |
-| JPY      | Yen                                 |
-| KES      | Kenyan Shilling                     |
-| KGS      | Som                                 |
-| KHR      | Riel                                |
-| KMF      | Comoro Franc                        |
-| KPW      | North Korean Won                    |
-| KRW      | Won                                 |
-| KWD      | Kuwaiti Dinar                       |
-| KYD      | Cayman Islands Dollar               |
-| KZT      | Tenge                               |
-| LAK      | Kip                                 |
-| LBP      | Lebanese Pound                      |
-| LKR      | Sri Lanka Rupee                     |
-| LRD      | Liberian Dollar                     |
-| LSL      | Loti                                |
-| LYD      | Libyan Dinar                        |
-| MAD      | Moroccan Dirham                     |
-| MDL      | Moldovan Leu                        |
-| MGA      | Malagasy Ariary                     |
-| MKD      | Denar                               |
-| MMK      | Kyat                                |
-| MNT      | Tugrik                              |
-| MOP      | Pataca                              |
-| MRO      | Ouguiya                             |
-| MUR      | Mauritius Rupee                     |
-| MVR      | Rufiyaa                             |
-| MWK      | Kwacha                              |
-| MXN      | Mexican Peso                        |
-| MXV      | Mexican Unidad de Inversion (UDI)   |
-| MYR      | Malaysian Ringgit                   |
-| MZN      | Mozambique Metical                  |
-| NAD      | Namibia Dollar                      |
-| NGN      | Naira                               |
-| NIO      | Cordoba Oro                         |
-| NOK      | Norwegian Krone                     |
-| NPR      | Nepalese Rupee                      |
-| NZD      | New Zealand Dollar                  |
-| OMR      | Rial Omani                          |
-| PAB      | Balboa                              |
-| PEN      | Nuevo Sol                           |
-| PGK      | Kina                                |
-| PHP      | Philippine Peso                     |
-| PKR      | Pakistan Rupee                      |
-| PLN      | Zloty                               |
-| PYG      | Guarani                             |
-| QAR      | Qatari Rial                         |
-| RON      | Romanian Leu                        |
-| RSD      | Serbian Dinar                       |
-| RUB      | Russian Ruble                       |
-| RWF      | Rwanda Franc                        |
-| SAR      | Saudi Riyal                         |
-| SBD      | Solomon Islands Dollar              |
-| SCR      | Seychelles Rupee                    |
-| SDG      | Sudanese Pound                      |
-| SEK      | Swedish Krona                       |
-| SGD      | Singapore Dollar                    |
-| SHP      | Saint Helena Pound                  |
-| SLL      | Leone                               |
-| SOS      | Somali Shilling                     |
-| SRD      | Surinam Dollar                      |
-| STD      | Dobra                               |
-| SVC      | El Salvador Colon                   |
-| SYP      | Syrian Pound                        |
-| SZL      | Lilangeni                           |
-| THB      | Baht                                |
-| TJS      | Somoni                              |
-| TMT      | Turkmenistan New Manat              |
-| TND      | Tunisian Dinar                      |
-| TOP      | Pa’anga                             |
-| TRY      | Turkish Lira                        |
-| TTD      | Trinidad and Tobago Dollar          |
-| TWD      | New Taiwan Dollar                   |
-| TZS      | Tanzanian Shilling                  |
-| UAH      | Hryvnia                             |
-| UGX      | Uganda Shilling                     |
-| USD      | US Dollar                           |
-| UYU      | Peso Uruguayo                       |
-| UZS      | Uzbekistan Sum                      |
-| VEF      | Bolivar                             |
-| VND      | Dong                                |
-| VUV      | Vatu                                |
-| WST      | Tala                                |
-| XAF      | CFA Franc BEAC                      |
-| XAG      | Silver                              |
-| XAU      | Gold                                |
-| XCD      | East Caribbean Dollar               |
-| XDR      | SDR (Special Drawing Right)         |
-| XOF      | CFA Franc BCEAO                     |
-| XPD      | Palladium                           |
-| XPF      | CFP Franc                           |
-| XPT      | Platinum                            |
-| YER      | Yemeni Rial                         |
-| ZAR      | Rand                                |
-| ZMW      | Zambian Kwacha                      |
-| ZWL      | Zimbabwe Dollar                     |
+| Symbol |                            Name                           |
+|--------|-----------------------------------------------------------|
+| AED    | UAE Dirham                                                |
+| AFN    | Afghani                                                   |
+| ALL    | Lek                                                       |
+| AMD    | Armenian Dram                                             |
+| ANG    | Netherlands Antillean Guilder                             |
+| AOA    | Kwanza                                                    |
+| ARS    | Argentine Peso                                            |
+| AUD    | Australian Dollar                                         |
+| AWG    | Aruban Florin                                             |
+| AZN    | Azerbaijan Manat                                          |
+| BAM    | Convertible Mark                                          |
+| BBD    | Barbados Dollar                                           |
+| BDT    | Taka                                                      |
+| BGN    | Bulgarian Lev                                             |
+| BHD    | Bahraini Dinar                                            |
+| BIF    | Burundi Franc                                             |
+| BMD    | Bermudian Dollar                                          |
+| BND    | Brunei Dollar                                             |
+| BOB    | Boliviano                                                 |
+| BOV    | Mvdol                                                     |
+| BRL    | Brazilian Real                                            |
+| BSD    | Bahamian Dollar                                           |
+| BTC    | Bitcoin                                                   |
+| BTN    | Ngultrum                                                  |
+| BWP    | Pula                                                      |
+| BYN    | Belarusian Ruble                                          |
+| BZD    | Belize Dollar                                             |
+| CAD    | Canadian Dollar                                           |
+| CDF    | Congolese Franc                                           |
+| CHE    | WIR Euro                                                  |
+| CHF    | Swiss Franc                                               |
+| CHW    | WIR Franc                                                 |
+| CLF    | Unidad de Fomento                                         |
+| CLP    | Chilean Peso                                              |
+| CNH    | Chinese yuan (Hong Kong)                                  |
+| CNT    | Chinese yuan (Taiwan)                                     |
+| CNY    | Yuan Renminbi                                             |
+| COP    | Colombian Peso                                            |
+| COU    | Unidad de Valor Real                                      |
+| CRC    | Costa Rican Colon                                         |
+| CUC    | Peso Convertible                                          |
+| CUP    | Cuban Peso                                                |
+| CVE    | Cabo Verde Escudo                                         |
+| CZK    | Czech Koruna                                              |
+| DJF    | Djibouti Franc                                            |
+| DKK    | Danish Krone                                              |
+| DOP    | Dominican Peso                                            |
+| DZD    | Algerian Dinar                                            |
+| EGP    | Egyptian Pound                                            |
+| ERN    | Nakfa                                                     |
+| ETB    | Ethiopian Birr                                            |
+| EUR    | Euro                                                      |
+| FJD    | Fiji Dollar                                               |
+| FKP    | Falkland Islands Pound                                    |
+| GBP    | Pound Sterling                                            |
+| GEL    | Lari                                                      |
+| GGP    | Guernsey pound                                            |
+| GHS    | Ghana Cedi                                                |
+| GIP    | Gibraltar Pound                                           |
+| GMD    | Dalasi                                                    |
+| GNF    | Guinean Franc                                             |
+| GTQ    | Quetzal                                                   |
+| GYD    | Guyana Dollar                                             |
+| HKD    | Hong Kong Dollar                                          |
+| HNL    | Lempira                                                   |
+| HRK    | Kuna                                                      |
+| HTG    | Gourde                                                    |
+| HUF    | Forint                                                    |
+| IDR    | Rupiah                                                    |
+| ILS    | New Israeli Sheqel                                        |
+| IMP    | Manx pound                                                |
+| INR    | Indian Rupee                                              |
+| IQD    | Iraqi Dinar                                               |
+| IRR    | Iranian Rial                                              |
+| ISK    | Iceland Krona                                             |
+| JEP    | Jersey pound                                              |
+| JMD    | Jamaican Dollar                                           |
+| JOD    | Jordanian Dinar                                           |
+| JPY    | Yen                                                       |
+| KES    | Kenyan Shilling                                           |
+| KGS    | Som                                                       |
+| KHR    | Riel                                                      |
+| KID    | Kiribati dollar                                           |
+| KMF    | Comorian Franc                                            |
+| KPW    | North Korean Won                                          |
+| KRW    | Won                                                       |
+| KWD    | Kuwaiti Dinar                                             |
+| KYD    | Cayman Islands Dollar                                     |
+| KZT    | Tenge                                                     |
+| LAK    | Lao Kip                                                   |
+| LBP    | Lebanese Pound                                            |
+| LKR    | Sri Lanka Rupee                                           |
+| LRD    | Liberian Dollar                                           |
+| LSL    | Loti                                                      |
+| LYD    | Libyan Dinar                                              |
+| MAD    | Moroccan Dirham                                           |
+| MDL    | Moldovan Leu                                              |
+| MGA    | Malagasy Ariary                                           |
+| MKD    | Denar                                                     |
+| MMK    | Kyat                                                      |
+| MNT    | Tugrik                                                    |
+| MOP    | Pataca                                                    |
+| MRO    | Ouguiya                                                   |
+| MUR    | Mauritius Rupee                                           |
+| MVR    | Rufiyaa                                                   |
+| MWK    | Malawi Kwacha                                             |
+| MXN    | Mexican Peso                                              |
+| MXV    | Mexican Unidad de Inversion (UDI)                         |
+| MYR    | Malaysian Ringgit                                         |
+| MZN    | Mozambique Metical                                        |
+| NAD    | Namibia Dollar                                            |
+| NGN    | Naira                                                     |
+| NIO    | Cordoba Oro                                               |
+| NIS    | New Israeli Shekel                                        |
+| NOK    | Norwegian Krone                                           |
+| NPR    | Nepalese Rupee                                            |
+| NTD    | New Taiwan Dollar                                         |
+| NZD    | New Zealand Dollar                                        |
+| OMR    | Rial Omani                                                |
+| PAB    | Balboa                                                    |
+| PEN    | Sol                                                       |
+| PGK    | Kina                                                      |
+| PHP    | Philippine Piso                                           |
+| PKR    | Pakistan Rupee                                            |
+| PLN    | Zloty                                                     |
+| PYG    | Guarani                                                   |
+| QAR    | Qatari Rial                                               |
+| RON    | Romanian Leu                                              |
+| RSD    | Serbian Dinar                                             |
+| RUB    | Russian Ruble                                             |
+| RWF    | Rwanda Franc                                              |
+| SAR    | Saudi Riyal                                               |
+| SBD    | Solomon Islands Dollar                                    |
+| SCR    | Seychelles Rupee                                          |
+| SDG    | Sudanese Pound                                            |
+| SEK    | Swedish Krona                                             |
+| SGD    | Singapore Dollar                                          |
+| SHP    | Saint Helena Pound                                        |
+| SLL    | Leone                                                     |
+| SLS    | Somaliland shilling                                       |
+| SOS    | Somali Shilling                                           |
+| SRD    | Surinam Dollar                                            |
+| SSP    | South Sudanese Pound                                      |
+| STD    | Dobra                                                     |
+| SVC    | El Salvador Colon                                         |
+| SYP    | Syrian Pound                                              |
+| SZL    | Lilangeni                                                 |
+| THB    | Baht                                                      |
+| TJS    | Somoni                                                    |
+| TMT    | Turkmenistan New Manat                                    |
+| TND    | Tunisian Dinar                                            |
+| TOP    | Pa’anga                                                   |
+| TRY    | Turkish Lira                                              |
+| TTD    | Trinidad and Tobago Dollar                                |
+| TVD    | Tuvalu dollar                                             |
+| TWD    | New Taiwan Dollar                                         |
+| TZS    | Tanzanian Shilling                                        |
+| UAH    | Hryvnia                                                   |
+| UGX    | Uganda Shilling                                           |
+| USD    | US Dollar                                                 |
+| USN    | US Dollar (Next day)                                      |
+| UYI    | Uruguay Peso en Unidades Indexadas (URUIURUI)             |
+| UYU    | Peso Uruguayo                                             |
+| UZS    | Uzbekistan Sum                                            |
+| VEF    | Bolívar                                                   |
+| VND    | Dong                                                      |
+| VUV    | Vatu                                                      |
+| WST    | Tala                                                      |
+| XAF    | CFA Franc BEAC                                            |
+| XAG    | Silver                                                    |
+| XAU    | Gold                                                      |
+| XBA    | Bond Markets Unit European Composite Unit (EURCO)         |
+| XBB    | Bond Markets Unit European Monetary Unit (E.M.U.-6)       |
+| XBC    | Bond Markets Unit European Unit of Account 9 (E.U.A.-9)   |
+| XBD    | Bond Markets Unit European Unit of Account 17 (E.U.A.-17) |
+| XCD    | East Caribbean Dollar                                     |
+| XDR    | SDR (Special Drawing Right)                               |
+| XOF    | CFA Franc BCEAO                                           |
+| XPD    | Palladium                                                 |
+| XPF    | CFP Franc                                                 |
+| XPT    | Platinum                                                  |
+| XSU    | Sucre                                                     |
+| XUA    | ADB Unit of Account                                       |
+| YER    | Yemeni Rial                                               |
+| ZAR    | Rand                                                      |
+| ZMW    | Zambian Kwacha                                            |
+| ZWL    | Zimbabwe Dollar                                           |
+
 
 
 Cryptocurrencies
@@ -188,38 +213,50 @@ The following cryptocurrencies are supported by the workflow:
 
 |  Symbol  |                 Name                 |
 |----------|--------------------------------------|
+| ABC      | AB-Chain                             |
 | ABY      | ArtByte                              |
 | AC       | Asia Coin                            |
+| ACC      | AdCoin                               |
 | ACES     | AcesCoin                             |
 | ACID     | AcidCoin                             |
 | ACN      | AvonCoin                             |
 | ACOIN    | ACoin                                |
 | ACP      | Anarchists Prime                     |
+| ADA      | Cardano                              |
 | ADC      | AudioCoin                            |
 | ADCN     | Asiadigicoin                         |
+| ADL      | Adelphoi                             |
 | ADN      | Aiden                                |
+| ADST     | Adshares                             |
+| ADT      | AdToken                              |
 | ADX      | AdEx                                 |
 | ADZ      | Adzcoin                              |
+| AE       | Aeternity                            |
 | AEC      | AcesCoin                             |
 | AEON     | AeonCoin                             |
 | AERO     | Aero Coin                            |
+| AGRS     | Agoras Token                         |
 | AGS      | Aegis                                |
+| AHT      | Ahoolee                              |
 | AIB      | AdvancedInternetBlock                |
-| AIR      | Aircoin                              |
+| AIR      | AirToken                             |
+| AIR*     | Aircoin                              |
 | ALC      | Arab League Coin                     |
 | ALEX     | Alexandrite                          |
 | ALF      | AlphaCoin                            |
+| ALIS     | ALISmedia                            |
 | ALN      | AlienCoin                            |
 | AM       | AeroMe                               |
+| AMB      | Ambrosus                             |
 | AMBER    | AmberCoin                            |
 | AMC      | AmericanCoin                         |
 | AMIS     | AMIS                                 |
 | AMP      | Synereo                              |
 | AMS      | Amsterdam Coin                       |
+| AMY      | Amygws                               |
 | ANAL     | AnalCoin                             |
 | ANC      | Anoncoin                             |
 | AND      | AndromedaCoin                        |
-| ANS      | Antshares                            |
 | ANT      | Aragon                               |
 | ANTI     | Anti Bitcoin                         |
 | APC      | AlpaCoin                             |
@@ -227,9 +264,11 @@ The following cryptocurrencies are supported by the workflow:
 | APT      | Aptcoin                              |
 | APX      | Apx                                  |
 | ARB      | Arbit Coin                           |
+| ARC*     | ArcticCoin                           |
 | ARCH     | ArchCoin                             |
 | ARCO     | AquariusCoin                         |
 | ARDR     | Ardor                                |
+| ARENA    | Arena                                |
 | ARG      | Argentum                             |
 | ARGUS    | ArgusCoin                            |
 | ARI      | AriCoin                              |
@@ -238,12 +277,18 @@ The following cryptocurrencies are supported by the workflow:
 | ARPA     | ArpaCoin                             |
 | ASAFE    | Allsafe                              |
 | ASN      | Ascension Coin                       |
-| AST      | Astral                               |
+| AST      | AirSwap                              |
+| AST*     | Astral                               |
+| ATB      | ATB coin                             |
+| ATCC     | ATC Coin                             |
+| ATL      | ATLANT                               |
 | ATM      | Autumncoin                           |
 | ATMS     | Atmos                                |
 | ATOM     | Atomic Coin                          |
+| ATS      | Authorship                           |
 | ATX      | ArtexCoin                            |
 | AUR      | Aurora Coin                          |
+| AURS     | Aureus                               |
 | AV       | Avatar Coin                          |
 | AVT      | AventCoin                            |
 | AXIOM    | Axiom Coin                           |
@@ -252,6 +297,7 @@ The following cryptocurrencies are supported by the workflow:
 | B@       | BankCoin                             |
 | BAC      | BitalphaCoin                         |
 | BAN      | Babes and Nerds                      |
+| BAR      | TBIS token                           |
 | BASH     | LuckChain                            |
 | BAT      | Basic Attention Token                |
 | BAY      | BitBay                               |
@@ -260,6 +306,7 @@ The following cryptocurrencies are supported by the workflow:
 | BCAP     | Blockchain Capital                   |
 | BCCOIN   | BitConnect Coin                      |
 | BCF      | BitcoinFast                          |
+| BCH      | Bitcoin Cash / BCC                   |
 | BCN      | ByteCoin                             |
 | BCR      | BitCredit                            |
 | BCX      | BattleCoin                           |
@@ -270,6 +317,7 @@ The following cryptocurrencies are supported by the workflow:
 | BERN     | BERNcash                             |
 | BEST     | BestChain                            |
 | BET      | BetaCoin                             |
+| BET*     | DAO.casino                           |
 | BFX      | BitFinex Tokens                      |
 | BHC      | BighanCoin                           |
 | BIC      | Bikercoins                           |
@@ -277,6 +325,7 @@ The following cryptocurrencies are supported by the workflow:
 | BIOB     | BioBar                               |
 | BIOS     | BiosCrypto                           |
 | BIP      | BipCoin                              |
+| BIS      | Bismuth                              |
 | BIT16    | 16BitCoin                            |
 | BITB     | BitBean                              |
 | BITCNY   | bitCNY                               |
@@ -284,6 +333,7 @@ The following cryptocurrencies are supported by the workflow:
 | BITS     | BitstarCoin                          |
 | BITUSD   | bitUSD                               |
 | BITZ     | Bitz Coin                            |
+| BLAS     | BlakeStar                            |
 | BLAZR    | BlazerCoin                           |
 | BLC      | BlakeCoin                            |
 | BLITZ    | BlitzCoin                            |
@@ -291,10 +341,16 @@ The following cryptocurrencies are supported by the workflow:
 | BLOCK    | BlockNet                             |
 | BLRY     | BillaryCoin                          |
 | BLU      | BlueCoin                             |
+| BLUE     | Ethereum Blue                        |
+| BLX      | Blockchain Index                     |
 | BM       | BitMoon                              |
-| BNB      | Boats and Bitches                    |
+| BMC      | Blackmoon Crypto                     |
+| BNB      | Binance Coin                         |
+| BNB*     | Boats and Bitches                    |
+| BNC      | Benjacoin                            |
 | BNT      | Bancor Network Token                 |
 | BNX      | BnrtxCoin                            |
+| BOAT     | Doubloon                             |
 | BOB      | Bob Coin                             |
 | BOLI     | BolivarCoin                          |
 | BOMB     | BombCoin                             |
@@ -304,12 +360,17 @@ The following cryptocurrencies are supported by the workflow:
 | BOSON    | BosonCoin                            |
 | BOSS     | BitBoss                              |
 | BOST     | BoostCoin                            |
+| BQ       | Bitqy                                |
 | BQC      | BQCoin                               |
 | BQX      | Bitquence                            |
 | BRAIN    | BrainCoin                            |
+| BRAT     | Brat                                 |
 | BRDD     | BeardDollars                         |
+| BRIT     | BritCoin                             |
 | BRK      | BreakoutCoin                         |
+| BRO      | Bitradio                             |
 | BRONZ    | BitBronze                            |
+| BRX      | Breakout Stake                       |
 | BS       | BlackShadowCoin                      |
 | BSC      | BowsCoin                             |
 | BSD      | BitSend                              |
@@ -326,14 +387,18 @@ The following cryptocurrencies are supported by the workflow:
 | BTCS     | Bitcoin Scrypt                       |
 | BTD      | Bitcloud                             |
 | BTE      | ByteCoin                             |
-| BTG      | BitGem                               |
+| BTG      | Bitcoin Gold                         |
+| BTG*     | BitGem                               |
 | BTLC     | BitLuckCoin                          |
 | BTM      | BitMark                              |
+| BTM*     | Bytom                                |
 | BTMI     | BitMiles                             |
+| BTPL     | Bitcoin Planet                       |
 | BTQ      | BitQuark                             |
 | BTS      | Bitshares                            |
 | BTTF     | Coin to the Future                   |
-| BTX      | BitcoinTX                            |
+| BTX      | Bitcore                              |
+| BTX*     | BitcoinTX                            |
 | BTZ      | BitzCoin                             |
 | BUCKS    | SwagBucks                            |
 | BUK      | CryptoBuk                            |
@@ -346,6 +411,7 @@ The following cryptocurrencies are supported by the workflow:
 | C2       | Coin.2                               |
 | CAB      | CabbageUnit                          |
 | CACH     | Cachecoin                            |
+| CAG      | Change                               |
 | CAIX     | CAIx                                 |
 | CALC     | CaliphCoin                           |
 | CAM      | Camcoin                              |
@@ -353,14 +419,18 @@ The following cryptocurrencies are supported by the workflow:
 | CAP      | BottleCaps                           |
 | CARBON   | Carboncoin                           |
 | CASH     | CashCoin                             |
-| CAT      | Catcoin                              |
+| CAT      | BlockCAT                             |
+| CAT*     | BitClave                             |
 | CBD      | CBD Crystals                         |
 | CBX      | CryptoBullion                        |
 | CC       | CyberCoin                            |
+| CCC      | CCCoin                               |
 | CCN      | CannaCoin                            |
 | CCRB     | CryptoCarbon                         |
 | CCX      | CoolDarkCoin                         |
 | CDN      | Canada eCoin                         |
+| CDT      | CoinDash                             |
+| CDX      | Cryptodex                            |
 | CELL     | SolarFarm                            |
 | CESC     | Crypto Escudo                        |
 | CETI     | CETUS Coin                           |
@@ -395,19 +465,30 @@ The following cryptocurrencies are supported by the workflow:
 | CLUD     | CludCoin                             |
 | CLV      | CleverCoin                           |
 | CMC      | CosmosCoin                           |
+| CMP      | Compcoin                             |
+| CMPCO    | CampusCoin                           |
 | CMT      | CometCoin                            |
 | CNC      | ChinaCoin                            |
+| CND      | Cindicator                           |
 | CNL      | ConcealCoin                          |
 | CNMT     | Coinomat                             |
 | CNO      | Coino                                |
 | CNT      | Centurion                            |
+| CNX      | Cryptonex                            |
+| COB      | Cobinhood                            |
 | COC      | Community Coin                       |
+| COE      | CoEval                               |
 | COIN     | Coin                                 |
+| COLX     | ColossusCoinXT                       |
 | COMM     | Community Coin                       |
 | CON      | Paycon                               |
 | COOL     | CoolCoin                             |
+| COR      | Corion                               |
 | CORAL    | CoralPay                             |
-| COV      | CovenCoin                            |
+| CORE     | Core Group Asset                     |
+| COSS     | COSS                                 |
+| COV      | Covesting                            |
+| COV*     | CovenCoin                            |
 | COVAL    | Circuits of Value                    |
 | COX      | CobraCoin                            |
 | CPC      | CapriCoin                            |
@@ -422,6 +503,7 @@ The following cryptocurrencies are supported by the workflow:
 | CRE      | Credits                              |
 | CREA     | CreativeChain                        |
 | CREVA    | Creva Coin                           |
+| CRM      | Cream                                |
 | CRNK     | CrankCoin                            |
 | CRPS     | CryptoPennies                        |
 | CRW      | Crown Coin                           |
@@ -431,12 +513,15 @@ The following cryptocurrencies are supported by the workflow:
 | CSC      | CasinoCoin                           |
 | CSH      | CashOut                              |
 | CSMIC    | Cosmic                               |
+| CSNO     | BitDice                              |
 | CTC      | CarterCoin                           |
 | CTIC     | Coinmatic                            |
 | CTO      | Crypto                               |
+| CTR      | Centra                               |
+| CTX      | CarTaxi                              |
 | CUBE     | DigiCube                             |
 | CURE     | Curecoin                             |
-| CV2      | ColossusCoin2.0                      |
+| CVC      | Civic                                |
 | CWXT     | CryptoWorldXToken                    |
 | CXC      | CheckCoin                            |
 | CXT      | Coinonat                             |
@@ -444,10 +529,13 @@ The following cryptocurrencies are supported by the workflow:
 | CYG      | Cygnus                               |
 | CYP      | CypherPunkCoin                       |
 | CYT      | Cryptokenz                           |
+| CZC      | Crazy Coin                           |
 | DANK     | DarkKush                             |
 | DAR      | Darcrus                              |
 | DARK     | Dark                                 |
+| DAS      | DAS                                  |
 | DASH     | DigitalCash                          |
+| DAT      | Datum                                |
 | DB       | DarkBit                              |
 | DBG      | Digital Bullion Gold                 |
 | DBIC     | DubaiCoin                            |
@@ -455,17 +543,20 @@ The following cryptocurrencies are supported by the workflow:
 | DBTC     | DebitCoin                            |
 | DCC      | DarkCrave                            |
 | DCK      | DickCoin                             |
+| DCN      | Dentacoin                            |
 | DCR      | Decred                               |
 | DCRE     | DeltaCredits                         |
 | DCT      | Decent                               |
 | DCY      | Dinastycoin                          |
 | DDF      | Digital Developers Fund              |
 | DEA      | Degas Coin                           |
+| DEEP     | Deep Gold                            |
 | DEM      | eMark                                |
 | DENT     | Dent                                 |
 | DES      | Destiny                              |
 | DETH     | DarkEther                            |
 | DEUR     | DigiEuro                             |
+| DFT      | Draftcoin                            |
 | DGB      | DigiByte                             |
 | DGC      | DigiCoin                             |
 | DGD      | Digix DAO                            |
@@ -480,8 +571,11 @@ The following cryptocurrencies are supported by the workflow:
 | DKC      | DarkKnightCoin                       |
 | DLC      | DollarCoin                           |
 | DLISK    | Dlisk                                |
+| DLT      | Agrello Delta                        |
 | DMD      | Diamond                              |
 | DNET     | Darknet                              |
+| DNR      | Denarius                             |
+| DNT      | district0x                           |
 | DOGE     | Dogecoin                             |
 | DOGED    | DogeCoinDark                         |
 | DOGETH   | EtherDoge                            |
@@ -496,12 +590,14 @@ The following cryptocurrencies are supported by the workflow:
 | DRKT     | DarkTron                             |
 | DRM8     | Dream8Coin                           |
 | DROP     | FaucetCoin                           |
+| DRT      | DomRaider                            |
 | DRZ      | Droidz                               |
 | DSB      | DarkShibe                            |
 | DSH      | Dashcoin                             |
 | DT       | DarkToken                            |
 | DTB      | Databits                             |
 | DTC      | DayTrader Coin                       |
+| DTT      | DreamTeam Token                      |
 | DUB      | DubCoin                              |
 | DUCK     | DuckDuckCoin                         |
 | DUO      | ParallelCoin                         |
@@ -512,16 +608,22 @@ The following cryptocurrencies are supported by the workflow:
 | EAC      | EarthCoin                            |
 | EAGS     | EagsCoin                             |
 | EB3      | EB3coin                              |
+| EBET     | EthBet                               |
 | EBS      | EbolaShare                           |
+| EBTC     | eBTC                                 |
 | EC       | Eclipse                              |
+| ECASH    | Ethereum Cash                        |
 | ECO      | ECOcoin                              |
 | ECOB     | EcoBit                               |
 | EDC      | EducoinV                             |
+| EDDIE    | Eddie coin                           |
 | EDG      | Edgeless                             |
 | EDGE     | EdgeCoin                             |
+| EDO      | Eidoo                                |
 | EDR      | E-Dinar Coin                         |
 | EDRC     | EDRCoin                              |
 | EFL      | E-Gulden                             |
+| EFYT     | Ergo                                 |
 | EGC      | EverGreenCoin                        |
 | EGG      | EggCoin                              |
 | EGO      | EGOcoin                              |
@@ -529,19 +631,27 @@ The following cryptocurrencies are supported by the workflow:
 | EKO      | EkoCoin                              |
 | ELC      | Elacoin                              |
 | ELE      | Elementrem                           |
+| ELITE    | EthereumLite                         |
+| ELIX     | Elixir                               |
+| ELM      | Elements                             |
 | ELS      | Elysium                              |
+| ELTC2    | eLTC                                 |
 | EMB      | EmberCoin                            |
 | EMC      | Emercoin                             |
 | EMC2     | Einsteinium                          |
 | EMD      | Emerald                              |
 | EMPC     | EmporiumCoin                         |
+| EMT      | EasyMine                             |
 | ENE      | EneCoin                              |
+| ENG      | Enigma                               |
+| ENJ      | Enjin Coin                           |
 | ENRG     | EnergyCoin                           |
 | ENT      | Eternity                             |
 | ENTER    | EnterCoin (ENTER)                    |
 | EOC      | EveryonesCoin                        |
 | EOS      | EOS                                  |
 | EPY      | Empyrean                             |
+| EQ       | EQUI                                 |
 | EQM      | Equilibrium Coin                     |
 | EQT      | EquiTrader                           |
 | EQUAL    | EqualCoin                            |
@@ -549,12 +659,20 @@ The following cryptocurrencies are supported by the workflow:
 | ERR      | ErrorCoin                            |
 | ERY      | Eryllium                             |
 | ESP      | Espers                               |
+| ETBS     | EthBits                              |
 | ETC      | Ethereum Classic                     |
+| ETG      | Ethereum Gold                        |
 | ETH      | Ethereum                             |
+| ETHD     | Ethereum Dark                        |
 | ETHS     | EthereumScrypt                       |
+| ETN      | Electroneum                          |
+| ETP      | Metaverse                            |
+| ETT      | EncryptoTel                          |
 | EUC      | Eurocoin                             |
+| EVC      | Eventchain                           |
 | EVENT    | Event Token                          |
 | EVIL     | EvilCoin                             |
+| EVX      | Everex                               |
 | EXB      | ExaByte (EXB)                        |
 | EXCL     | Exclusive Coin                       |
 | EXE      | ExeCoin                              |
@@ -565,10 +683,12 @@ The following cryptocurrencies are supported by the workflow:
 | FAIR     | FairCoin                             |
 | FAME     | FameCoin                             |
 | FAZZ     | FazzCoin                             |
+| FC       | Facecoin                             |
 | FC2      | Fuel2Coin                            |
 | FCN      | FantomCoin                           |
 | FCS      | CryptoFocus                          |
 | FCT      | Factoids                             |
+| FDC      | FoodCoin                             |
 | FFC      | FireflyCoin                          |
 | FGZ      | Free Game Zone                       |
 | FIBRE    | FIBRE                                |
@@ -578,7 +698,9 @@ The following cryptocurrencies are supported by the workflow:
 | FIST     | FistBump                             |
 | FIT      | Fitcoin                              |
 | FJC      | FujiCoin                             |
+| FLASH    | FLASH coin                           |
 | FLDC     | Folding Coin                         |
+| FLIK     | FLiK                                 |
 | FLO      | FlorinCoin                           |
 | FLT      | FlutterCoin                          |
 | FLVR     | FlavorCoin                           |
@@ -587,6 +709,7 @@ The following cryptocurrencies are supported by the workflow:
 | FONZ     | FonzieCoin                           |
 | FOREX    | ForexCoin                            |
 | FRAC     | FractalCoin                          |
+| FRAZ     | FrazCoin                             |
 | FRC      | FireRoosterCoin                      |
 | FRE      | FreeCoin                             |
 | FRK      | Franko                               |
@@ -598,6 +721,8 @@ The following cryptocurrencies are supported by the workflow:
 | FST      | FastCoin                             |
 | FTC      | FeatherCoin                          |
 | FTP      | FuturePoints                         |
+| FUCK     | Fuck Token                           |
+| FUEL     | Etherparty                           |
 | FUN      | FunFair                              |
 | FUNC     | FunCoin                              |
 | FUTC     | FutCoin                              |
@@ -609,6 +734,7 @@ The following cryptocurrencies are supported by the workflow:
 | GAM      | Gambit coin                          |
 | GAME     | Gamecredits                          |
 | GAP      | Gapcoin                              |
+| GAS      | Gas                                  |
 | GAY      | GayCoin                              |
 | GB       | GoldBlocks                           |
 | GBIT     | GravityBit                           |
@@ -616,16 +742,19 @@ The following cryptocurrencies are supported by the workflow:
 | GBT      | GameBetCoin                          |
 | GBYTE    | Byteball                             |
 | GCC      | GuccioneCoin                         |
+| GCN      | GCoin                                |
 | GCR      | Global Currency Reserve              |
 | GDC      | GrandCoin                            |
 | GEMZ     | Gemz Social                          |
 | GEN      | Genstake                             |
 | GEO      | GeoCoin                              |
+| GGS      | Gilgam                               |
 | GHC      | GhostCoin                            |
 | GHOUL    | Ghoul Coin                           |
 | GHS      | Giga Hash                            |
 | GIFT     | GiftNet                              |
 | GIG      | GigCoin                              |
+| GIM      | Gimli                                |
 | GIVE     | GiveCoin                             |
 | GIZ      | GIZMOcoin                            |
 | GLC      | GlobalCoin                           |
@@ -641,6 +770,7 @@ The following cryptocurrencies are supported by the workflow:
 | GNT      | Golem Network Token                  |
 | GOAT     | Goat                                 |
 | GOLOS    | Golos                                |
+| GOOD     | GoodCoin                             |
 | GOON     | Goonies                              |
 | GOT      | Giotto Coin                          |
 | GOTX     | GothicCoin                           |
@@ -652,36 +782,47 @@ The following cryptocurrencies are supported by the workflow:
 | GRC      | GridCoin                             |
 | GRE      | GreenCoin                            |
 | GREXIT   | GrexitCoin                           |
+| GRF      | Graft Network                        |
 | GRID     | GridPay                              |
 | GRM      | GridMaster                           |
 | GROW     | GrownCoin                            |
 | GRS      | Groestlcoin                          |
 | GRT      | Grantcoin                            |
 | GRW      | GrowthCoin                           |
+| GRWI     | Growers International                |
 | GSM      | GSM Coin                             |
 | GSX      | GlowShares                           |
 | GSY      | GenesysCoin                          |
 | GUE      | GuerillaCoin                         |
+| GUNS     | GeoFunders                           |
 | GUP      | Guppy                                |
+| GXC      | Gx Coin                              |
+| GXC*     | GenXCoin                             |
+| HAC      | Hackspace Capital                    |
 | HAL      | Halcyon                              |
 | HALLO    | Halloween Coin                       |
 | HAMS     | HamsterCoin                          |
 | HAZE     | HazeCoin                             |
 | HBN      | HoboNickels                          |
+| HBT      | Hubiit                               |
 | HCC      | HappyCreatorCoin                     |
+| HDG      | Hedge Token                          |
 | HEAT     | Heat Ledger                          |
 | HEDG     | Hedgecoin                            |
 | HEEL     | HeelCoin                             |
+| HGT      | Hello Gold                           |
 | HILL     | President Clinton                    |
-| HIRE     | BitHIRE                              |
+| HIRE     | HireMatch                            |
 | HKG      | Hacker Gold                          |
 | HMP      | HempCoin                             |
 | HMQ      | Humaniq                              |
 | HNC      | Hellenic Coin                        |
 | HODL     | HOdlcoin                             |
+| HONEY    | Honey                                |
 | HPC      | HappyCoin                            |
 | HRB      | Harbour DAO                          |
 | HSP      | Horse Power                          |
+| HSR      | Hshare                               |
 | HTC      | Hitcoin                              |
 | HTML5    | HTML Coin                            |
 | HUC      | HunterCoin                           |
@@ -689,6 +830,7 @@ The following cryptocurrencies are supported by the workflow:
 | HUSH     | Hush                                 |
 | HVC      | HeavyCoin                            |
 | HVCO     | High Voltage Coin                    |
+| HVN      | Hive                                 |
 | HXX      | HexxCoin                             |
 | HYP      | Hyperstake                           |
 | HYPER    | HyperCoin                            |
@@ -698,35 +840,47 @@ The following cryptocurrencies are supported by the workflow:
 | IBANK    | iBankCoin                            |
 | ICASH    | ICASH                                |
 | ICB      | IceBergCoin                          |
+| ICE      | iDice                                |
 | ICN      | Iconomi                              |
 | ICOB     | Icobid                               |
 | ICON     | Iconic                               |
+| ICOS     | ICOBox                               |
+| ICX      | ICON Project                         |
 | IEC      | IvugeoEvolutionCoin                  |
 | IFC      | Infinite Coin                        |
 | IFLT     | InflationCoin                        |
+| IFT      | InvestFeed                           |
+| IGNIS    | Ignis                                |
 | ILC      | ILCoin                               |
+| IML      | IMMLA                                |
 | IMPCH    | Impeach                              |
 | IMPS     | Impulse Coin                         |
 | IMS      | Independent Money System             |
+| IMX      | Impact                               |
 | IN       | InCoin                               |
 | INC      | Incrementum                          |
 | INCNT    | Incent                               |
 | INCP     | InceptionCoin                        |
+| IND      | Indorse                              |
 | INFX     | Influxcoin                           |
 | INPAY    | InPay                                |
 | INSANE   | InsaneCoin                           |
 | INSN     | Insane Coin                          |
 | INV      | Invictus                             |
+| INXT     | Internxt                             |
 | IOC      | IOCoin                               |
 | ION      | Ionomy                               |
 | IOP      | Internet of People                   |
 | IOT      | IOTA                                 |
 | IOU      | IOU1                                 |
+| IPC      | ImperialCoin                         |
 | ISL      | IslaCoin                             |
+| ITT      | Intelligent Trading Technologies     |
 | IVZ      | InvisibleCoin                        |
 | IW       | iWallet                              |
+| IWT      | IwToken                              |
 | IXC      | IXcoin                               |
-| IXT      | InsureX                              |
+| IXT      | iXledger                             |
 | J        | JoinCoin                             |
 | JANE     | JaneCoin                             |
 | JBS      | JumBucks Coin                        |
@@ -747,23 +901,32 @@ The following cryptocurrencies are supported by the workflow:
 | KED      | Klingon Empire Darsek                |
 | KEY      | KeyCoin                              |
 | KGC      | KrugerCoin                           |
+| KICK     | KickCoin                             |
+| KIN      | Kin                                  |
+| KING     | King93                               |
 | KLC      | KiloCoin                             |
 | KMD      | Komodo                               |
-| KNC      | Khancoin                             |
+| KNC      | Kyber Network                        |
+| KNC*     | Khancoin                             |
 | KOBO     | KoboCoin                             |
-| KORE     | KoreCoin                             |
+| KOLION   | Kolion                               |
+| KORE     | Kore                                 |
 | KR       | Krypton                              |
 | KRAK     | Kraken                               |
 | KRB      | Karbowanec                           |
 | KRC      | KRCoin                               |
+| KRONE    | Kronecoin                            |
 | KTK      | KryptCoin                            |
 | KUBO     | KubosCoin                            |
 | KURT     | Kurrent                              |
 | KUSH     | KushCoin                             |
+| LA       | LAToken                              |
 | LAB      | CoinWorksCoin                        |
 | LANA     | LanaCoin                             |
+| LAT      | Latium                               |
 | LAZ      | Lazarus                              |
 | LBC      | LBRY Credits                         |
+| LBTC     | LiteBitcoin                          |
 | LC       | Lutetium Coin                        |
 | LDOGE    | LiteDoge                             |
 | LEA      | LeaCoin                              |
@@ -775,15 +938,21 @@ The following cryptocurrencies are supported by the workflow:
 | LGBTQ    | LGBTQoin                             |
 | LGD      | Legends Cryptocurrency               |
 | LIMX     | LimeCoinX                            |
+| LINDA    | Linda                                |
+| LINK     | ChainLink                            |
+| LINX     | Linx                                 |
 | LIR      | Let it Ride                          |
 | LIV      | LiviaCoin                            |
 | LK7      | Lucky7Coin                           |
+| LKK      | Lykke                                |
 | LKY      | LuckyCoin                            |
 | LMC      | LomoCoin                             |
+| LNK      | Ethereum.Link                        |
 | LOC      | Loco                                 |
 | LOG      | Wood Coin                            |
 | LOOK     | LookCoin                             |
 | LQD      | Liquid                               |
+| LRC      | Loopring                             |
 | LSD      | LightSpeedCoin                       |
 | LSK      | Lisk                                 |
 | LTB      | Litebar                              |
@@ -797,7 +966,7 @@ The following cryptocurrencies are supported by the workflow:
 | LTS      | Litestar Coin                        |
 | LUCKY    | LuckyBlocks (LUCKY)                  |
 | LUN      | Lunyr                                |
-| LUX      | BitLux                               |
+| LUX      | LUXCoin                              |
 | LVG      | Leverage Coin                        |
 | LXC      | LibrexCoin                           |
 | LYB      | LyraBar                              |
@@ -806,20 +975,26 @@ The following cryptocurrencies are supported by the workflow:
 | MAC      | MachineCoin                          |
 | MAD      | SatoshiMadness                       |
 | MAID     | MaidSafe Coin                        |
+| MANA     | Decentraland                         |
 | MAPC     | MapCoin                              |
 | MAR      | MarijuanaCoin                        |
 | MARS     | MarsCoin                             |
 | MARV     | Marvelous                            |
 | MARX     | MarxCoin                             |
 | MARYJ    | MaryJane Coin                        |
-| MAT      | Manet Coin                           |
+| MAT*     | Manet Coin                           |
 | MAX      | MaxCoin                              |
+| MAY      | Theresa May Coin                     |
+| MBI      | Monster Byte Inc                     |
 | MBIT     | Mbitbooks                            |
+| MBRS     | Embers                               |
 | MCAP     | MCAP                                 |
 | MCAR     | MasterCar                            |
+| MCI      | Musiconomi                           |
 | MCN      | MonetaVerde                          |
 | MCO      | Monaco                               |
 | MCRN     | MacronCoin                           |
+| MDA      | Moeda                                |
 | MDC      | MedicCoin                            |
 | MDT      | Midnight                             |
 | MEC      | MegaCoin                             |
@@ -827,6 +1002,7 @@ The following cryptocurrencies are supported by the workflow:
 | MEGA     | MegaFlash                            |
 | MEME     | Pepe                                 |
 | MER      | Mercury                              |
+| MET      | Memessenger                          |
 | METAL    | MetalCoin                            |
 | MG       | Mind Gene                            |
 | MGO      | MobileGo                             |
@@ -835,11 +1011,13 @@ The following cryptocurrencies are supported by the workflow:
 | MILO     | MiloCoin                             |
 | MIN      | Minerals Coin                        |
 | MINE     | Instamine Nuggets                    |
+| MINEX    | Minex                                |
 | MINT     | MintCoin                             |
 | MIS      | MIScoin                              |
 | MKR      | Maker                                |
 | MLITE    | MeLite                               |
 | MLN      | Melon                                |
+| MLS      | CPROP                                |
 | MM       | MasterMint                           |
 | MMC      | MemoryCoin                           |
 | MMNXT    | MMNXT                                |
@@ -850,6 +1028,8 @@ The following cryptocurrencies are supported by the workflow:
 | MND      | MindCoin                             |
 | MNE      | Minereum                             |
 | MNM      | Mineum                               |
+| MNY      | Monkey                               |
+| MOD      | Modum                                |
 | MOIN     | MoinCoin                             |
 | MOJO     | Mojocoin                             |
 | MONA     | MonaCoin                             |
@@ -863,10 +1043,13 @@ The following cryptocurrencies are supported by the workflow:
 | MRS      | MarsCoin                             |
 | MRSA     | MrsaCoin                             |
 | MRT      | MinersReward                         |
-| MRY      | MemoryCoin                           |
+| MRV      | Macroverse                           |
+| MRY      | MurrayCoin                           |
 | MSC      | MasterCoin                           |
+| MSP      | Mothership                           |
 | MST      | MustangCoin                          |
 | MT       | Mycelium Token                       |
+| MTH      | Monetha                              |
 | MTL      | Metal                                |
 | MTR      | MasterTraderCoin                     |
 | MUDRA    | MudraCoin                            |
@@ -877,9 +1060,11 @@ The following cryptocurrencies are supported by the workflow:
 | MXT      | MartexCoin                           |
 | MYB      | MyBit                                |
 | MYC      | MayaCoin                             |
-| MYST     | MysteryCoin                          |
+| MYST     | Mysterium                            |
+| MYST*    | MysteryCoin                          |
 | MZC      | MazaCoin                             |
 | N7       | Number7                              |
+| NAMO     | NamoCoin                             |
 | NAN      | NanoToken                            |
 | NANAS    | BananaBits                           |
 | NAS2     | Nas2Coin                             |
@@ -888,22 +1073,28 @@ The following cryptocurrencies are supported by the workflow:
 | NBIT     | NetBit                               |
 | NBL      | Nybble                               |
 | NBT      | NuBits                               |
+| NDC      | NeverDie                             |
 | NDOGE    | NinjaDoge                            |
+| NEBL     | Neblio                               |
 | NEBU     | Nebuchadnezzar                       |
 | NEC      | NeoCoin                              |
 | NEF      | NefariousCoin                        |
+| NEO      | NEO                                  |
 | NEOS     | NeosCoin                             |
 | NET      | NetCoin                              |
+| NET*     | Nimiq Exchange Token                 |
 | NETC     | NetworkCoin                          |
 | NETKO    | Netko                                |
 | NEU      | NeuCoin                              |
 | NEVA     | NevaCoin                             |
 | NIC      | NewInvestCoin                        |
 | NICE     | NiceCoin                             |
+| NIMFA    | Nimfamoney                           |
 | NKA      | IncaKoin                             |
 | NKC      | Nukecoinz                            |
 | NKT      | NakomotoDark                         |
 | NLC      | NoLimitCoin                          |
+| NLC2     | NoLimitCoin                          |
 | NLG      | Gulden                               |
 | NMB      | Nimbus Coin                          |
 | NMC      | NameCoin                             |
@@ -919,6 +1110,8 @@ The following cryptocurrencies are supported by the workflow:
 | NSR      | NuShares                             |
 | NTC      | NineElevenTruthCoin                  |
 | NTCC     | NeptuneClassic                       |
+| NTM      | NetM                                 |
+| NTO      | Fujinto                              |
 | NTRN     | Neutron                              |
 | NUBIS    | NubisCoin                            |
 | NUKE     | NukeCoin                             |
@@ -931,35 +1124,47 @@ The following cryptocurrencies are supported by the workflow:
 | NXTI     | NXTI                                 |
 | NXTTY    | NXTTY                                |
 | NYAN     | NyanCoin                             |
+| NYC      | NewYorkCoin                          |
 | NZC      | NewZealandCoin                       |
 | OAX      | OpenANX                              |
 | OBITS    | Obits Coin                           |
 | OBS      | Obscurebay                           |
 | OC       | OrangeCoin                           |
+| OCL      | Oceanlab                             |
 | OCTO     | OctoCoin                             |
+| ODN      | Obsidian                             |
 | ODNT     | Old Dogs New Tricks                  |
 | OK       | OKCash                               |
 | OLDSF    | OldSafeCoin                          |
 | OLYMP    | OlympCoin                            |
 | OMA      | OmegaCoin                            |
 | OMC      | OmniCron                             |
+| OMG      | OmiseGo                              |
 | OMNI     | Omni                                 |
+| ONION    | DeepOnion                            |
+| ONX      | Onix                                 |
 | OPAL     | OpalCoin                             |
 | OPES     | Opes                                 |
+| OPT      | Opus                                 |
 | OPTION   | OptionCoin                           |
 | ORB      | Orbitcoin                            |
 | ORLY     | OrlyCoin                             |
+| ORME     | Ormeus Coin                          |
 | ORO      | OroCoin                              |
 | OS76     | OsmiumCoin                           |
 | OSC      | OpenSourceCoin                       |
+| OTX      | Octanox                              |
 | PAC      | PacCoin                              |
 | PAK      | Pakcoin                              |
 | PARA     | ParanoiaCoin                         |
+| PART     | Particl                              |
 | PASC     | Pascal Coin                          |
 | PASL     | Pascal Lite                          |
 | PAY      | TenX                                 |
 | PAYP     | PayPeer                              |
 | PBC      | PabyosiCoin                          |
+| PBKX     | Bankex                               |
+| PBT      | Primalbase                           |
 | PCM      | Procom                               |
 | PCS      | Pabyosi Coin                         |
 | PDC      | Project Decorum                      |
@@ -967,6 +1172,7 @@ The following cryptocurrencies are supported by the workflow:
 | PEN      | PenCoin                              |
 | PEPECASH | Pepe Cash                            |
 | PEX      | PosEx                                |
+| PGL      | Prospectors                          |
 | PHR      | Phreak                               |
 | PHS      | PhilosophersStone                    |
 | PIE      | Persistent Information Exchange      |
@@ -975,39 +1181,50 @@ The following cryptocurrencies are supported by the workflow:
 | PINK     | PinkCoin                             |
 | PINKX    | PantherCoin                          |
 | PIO      | Pioneershares                        |
+| PIRL     | Pirl                                 |
 | PIVX     | Private Instant Verified Transaction |
+| PIX      | Lampix                               |
 | PIZZA    | PizzaCoin                            |
 | PKB      | ParkByte                             |
 | PLANET   | PlanetCoin                           |
 | PLBT     | Polybius                             |
 | PLNC     | PLNCoin                              |
+| PLR      | Pillar                               |
 | PLU      | Pluton                               |
 | PNC      | PlatiniumCoin                        |
 | PND      | PandaCoin                            |
 | PNK      | SteamPunk                            |
+| POE      | Po.et                                |
 | POINTS   | Cryptsy Points                       |
+| POLL     | ClearPoll                            |
 | POLY     | PolyBit                              |
 | POST     | PostCoin                             |
 | POSW     | PoSWallet                            |
 | POT      | PotCoin                              |
+| POWR     | Power Ledger                         |
 | PPC      | PeerCoin                             |
+| PPP      | PayPie                               |
 | PPT      | Populous                             |
 | PPY      | Peerplays                            |
+| PQT      | PAquarium                            |
 | PRC      | ProsperCoin                          |
 | PRE      | Premium                              |
 | PRES     | President Trump                      |
+| PRG      | Paragon                              |
 | PRIME    | PrimeChain                           |
 | PRM      | PrismChain                           |
+| PRO      | Propy                                |
 | PROC     | ProCurrency                          |
 | PRX      | Printerium                           |
 | PSB      | PesoBit                              |
 | PSEUD    | PseudoCash                           |
 | PSI      | PSIcoin                              |
+| PST      | Primas                               |
 | PSY      | Psilocybin                           |
 | PTA      | PentaCoin                            |
 | PTC      | PesetaCoin                           |
 | PTOY     | Patientory                           |
-| PTS      | Protoshares                          |
+| PTS*     | Protoshares                          |
 | PULSE    | Pulse                                |
 | PUPA     | PupaCoin                             |
 | PUT      | PutinCoin                            |
@@ -1029,7 +1246,9 @@ The following cryptocurrencies are supported by the workflow:
 | QTL      | Quatloo                              |
 | QTUM     | QTUM                                 |
 | QTZ      | Quartz                               |
+| QVT      | Qvolta                               |
 | QWARK    | Qwark                                |
+| R        | Revain                               |
 | RADI     | RadicalCoin                          |
 | RADS     | Radium                               |
 | RAIN     | Condensate                           |
@@ -1041,25 +1260,36 @@ The following cryptocurrencies are supported by the workflow:
 | RBX      | RiptoBuX                             |
 | RBY      | RubyCoin                             |
 | RC       | Russiacoin                           |
-| RCN      | RCoin                                |
+| RCC      | Reality Clash                        |
+| RCN      | Ripio                                |
+| RCN*     | RCoin                                |
 | RCX      | RedCrowCoin                          |
 | RDD      | ReddCoin                             |
 | RDN      | RadonPay                             |
+| REA      | Realisto                             |
+| REAL     | REAL                                 |
+| REC      | Regalcoin                            |
 | RED      | Redcoin                              |
 | REE      | ReeCoin                              |
 | REP      | Augur                                |
+| REQ      | Request Network                      |
 | REV      | Revenu                               |
+| REX      | REX                                  |
+| RGC      | RG Coin                              |
 | RIC      | Riecoin                              |
 | RICE     | RiceCoin                             |
 | RIDE     | Ride My Car                          |
 | RING     | RingCoin                             |
 | RIPO     | RipOffCoin                           |
 | RISE     | Rise                                 |
+| RIYA     | Etheriya                             |
+| RKC      | Royal Kingdom Coin                   |
 | RLC      | iEx.ec                               |
 | RMS      | Resumeo Shares                       |
 | RNC      | ReturnCoin                           |
 | RNS      | RenosCoin                            |
 | ROOT     | RootCoin                             |
+| ROOTS    | RootProject                          |
 | ROS      | ROS Coin                             |
 | ROUND    | RoundCoin                            |
 | ROYAL    | RoyalCoin                            |
@@ -1067,13 +1297,18 @@ The following cryptocurrencies are supported by the workflow:
 | RRT      | Recovery Right Tokens                |
 | RT2      | RotoCoin                             |
 | RUBIT    | Rublebit                             |
+| RUP      | Rupee                                |
 | RUST     | RustCoin                             |
+| RVT      | Rivetz                               |
 | RYC      | RoyalCoin                            |
 | RYCN     | RoyalCoin 2.0                        |
 | RZR      | RazorCoin                            |
 | S8C      | S88 Coin                             |
+| SAFEX    | SafeExchangeCoin                     |
 | SAK      | SharkCoin                            |
+| SALT     | Salt Lending                         |
 | SAN      | Santiment                            |
+| SAND     | BeachCoin                            |
 | SANDG    | Save and Gain                        |
 | SAR      | SARCoin                              |
 | SAT2     | Saturn2Coin                          |
@@ -1081,14 +1316,15 @@ The following cryptocurrencies are supported by the workflow:
 | SBD      | Steem Backed Dollars                 |
 | SC       | Siacoin                              |
 | SCASH    | SpaceCash                            |
+| SCL      | Social Nexus                         |
 | SCN      | Swiscoin                             |
+| SCORE    | Scorecoin                            |
 | SCOT     | Scotcoin                             |
 | SCRPT    | ScryptCoin                           |
 | SCRT     | SecretCoin                           |
 | SCT      | ScryptToken                          |
 | SDC      | ShadowCash                           |
 | SDP      | SydPakCoin                           |
-| SEC      | SafeExchangeCoin                     |
 | SEEDS    | SeedShares                           |
 | SEL      | SelenCoin                            |
 | SEN      | Sentaro                              |
@@ -1102,10 +1338,13 @@ The following cryptocurrencies are supported by the workflow:
 | SHLD     | ShieldCoin                           |
 | SHORTY   | ShortyCoin                           |
 | SIB      | SibCoin                              |
+| SIFT     | Smart Investment Fund Token          |
+| SIGT     | Signatum                             |
 | SIGU     | Singular                             |
 | SILK     | SilkCoin                             |
 | SJCX     | StorjCoin                            |
 | SKB      | SkullBuzz                            |
+| SKIN     | Skincoin                             |
 | SKY      | Skycoin                              |
 | SLG      | SterlingCoin                         |
 | SLING    | Sling Coin                           |
@@ -1113,16 +1352,21 @@ The following cryptocurrencies are supported by the workflow:
 | SLR      | SolarCoin                            |
 | SLS      | SaluS                                |
 | SMAC     | Social Media Coin                    |
+| SMART    | SmartCash                            |
 | SMC      | SmartCoin                            |
 | SMF      | SmurfCoin                            |
 | SMLY     | SmileyCoin                           |
 | SMSR     | Samsara Coin                         |
+| SMT      | Social Media Market                  |
 | SNC      | SunContract                          |
+| SND      | Sandcoin                             |
 | SNGLS    | SingularDTV                          |
 | SNM      | SONM                                 |
 | SNRG     | Synergy                              |
 | SNT      | Status Network Token                 |
+| SOCC     | SocialCoin                           |
 | SOIL     | SoilCoin                             |
+| SOJ      | Sojourn Coin                         |
 | SOLE     | SoleCoin                             |
 | SONG     | Song Coin                            |
 | SOON     | SoonCoin                             |
@@ -1135,6 +1379,7 @@ The following cryptocurrencies are supported by the workflow:
 | SPHR     | Sphere Coin                          |
 | SPKTR    | Ghost Coin                           |
 | SPM      | Supreme                              |
+| SPN      | Spoon                                |
 | SPORT    | SportsCoin                           |
 | SPOTS    | Spots                                |
 | SPR      | Spreadcoin                           |
@@ -1146,19 +1391,27 @@ The following cryptocurrencies are supported by the workflow:
 | SSD      | Sonic Screw Driver Coin              |
 | SSTC     | SunShotCoin                          |
 | SSV      | SSVCoin                              |
-| STA      | Stakers                              |
+| STA      | Starta                               |
+| STA*     | Stakers                              |
 | STALIN   | StalinCoin                           |
-| STAR     | StarCoin                             |
+| STAR     | Starbase                             |
+| STAR*    | StarCoin                             |
 | START    | StartCoin                            |
+| STCN     | Stakecoin                            |
 | STEEM    | Steem                                |
 | STEPS    | Steps                                |
 | STHR     | Stakerush                            |
 | STO      | Save The Ocean                       |
+| STORJ    | Storj                                |
 | STR*     | StarCoin                             |
 | STRAT    | Stratis                              |
 | STS      | STRESScoin                           |
+| STU      | BitJob                               |
 | STV      | Sativa Coin                          |
-| SUB      | Subscriptio                          |
+| STX      | Stox                                 |
+| SUB      | Substratum Network                   |
+| SUB*     | Subscriptio                          |
+| SUMO     | Sumokoin                             |
 | SUP      | Supcoin                              |
 | SUPER    | SuperCoin                            |
 | SUR      | Suretly                              |
@@ -1188,21 +1441,29 @@ The following cryptocurrencies are supported by the workflow:
 | TEK      | TekCoin                              |
 | TELL     | Tellurion                            |
 | TENNET   | Tennet                               |
+| TER      | TerraNovaCoin                        |
 | TES      | TeslaCoin                            |
 | TESLA    | TeslaCoilCoin                        |
 | TFL      | True Flip Lottery                    |
 | TGC      | TigerCoin                            |
 | THC      | The Hempcoin                         |
+| THNX     | ThankYou                             |
 | THS      | TechShares                           |
 | TIA      | Tianhe                               |
 | TIC      | TrueInvestmentCoin                   |
+| TIE      | Ties Network                         |
 | TIME     | Time                                 |
 | TIT      | TitCoin                              |
 | TIX      | Blocktix                             |
 | TKN      | TokenCard                            |
+| TKN*     | TrollTokens                          |
+| TKR      | CryptoInsight                        |
 | TKS      | Tokes                                |
 | TMC      | TimesCoin                            |
+| TME      | Timereum                             |
+| TNT      | Tierion                              |
 | TODAY    | TodayCoin                            |
+| TOM      | Tomahawkcoin                         |
 | TOR      | TorCoin                              |
 | TOT      | TotCoin                              |
 | TPAY     | TrollPlay                            |
@@ -1217,23 +1478,29 @@ The following cryptocurrencies are supported by the workflow:
 | TRST     | TrustCoin                            |
 | TRUMP    | TrumpCoin                            |
 | TRUST    | TrustPlus                            |
+| TRV      | Travel Coin                          |
+| TRX      | Tronix                               |
 | TSE      | TattooCoin                           |
 | TTC      | TittieCoin                           |
 | TUR      | Turron                               |
 | TWIST    | TwisterCoin                          |
 | TWLV     | Twelve Coin                          |
 | TX       | Transfer                             |
+| TZC      | TrezarCoin                           |
 | U        | Ucoin                                |
 | UBIQ     | Ubiqoin                              |
 | UBQ      | Ubiq                                 |
+| UET      | Useless Ethereum Token               |
 | UFO      | UFO Coin                             |
 | UIS      | Unitus                               |
 | ULTC     | Umbrella                             |
+| UMC      | Umbrella Coin                        |
 | UNAT     | Unattanium                           |
 | UNB      | UnbreakableCoin                      |
 | UNC      | UnCoin                               |
 | UNF      | Unfed Coin                           |
 | UNI      | Universe                             |
+| UNIFY    | Unify                                |
 | UNIQ     | Uniqredit                            |
 | UNIT     | Universal Currency                   |
 | UNITS    | GameUnits                            |
@@ -1251,17 +1518,22 @@ The following cryptocurrencies are supported by the workflow:
 | VDO      | VidioCoin                            |
 | VEC2     | VectorCoin 2.0                       |
 | VEG      | BitVegan                             |
+| VEN      | Vechain                              |
 | VERI     | Veritaseum                           |
 | VERSA    | Versa Token                          |
 | VIA      | ViaCoin                              |
+| VIB      | Viberate                             |
+| VIBE     | VIBEHub                              |
 | VIDZ     | PureVidz                             |
 | VIOR     | ViorCoin                             |
 | VIP      | VIP Tokens                           |
 | VIRAL    | Viral Coin                           |
 | VISIO    | Visio                                |
+| VIVO     | VIVO Coin                            |
 | VLT      | Veltor                               |
 | VLTC     | VaultCoin                            |
 | VMC      | VirtualMining Coin                   |
+| VOISE    | Voise                                |
 | VOLT     | BitVolt                              |
 | VOOT     | VootCoin                             |
 | VOX      | Voxels                               |
@@ -1271,6 +1543,7 @@ The following cryptocurrencies are supported by the workflow:
 | VRM      | Verium                               |
 | VRS      | Veros                                |
 | VSL      | vSlice                               |
+| VSX      | Vsync                                |
 | VTA      | VirtaCoin                            |
 | VTC      | VertCoin                             |
 | VTR      | Vtorrent                             |
@@ -1291,14 +1564,24 @@ The following cryptocurrencies are supported by the workflow:
 | WGC      | World Gold Coin                      |
 | WGO      | WavesGO                              |
 | WGR      | Wagerr                               |
+| WIC      | Wi Coin                              |
+| WILD     | Wild Crypto                          |
 | WINE     | WineCoin                             |
 | WINGS    | Wings DAO                            |
+| WINK     | Wink                                 |
 | WISC     | WisdomCoin                           |
 | WMC      | WMCoin                               |
+| WNET     | Wavesnode.net                        |
 | WOLF     | Insanity Coin                        |
+| WOLK     | Wolk                                 |
+| WOMEN    | WomenCoin                            |
 | WOP      | WorldPay                             |
-| WRC      | WarCoin                              |
+| WORM     | HealthyWorm                          |
+| WRC      | Worldcore                            |
+| WRC*     | WarCoin                              |
+| WRT      | WRTcoin                              |
 | WSX      | WeAreSatoshi                         |
+| WTC      | Waltonchain                          |
 | WTT      | Giga Watt                            |
 | X2       | X2Coin                               |
 | XAI      | SapienceCoin                         |
@@ -1319,6 +1602,7 @@ The following cryptocurrencies are supported by the workflow:
 | XCR      | Crypti                               |
 | XCRE     | Creatio                              |
 | XCT      | C-Bits                               |
+| XCXT     | CoinonatX                            |
 | XDB      | DragonSphere                         |
 | XDE2     | XDE II                               |
 | XDN      | DigitalNote                          |
@@ -1332,19 +1616,24 @@ The following cryptocurrencies are supported by the workflow:
 | XGB      | GoldenBird                           |
 | XGR      | GoldReserve                          |
 | XHI      | HiCoin                               |
-| XID      | International Diamond Coin           |
+| XID      | Sphre AIR                            |
+| XID*     | International Diamond Coin           |
+| XIOS     | Xios                                 |
 | XJO      | JouleCoin                            |
 | XLB      | LibertyCoin                          |
+| XLC      | LeviarCoin                           |
 | XLM      | Stellar                              |
 | XLR      | Solaris                              |
+| XMCC     | MonacoCoin                           |
 | XMG      | Coin Magi                            |
 | XMR      | Monero                               |
 | XMS      | Megastake                            |
 | XMY      | MyriadCoin                           |
 | XNA      | DeOxyRibose                          |
-| XNC      | Numismatic Collections               |
+| XNC      | XenCoin                              |
 | XNG      | Enigma                               |
 | XNX      | XanaxCoin                            |
+| XP       | XP                                   |
 | XPB      | Pebble Coin                          |
 | XPD      | PetroDollar                          |
 | XPH      | PharmaCoin                           |
@@ -1368,12 +1657,12 @@ The following cryptocurrencies are supported by the workflow:
 | XT       | ExtremeCoin                          |
 | XTC      | TileCoin                             |
 | XTZ      | Tezos                                |
+| XUC      | Exchange Union                       |
 | XUP      | UPcoin                               |
 | XVC      | Vcash                                |
 | XVE      | The Vegan Initiative                 |
 | XVG      | Verge                                |
 | XVP      | VirtacoinPlus                        |
-| XVS      | Vsync                                |
 | XWC      | WhiteCoin                            |
 | XWT      | World Trade Funds                    |
 | XXX      | XXXCoin                              |
@@ -1385,6 +1674,7 @@ The following cryptocurrencies are supported by the workflow:
 | YMC      | YamahaCoin                           |
 | YOC      | YoCoin                               |
 | YOVI     | YobitVirtualCoin                     |
+| YOYOW    | Yoyow                                |
 | ZBC      | Zilbercoin                           |
 | ZCC      | ZCC Coin                             |
 | ZCL      | ZClassic                             |
@@ -1403,12 +1693,14 @@ The following cryptocurrencies are supported by the workflow:
 | ZOI      | Zoin                                 |
 | ZOOM     | ZoomCoin                             |
 | ZRC      | ZrCoin                               |
+| ZRC*     | ZiftrCoin                            |
+| ZRX      | 0x                                   |
+| ZSC      | Zeusshield                           |
 | ZSE      | ZSEcoin                              |
 | ZUR      | Zurcoin                              |
 | ZXT      | Zcrypt                               |
 | ZYD      | ZayedCoin                            |
 
 
-
-[yahoo-finance]: https://finance.yahoo.com/
+[openx]: https://openexchangerates.org/
 [cryptocompare]: https://www.cryptocompare.com/
