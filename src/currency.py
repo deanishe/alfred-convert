@@ -110,7 +110,7 @@ def load_openx_rates(symbols):
     wanted = set(symbols)
     if not OPENX_APP_KEY:
         log.warning(
-            'Not fetching fiat currency exchange rates: '
+            'not fetching fiat currency exchange rates: '
             'APP_KEY for openexchangerates.org not set. '
             'Please sign up for a free account here: '
             'https://openexchangerates.org/signup/free'
@@ -147,7 +147,7 @@ def load_active_currencies():
     with open(user_currencies) as fp:
         for line in fp:
             line = line.strip()
-            if line.startswith('#'):
+            if not line or line.startswith('#'):
                 continue
 
             symbols.add(line.upper())
@@ -201,7 +201,8 @@ def main(wf):
     start_time = time.time()
     bootstrap(wf)
 
-    log.info('fetching exchange rates from Yahoo! and CryptoCompare.com ...')
+    log.info('fetching exchange rates from OpenExchangeRates.org and '
+             'CryptoCompare.com ...')
 
     rates = wf.cached_data(CURRENCY_CACHE_NAME,
                            fetch_exchange_rates,

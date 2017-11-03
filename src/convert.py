@@ -19,6 +19,7 @@ from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
 
 from workflow import Workflow3, ICON_WARNING, ICON_INFO
 from workflow.background import run_in_background, is_running
+from workflow.update import Version
 from config import (
     bootstrap,
     DEFAULT_UNIT_DEFINITIONS,
@@ -32,6 +33,8 @@ from config import (
     DEFAULT_SETTINGS,
     HELP_URL,
     ICON_UPDATE,
+    NOKEY_FILENAME,
+    OPENX_APP_KEY,
     THOUSANDS_SEPARATOR,
     UPDATE_SETTINGS,
 )
@@ -42,6 +45,38 @@ log = None
 # Pint objects
 ureg = None
 # Q = ureg.Quantity
+
+
+def handle_update(wf):
+    """Clear cache on update.
+
+    Delete cached data if last-run version used a different format,
+    or if user has just added the ``APP_KEY`` for fiat currency
+    exchange rates.
+
+    """
+    nokey = wf.cachefile(NOKEY_FILENAME)
+    clear = False
+
+    # Clear cache if previous version was old
+    lv = wf.last_version_run
+    log.debug('version=%s, last_version=%s', wf.version, lv)
+    if wf.version > Version('3.0') and lv < Version('3.1'):
+        log.debug('clearing cache: saved data is incompatible')
+        clear = True
+
+    if OPENX_APP_KEY:
+        if os.path.exists(nokey):
+            os.unlink(nokey)
+            log.debug('clearing cache: APP_KEY was set')
+            clear = True
+    else:
+        if not os.path.exists(nokey):
+            open(nokey, 'wb').write('')
+
+    if clear:
+        wf.cache_data(CURRENCY_CACHE_NAME, None)
+        log.debug('cleared old cached currencies')
 
 
 class NoToUnits(Exception):
@@ -390,6 +425,7 @@ def main(wf):
     query = wf.args[0]  # .lower()
     log.debug('query : %s', query)
 
+    handle_update(wf)
     # Create data files if necessary
     bootstrap(wf)
 

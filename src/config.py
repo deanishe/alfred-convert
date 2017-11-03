@@ -42,6 +42,7 @@ OPENX_API_URL = 'https://openexchangerates.org/api/latest.json?app_id={}'
 CRYPTO_COMPARE_BASE_URL = 'https://min-api.cryptocompare.com/data/price?fsym={}&tsyms={}'
 SYMBOLS_PER_REQUEST = 20
 USER_AGENT = 'Alfred Convert/{}'.format(os.getenv('alfred_workflow_version'))
+NOKEY_FILENAME = 'nokey'
 
 # ----------------------------------------------------------------------
 # Unit definition files
