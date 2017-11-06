@@ -47,6 +47,39 @@ ureg = None
 # Q = ureg.Quantity
 
 
+def unit_is_currency(unit):
+    """Return ``True`` if specified unit is a fiat currency."""
+    from config import CURRENCIES
+    return unit.upper() in CURRENCIES
+
+
+def open_currency_instructions():
+    """Magic action to open README in browser."""
+    import webbrowser
+    webbrowser.open('https://github.com/deanishe/alfred-convert#conversions')
+    return 'Opening instructions in browser...'
+
+
+def error_if_currency(unit):
+    if unit_is_currency(unit):
+        log.error(
+            "[parser] unit %s is a fiat currency, but exchange "
+            "rates aren't configured", unit)
+
+        show_currency_help()
+        sys.exit(0)
+
+
+def show_currency_help():
+    """Show a message in Alfred telling user to set ``APP_KEY``."""
+    wf.add_item('Set APP_KEY to convert currencies',
+                'Action this item for instructions',
+                autocomplete='workflow:appkey',
+                icon=ICON_WARNING)
+
+    wf.send_feedback()
+
+
 def handle_update(wf):
     """Clear cache on update.
 
@@ -193,7 +226,12 @@ class Converter(object):
         results = []
         qty = ureg.Quantity(i.number, i.from_unit)
         for u in units:
-            to_unit = ureg.Quantity(1, u)
+            try:
+                to_unit = ureg.Quantity(1, u)
+            except UndefinedUnitError:
+                error_if_currency(u)
+                raise ValueError('Unknown unit: {}'.format(u))
+
             conv = qty.to(to_unit)
             log.debug('[convert] %s -> %s = %s', i.from_unit, u, conv)
             results.append(Conversion(i.number, i.from_unit,
@@ -215,7 +253,11 @@ class Converter(object):
 
         if ctx:
             ctx = ''.join(ctx)
-            ureg.enable_contexts(ctx)
+            try:
+                ureg.enable_contexts(ctx)
+            except KeyError:
+                raise ValueError('Unknown context: {}'.format(ctx))
+
             log.debug('[parser] context=%s', ctx)
             query = query[len(ctx):].strip()
 
@@ -253,12 +295,14 @@ class Converter(object):
         try:
             from_unit = ureg.Quantity(qty, from_unit)
         except UndefinedUnitError:
+            error_if_currency(from_unit)
             raise ValueError('Unknown unit: ' + from_unit)
 
         if to_unit:
             try:
                 to_unit = ureg.Quantity(1, to_unit)
             except UndefinedUnitError:
+                error_if_currency(to_unit)
                 raise ValueError('Unknown unit: ' + to_unit)
 
         tu = None
@@ -418,6 +462,8 @@ def main(wf):
     global ureg
     ureg = UnitRegistry(wf.decode(DEFAULT_UNIT_DEFINITIONS))
     ureg.default_format = 'P'
+
+    wf.magic_arguments['appkey'] = open_currency_instructions
 
     if not len(wf.args):
         return
