@@ -90,14 +90,14 @@ The workflow is configured via the configuration sheet (`[𝓍]`) in Alfred Pref
 
 Basic configuration is performed in the configuration sheet:
 
-|         Option        |                                           Meaning                                            |
-|-----------------------|----------------------------------------------------------------------------------------------|
-| `APP_KEY` | API key for [openexchangerates.org][openx] |
-| `COPY_UNIT`           | Include unit when copying conversion result. Any value but `0` or empty turns this option on |
-| `DECIMAL_PLACES`      | Number of decimal places to show in results                                                  |
-| `DECIMAL_SEPARATOR`   | Character to separate whole numbers and decimal fractions                                    |
-| `THOUSANDS_SEPARATOR` | Character to delimit thousands                                                               |
-| `UPDATE_INTERVAL`     | How often (in minutes) to update currency exchange rates                                     |
+|         Option        |                                                 Meaning                                                  |
+|-----------------------|----------------------------------------------------------------------------------------------------------|
+| `APP_KEY`             | API key for [openexchangerates.org][openx].                                                              |
+| `COPY_UNIT`           | Include unit when copying conversion result. Any value but `0` or empty turns this option on.            |
+| `DECIMAL_PLACES`      | Number of decimal places to show in results.                                                             |
+| `DECIMAL_SEPARATOR`   | Character to separate whole numbers and decimal fractions. Used for parsing input and generating output. |
+| `THOUSANDS_SEPARATOR` | Character to delimit thousands Used for parsing input and generating output.                             |
+| `UPDATE_INTERVAL`     | How often (in minutes) to update currency exchange rates.                                                |
 
 
 #### Active currencies ####

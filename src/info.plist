@@ -501,9 +501,9 @@ COPY_UNIT determines whether the unit is also copied when you press CMD+C. 0 or 
 
 DECIMAL_PLACES is the number of decimal places to show in conversion results.
 
-DECIMAL_SEPARATOR is the character used to separate whole numbers from decimal fraction.
+DECIMAL_SEPARATOR is the character used to separate whole numbers from decimal fraction when parsing and outputting numbers.
 
-THOUSANDS_SEPARATOR is the character used to separate thousands.
+THOUSANDS_SEPARATOR is the character used to separate thousands when parsing and outputting numbers.
 
 UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 	<key>uidata</key>
@@ -620,7 +620,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 	<key>variables</key>
 	<dict>
 		<key>APP_KEY</key>
-		<string></string>
+		<string>0f40388e95824255ab6b3afab053762f</string>
 		<key>COPY_UNIT</key>
 		<string></string>
 		<key>DECIMAL_PLACES</key>
@@ -637,7 +637,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>APP_KEY</string>
 	</array>
 	<key>version</key>
-	<string>3.2.2</string>
+	<string>3.3</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
