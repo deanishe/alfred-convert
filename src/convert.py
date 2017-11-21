@@ -474,8 +474,8 @@ def register_exchange_rates(exchange_rates):
         exchange_rates (dict): `{symbol: rate}` mapping of currencies.
 
     """
-    # EUR will be the baseline currency. All exchange rates are
-    # defined relative to the euro
+    # USD will be the baseline currency. All exchange rates are
+    # defined relative to the US dollar
     ureg.define('USD = [currency] = usd')
 
     for abbr, rate in exchange_rates.items():

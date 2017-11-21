@@ -87,11 +87,15 @@ def load_cryptocurrency_rates(symbols):
     """
     url = CRYPTO_COMPARE_BASE_URL.format(REFERENCE_CURRENCY, ','.join(symbols))
 
+    log.debug('fetching %s ...', url)
     r = web.get(url, headers={'User-Agent': USER_AGENT})
     r.raise_for_status()
 
     data = r.json()
-    log.debug('fetching %s ...', url)
+    for sym, rate in data.items():
+        log.debug('[CryptoCompare.com] 1 %s = %s %s',
+                  REFERENCE_CURRENCY, rate, sym)
+
     return data
 
 
@@ -126,6 +130,8 @@ def load_openx_rates(symbols):
     for sym, rate in data['rates'].items():
         if sym not in wanted:
             continue
+        log.debug('[OpenExchangeRates.org] 1 %s = %s %s',
+                  REFERENCE_CURRENCY, rate, sym)
         rates[sym] = rate
 
     return rates
@@ -173,7 +179,15 @@ def fetch_exchange_rates():
     # rates.update(load_openx_rates(syms))
     jobs = [(load_openx_rates, (syms,))]
 
-    syms = [s for s in CRYPTO_CURRENCIES.keys() if s in active]
+    syms = []
+    for s in CRYPTO_CURRENCIES.keys():
+        if s in CURRENCIES:
+            log.warning('ignoring crytopcurrency "%s", as it conflicts with '
+                        'a fiat currency', s)
+            continue
+        if s in active:
+            syms.append(s)
+    # syms = [s for s in CRYPTO_CURRENCIES.keys() if s in active]
     for symbols in grouper(SYMBOLS_PER_REQUEST, syms):
         jobs.append((load_cryptocurrency_rates, (symbols,)))
 
