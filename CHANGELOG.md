@@ -2,6 +2,26 @@
 Changelog
 =========
 
+### [3.3.1][v3.3.1] ###
+
+Released 2017-11-21
+
+- Disable currencies with conflicting symbols
+
+
+### [3.3][v3.3] ###
+
+Released 2017-11-20
+
+- Parse numbers in accordance with the decimal and thousands separators specified in the workflow configuration
+
+### [3.2.2][v3.2.2] ###
+
+Released 2017-11-07
+
+- Show warning if user tries to convert fiat currency and `APP_KEY` isn't set
+- Ensure cache is cleared after user sets `APP_KEY`
+
 ### [3.2.1][v3.2.1] ###
 
 Released 2017-11-04
@@ -128,4 +148,7 @@ Released 2014-08-09.
 [v3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.1
 [v3.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2
 [v3.2.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2.1
+[v3.2.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2.2
+[v3.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3
+[v3.3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3.1
 [openx]: https://openexchangerates.org/

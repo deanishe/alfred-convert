@@ -155,6 +155,9 @@ See [CHANGELOG][changelog] for more information.
 
 |     Release     |      Date      |
 |-----------------|----------------|
+| [3.3.1][v3.3.1] | 2017-11-21     |
+| [3.3][v3.3]     | 2017-11-20     |
+| [3.2.2][v3.2.2] | 2017-11-07     |
 | [3.2.1][v3.2.1] | 2017-11-04     |
 | [3.2][v3.2]     | 2017-11-02     |
 | [3.1][v3.1]     | 2017-11-02     |
@@ -208,6 +211,9 @@ All other code/media are released under the [MIT Licence][mit].
 [v3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.1
 [v3.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2
 [v3.2.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2.1
+[v3.2.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2.2
+[v3.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3
+[v3.3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3.1
 [cryptocompare]: https://www.cryptocompare.com/
 [openx]: https://openexchangerates.org/
 [openx-free]: https://openexchangerates.org/signup/free
