@@ -83,7 +83,7 @@ Actioning an item (selecting it and hitting `↩`) will copy it to the clipboard
 <a name="configuration"></a>
 ### Configuration ###
 
-The workflow is configured via the configuration sheet (`[𝓍]`) in Alfred Preferences and via a couple of text files in its data directory.
+The workflow is configured via the configuration sheet (`[𝒙]`) in Alfred Preferences and via a couple of text files in its data directory.
 
 
 #### Configuration sheet ####
