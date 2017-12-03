@@ -620,7 +620,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 	<key>variables</key>
 	<dict>
 		<key>APP_KEY</key>
-		<string>0f40388e95824255ab6b3afab053762f</string>
+		<string></string>
 		<key>COPY_UNIT</key>
 		<string></string>
 		<key>DECIMAL_PLACES</key>
