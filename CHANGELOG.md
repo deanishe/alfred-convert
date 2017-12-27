@@ -2,6 +2,14 @@
 Changelog
 =========
 
+
+### [3.4][v3.4] ###
+
+Released 2017-12-27
+
+- Understand negative numbers in input
+
+
 ### [3.3.1][v3.3.1] ###
 
 Released 2017-11-21
@@ -151,4 +159,5 @@ Released 2014-08-09.
 [v3.2.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2.2
 [v3.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3
 [v3.3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3.1
+[v3.4]: https://github.com/deanishe/alfred-convert/releases/tag/v3.4
 [openx]: https://openexchangerates.org/
