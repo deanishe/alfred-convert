@@ -368,10 +368,12 @@ class Converter(object):
 
         """
         qty = []
-        qtychars = ('1234567890' + self.thousands_separator +
+        qtychars = ('+-1234567890' + self.thousands_separator +
                     self.decimal_separator)
         for c in query:
             if c in qtychars:
+                if c == '+':
+                    qty.append('')
                 if c == self.thousands_separator:
                     log.debug('ignored thousands separator "%s"', c)
                     # Append an empty string so qty length is correct
