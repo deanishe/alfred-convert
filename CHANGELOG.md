@@ -3,6 +3,13 @@ Changelog
 =========
 
 
+### [3.5][v3.5] ###
+
+Released 2018-01-12
+
+- Add `DYNAMIC_DECIMALS` setting to expand the number of decimal places until the displayed result is non-zero.
+
+
 ### [3.4][v3.4] ###
 
 Released 2017-12-27
@@ -160,4 +167,5 @@ Released 2014-08-09.
 [v3.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3
 [v3.3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3.1
 [v3.4]: https://github.com/deanishe/alfred-convert/releases/tag/v3.4
+[v3.5]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5
 [openx]: https://openexchangerates.org/

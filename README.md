@@ -90,14 +90,15 @@ The workflow is configured via the configuration sheet (`[𝒙]`) in Alfred Pref
 
 Basic configuration is performed in the configuration sheet:
 
-|         Option        |                                                 Meaning                                                  |
-|-----------------------|----------------------------------------------------------------------------------------------------------|
-| `APP_KEY`             | API key for [openexchangerates.org][openx].                                                              |
-| `COPY_UNIT`           | Include unit when copying conversion result. Any value but `0` or empty turns this option on.            |
-| `DECIMAL_PLACES`      | Number of decimal places to show in results.                                                             |
-| `DECIMAL_SEPARATOR`   | Character to separate whole numbers and decimal fractions. Used for parsing input and generating output. |
-| `THOUSANDS_SEPARATOR` | Character to delimit thousands Used for parsing input and generating output.                             |
-| `UPDATE_INTERVAL`     | How often (in minutes) to update currency exchange rates.                                                |
+|         Option        |                                                                    Meaning                                                                    |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `APP_KEY`             | API key for [openexchangerates.org][openx].                                                                                                   |
+| `COPY_UNIT`           | Include unit when copying conversion result. Any value but `0` or empty turns this option on.                                                 |
+| `DECIMAL_PLACES`      | Number of decimal places to show in results.                                                                                                  |
+| `DECIMAL_SEPARATOR`   | Character to separate whole numbers and decimal fractions. Used for parsing input and generating output.                                      |
+| `DYNAMIC_DECIMALS`    | Dynamically increase the number of decimal places (up to 10) so that the result is non-zero. Any value but `0` or empty turns this option on. |
+| `THOUSANDS_SEPARATOR` | Character to delimit thousands Used for parsing input and generating output.                                                                  |
+| `UPDATE_INTERVAL`     | How often (in minutes) to update currency exchange rates.                                                                                     |
 
 
 #### Active currencies ####
@@ -155,6 +156,8 @@ See [CHANGELOG][changelog] for more information.
 
 |     Release     |      Date      |
 |-----------------|----------------|
+| [3.5][v3.5]     | 2018-01-12     |
+| [3.4][v3.4]     | 2017-12-26     |
 | [3.3.1][v3.3.1] | 2017-11-21     |
 | [3.3][v3.3]     | 2017-11-20     |
 | [3.2.2][v3.2.2] | 2017-11-07     |
@@ -214,6 +217,8 @@ All other code/media are released under the [MIT Licence][mit].
 [v3.2.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.2.2
 [v3.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3
 [v3.3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3.1
+[v3.4]: https://github.com/deanishe/alfred-convert/releases/tag/v3.4
+[v3.5]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5
 [cryptocompare]: https://www.cryptocompare.com/
 [openx]: https://openexchangerates.org/
 [openx-free]: https://openexchangerates.org/signup/free

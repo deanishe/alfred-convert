@@ -31,6 +31,7 @@ from config import (
     DECIMAL_PLACES,
     DECIMAL_SEPARATOR,
     DEFAULT_SETTINGS,
+    DYNAMIC_DECIMALS,
     HELP_URL,
     ICON_UPDATE,
     NOKEY_FILENAME,
@@ -153,11 +154,55 @@ class Formatter(object):
     """
 
     def __init__(self, decimal_places=2, decimal_separator='.',
-                 thousands_separator=''):
+                 thousands_separator='', dynamic_decimals=True):
         """Create a new `Formatter`."""
         self.decimal_places = decimal_places
         self.decimal_separator = decimal_separator
         self.thousands_separator = thousands_separator
+        self.dynamic_decimals = dynamic_decimals
+
+    def _decimal_places(self, n):
+        """Calculate the number of decimal places the result should have.
+
+        If :attr:`dynamic_decimals` is `True`, increase the number of
+        decimal places until the result is non-zero.
+
+        Args:
+            n (float): Number that will be formatted.
+
+        Returns:
+            int: Number of decimal places for result.
+        """
+        log.debug('DYNAMIC_DECIMALS are %s',
+                  ('off', 'on')[self.dynamic_decimals])
+
+        if not self.dynamic_decimals:
+            return self.decimal_places
+
+        m = max(self.decimal_places, 10) + 1
+        p = self.decimal_places
+        while p < m:
+            e = 10 ** p
+            i = n * e
+            # log.debug('n=%f, e=%d, i=%f, p=%d', n, e, i, p)
+            if n * e >= 10:
+                break
+
+            p += 1
+
+        # Remove trailing zeroes
+        s = str(i)
+        if '.' not in s:  # not a fraction
+            return p
+
+        s = s.split('.')[-1]
+        # log.debug('s=%s, p=%d', s, p)
+        while s.endswith('0'):
+            s = s[:-1]
+            p -= 1
+            # log.debug('s=%s, p=%d', s, p)
+
+        return p
 
     def formatted(self, n, unit=None):
         """Format number with thousands and decimal separators."""
@@ -165,7 +210,7 @@ class Formatter(object):
         if self.thousands_separator:
             sep = u','
 
-        fmt = u'{{:0{}.{:d}f}}'.format(sep, self.decimal_places)
+        fmt = u'{{:0{}.{:d}f}}'.format(sep, self._decimal_places(n))
         num = fmt.format(n)
         # log.debug('n=%r, fmt=%r, num=%r', n, fmt, num)
         num = num.replace(',', '||comma||')
@@ -436,27 +481,6 @@ class Converter(object):
         return from_unit, to_unit
 
 
-def format_number(n):
-    """Format a floating point number with thousands/decimal separators.
-
-    Args:
-        n (float): Number to format
-
-    """
-    sep = ''
-    if THOUSANDS_SEPARATOR:
-        sep = ','
-
-    fmt = '{{:0{}.{:d}f}}'.format(sep, DECIMAL_PLACES)
-    num = fmt.format(n)
-    # log.debug('n=%r, fmt=%r, num=%r', n, fmt, num)
-    num = num.replace(',', '||comma||')
-    num = num.replace('.', '||point||')
-    num = num.replace('||comma||', THOUSANDS_SEPARATOR)
-    num = num.replace('||point||', DECIMAL_SEPARATOR)
-    return num
-
-
 def register_units():
     """Add built-in and user units to unit registry."""
     # Add custom units from workflow and user data
@@ -541,7 +565,8 @@ def convert(query):
                     valid=False, icon=ICON_WARNING)
 
     else:  # Show results
-        f = Formatter(DECIMAL_PLACES, DECIMAL_SEPARATOR, THOUSANDS_SEPARATOR)
+        f = Formatter(DECIMAL_PLACES, DECIMAL_SEPARATOR, THOUSANDS_SEPARATOR,
+                      DYNAMIC_DECIMALS)
         wf.setvar('query', query)
         for conv in results:
             value = copytext = f.formatted(conv.to_number, conv.to_unit)
