@@ -27,6 +27,7 @@ from config import (
     COPY_UNIT,
     CURRENCY_CACHE_AGE,
     CURRENCY_CACHE_NAME,
+    CURRENCY_DECIMAL_PLACES,
     CUSTOM_DEFINITIONS_FILENAME,
     DECIMAL_PLACES,
     DECIMAL_SEPARATOR,
@@ -131,6 +132,11 @@ class Input(object):
         self.from_unit = from_unit
         self.to_unit = to_unit
 
+    @property
+    def is_currency(self):
+        """`True` if Input is a currency."""
+        return self.dimensionality == u'[currency]'
+
     def __repr__(self):
         """Code-like representation of `Input`."""
         return ('Input(number={!r}, dimensionality={!r}, '
@@ -173,10 +179,9 @@ class Formatter(object):
         Returns:
             int: Number of decimal places for result.
         """
-        log.debug('DYNAMIC_DECIMALS are %s',
-                  ('off', 'on')[self.dynamic_decimals])
+        log.debug('DYNAMIC_DECIMALS: %s', ('off', 'on')[self.dynamic_decimals])
 
-        if not self.dynamic_decimals:
+        if not self.dynamic_decimals or n == 0.0:
             return self.decimal_places
 
         m = max(self.decimal_places, 10) + 1
@@ -184,7 +189,7 @@ class Formatter(object):
         while p < m:
             e = 10 ** p
             i = n * e
-            # log.debug('n=%f, e=%d, i=%f, p=%d', n, e, i, p)
+            # log.debug('n=%r, e=%d, i=%r, p=%d', n, e, i, p)
             if n * e >= 10:
                 break
 
@@ -195,13 +200,15 @@ class Formatter(object):
         if '.' not in s:  # not a fraction
             return p
 
-        s = s.split('.')[-1]
+        _, s = s.split('.', 1)
         # log.debug('s=%s, p=%d', s, p)
         while s.endswith('0'):
             s = s[:-1]
             p -= 1
             # log.debug('s=%s, p=%d', s, p)
 
+        p = max(p, self.decimal_places)
+        log.debug('places=%d', p)
         return p
 
     def formatted(self, n, unit=None):
@@ -565,7 +572,8 @@ def convert(query):
                     valid=False, icon=ICON_WARNING)
 
     else:  # Show results
-        f = Formatter(DECIMAL_PLACES, DECIMAL_SEPARATOR, THOUSANDS_SEPARATOR,
+        p = CURRENCY_DECIMAL_PLACES if i.is_currency else DECIMAL_PLACES
+        f = Formatter(p, DECIMAL_SEPARATOR, THOUSANDS_SEPARATOR,
                       DYNAMIC_DECIMALS)
         wf.setvar('query', query)
         for conv in results:

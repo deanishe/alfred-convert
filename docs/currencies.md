@@ -2,9 +2,16 @@
 Supported Currencies
 ====================
 
+<!-- MarkdownTOC autolink="true" bracket="round" depth="3" autoanchor="true" -->
+
 - [Fiat currencies](#fiat-currencies)
 - [Cryptocurrencies](#cryptocurrencies)
+- [Unsupported currencies](#unsupported-currencies)
 
+<!-- /MarkdownTOC -->
+
+
+<a name="fiat-currencies"></a>
 Fiat currencies
 ---------------
 
@@ -187,12 +194,10 @@ The following fiat currencies are supported by the workflow:
 | XAU    | Gold                                          |
 | XBA    | Bond Markets Unit European Composite Unit     |
 | XBB    | Bond Markets Unit European Monetary Unit      |
-| XBC    | Bond Markets Unit European Unit of Account 9  |
 | XBD    | Bond Markets Unit European Unit of Account 17 |
 | XCD    | East Caribbean Dollar                         |
 | XDR    | SDR (Special Drawing Right)                   |
 | XOF    | CFA Franc BCEAO                               |
-| XPD    | Palladium                                     |
 | XPF    | CFP Franc                                     |
 | XPT    | Platinum                                      |
 | XSU    | Sucre                                         |
@@ -205,6 +210,7 @@ The following fiat currencies are supported by the workflow:
 
 
 
+<a name="cryptocurrencies"></a>
 Cryptocurrencies
 ----------------
 
@@ -241,7 +247,6 @@ The following cryptocurrencies are supported by the workflow:
 | AHT      | Ahoolee                              |
 | AIB      | AdvancedInternetBlock                |
 | AIR      | AirToken                             |
-| AIR*     | Aircoin                              |
 | ALC      | Arab League Coin                     |
 | ALEX     | Alexandrite                          |
 | ALF      | AlphaCoin                            |
@@ -265,7 +270,6 @@ The following cryptocurrencies are supported by the workflow:
 | APT      | Aptcoin                              |
 | APX      | Apx                                  |
 | ARB      | Arbit Coin                           |
-| ARC*     | ArcticCoin                           |
 | ARCH     | ArchCoin                             |
 | ARCO     | AquariusCoin                         |
 | ARDR     | Ardor                                |
@@ -279,7 +283,6 @@ The following cryptocurrencies are supported by the workflow:
 | ASAFE    | Allsafe                              |
 | ASN      | Ascension Coin                       |
 | AST      | AirSwap                              |
-| AST*     | Astral                               |
 | ATB      | ATB coin                             |
 | ATCC     | ATC Coin                             |
 | ATL      | ATLANT                               |
@@ -347,12 +350,10 @@ The following cryptocurrencies are supported by the workflow:
 | BM       | BitMoon                              |
 | BMC      | Blackmoon Crypto                     |
 | BNB      | Binance Coin                         |
-| BNB*     | Boats and Bitches                    |
 | BNC      | Benjacoin                            |
 | BNT      | Bancor Network Token                 |
 | BNX      | BnrtxCoin                            |
 | BOAT     | Doubloon                             |
-| BOB      | Bob Coin                             |
 | BOLI     | BolivarCoin                          |
 | BOMB     | BombCoin                             |
 | BON      | BonesCoin                            |
@@ -374,7 +375,6 @@ The following cryptocurrencies are supported by the workflow:
 | BRX      | Breakout Stake                       |
 | BS       | BlackShadowCoin                      |
 | BSC      | BowsCoin                             |
-| BSD      | BitSend                              |
 | BST      | BitStone                             |
 | BSTAR    | Blackstar                            |
 | BSTK     | BattleStake                          |
@@ -389,17 +389,14 @@ The following cryptocurrencies are supported by the workflow:
 | BTD      | Bitcloud                             |
 | BTE      | ByteCoin                             |
 | BTG      | Bitcoin Gold                         |
-| BTG*     | BitGem                               |
 | BTLC     | BitLuckCoin                          |
 | BTM      | BitMark                              |
-| BTM*     | Bytom                                |
 | BTMI     | BitMiles                             |
 | BTPL     | Bitcoin Planet                       |
 | BTQ      | BitQuark                             |
 | BTS      | Bitshares                            |
 | BTTF     | Coin to the Future                   |
 | BTX      | Bitcore                              |
-| BTX*     | BitcoinTX                            |
 | BTZ      | BitzCoin                             |
 | BUCKS    | SwagBucks                            |
 | BUK      | CryptoBuk                            |
@@ -421,7 +418,6 @@ The following cryptocurrencies are supported by the workflow:
 | CARBON   | Carboncoin                           |
 | CASH     | CashCoin                             |
 | CAT      | BlockCAT                             |
-| CAT*     | BitClave                             |
 | CBD      | CBD Crystals                         |
 | CBX      | CryptoBullion                        |
 | CC       | CyberCoin                            |
@@ -474,7 +470,6 @@ The following cryptocurrencies are supported by the workflow:
 | CNL      | ConcealCoin                          |
 | CNMT     | Coinomat                             |
 | CNO      | Coino                                |
-| CNT      | Centurion                            |
 | CNX      | Cryptonex                            |
 | COB      | Cobinhood                            |
 | COC      | Community Coin                       |
@@ -489,7 +484,6 @@ The following cryptocurrencies are supported by the workflow:
 | CORE     | Core Group Asset                     |
 | COSS     | COSS                                 |
 | COV      | Covesting                            |
-| COV*     | CovenCoin                            |
 | COVAL    | Circuits of Value                    |
 | COX      | CobraCoin                            |
 | CPC      | CapriCoin                            |
@@ -500,7 +494,6 @@ The following cryptocurrencies are supported by the workflow:
 | CRAIG    | CraigsCoin                           |
 | CRAVE    | CraveCoin                            |
 | CRBIT    | Creditbit                            |
-| CRC      | CraftCoin                            |
 | CRE      | Credits                              |
 | CREA     | CreativeChain                        |
 | CREVA    | Creva Coin                           |
@@ -752,7 +745,6 @@ The following cryptocurrencies are supported by the workflow:
 | GGS      | Gilgam                               |
 | GHC      | GhostCoin                            |
 | GHOUL    | Ghoul Coin                           |
-| GHS      | Giga Hash                            |
 | GIFT     | GiftNet                              |
 | GIG      | GigCoin                              |
 | GIM      | Gimli                                |
@@ -798,7 +790,6 @@ The following cryptocurrencies are supported by the workflow:
 | GUNS     | GeoFunders                           |
 | GUP      | Guppy                                |
 | GXC      | Gx Coin                              |
-| GXC*     | GenXCoin                             |
 | HAC      | Hackspace Capital                    |
 | HAL      | Halcyon                              |
 | HALLO    | Halloween Coin                       |
@@ -908,7 +899,6 @@ The following cryptocurrencies are supported by the workflow:
 | KLC      | KiloCoin                             |
 | KMD      | Komodo                               |
 | KNC      | Kyber Network                        |
-| KNC*     | Khancoin                             |
 | KOBO     | KoboCoin                             |
 | KOLION   | Kolion                               |
 | KORE     | Kore                                 |
@@ -974,7 +964,6 @@ The following cryptocurrencies are supported by the workflow:
 | LYC      | LycanCoin                            |
 | M1       | SupplyShock                          |
 | MAC      | MachineCoin                          |
-| MAD      | SatoshiMadness                       |
 | MAID     | MaidSafe Coin                        |
 | MANA     | Decentraland                         |
 | MAPC     | MapCoin                              |
@@ -983,7 +972,6 @@ The following cryptocurrencies are supported by the workflow:
 | MARV     | Marvelous                            |
 | MARX     | MarxCoin                             |
 | MARYJ    | MaryJane Coin                        |
-| MAT*     | Manet Coin                           |
 | MAX      | MaxCoin                              |
 | MAY      | Theresa May Coin                     |
 | MBI      | Monster Byte Inc                     |
@@ -1062,7 +1050,6 @@ The following cryptocurrencies are supported by the workflow:
 | MYB      | MyBit                                |
 | MYC      | MayaCoin                             |
 | MYST     | Mysterium                            |
-| MYST*    | MysteryCoin                          |
 | MZC      | MazaCoin                             |
 | N7       | Number7                              |
 | NAMO     | NamoCoin                             |
@@ -1083,7 +1070,6 @@ The following cryptocurrencies are supported by the workflow:
 | NEO      | NEO                                  |
 | NEOS     | NeosCoin                             |
 | NET      | NetCoin                              |
-| NET*     | Nimiq Exchange Token                 |
 | NETC     | NetworkCoin                          |
 | NETKO    | Netko                                |
 | NEU      | NeuCoin                              |
@@ -1170,7 +1156,6 @@ The following cryptocurrencies are supported by the workflow:
 | PCS      | Pabyosi Coin                         |
 | PDC      | Project Decorum                      |
 | PEC      | PeaceCoin                            |
-| PEN      | PenCoin                              |
 | PEPECASH | Pepe Cash                            |
 | PEX      | PosEx                                |
 | PGL      | Prospectors                          |
@@ -1225,7 +1210,6 @@ The following cryptocurrencies are supported by the workflow:
 | PTA      | PentaCoin                            |
 | PTC      | PesetaCoin                           |
 | PTOY     | Patientory                           |
-| PTS*     | Protoshares                          |
 | PULSE    | Pulse                                |
 | PUPA     | PupaCoin                             |
 | PUT      | PutinCoin                            |
@@ -1263,7 +1247,6 @@ The following cryptocurrencies are supported by the workflow:
 | RC       | Russiacoin                           |
 | RCC      | Reality Clash                        |
 | RCN      | Ripio                                |
-| RCN*     | RCoin                                |
 | RCX      | RedCrowCoin                          |
 | RDD      | ReddCoin                             |
 | RDN      | RadonPay                             |
@@ -1311,10 +1294,8 @@ The following cryptocurrencies are supported by the workflow:
 | SAN      | Santiment                            |
 | SAND     | BeachCoin                            |
 | SANDG    | Save and Gain                        |
-| SAR      | SARCoin                              |
 | SAT2     | Saturn2Coin                          |
 | SBC      | StableCoin                           |
-| SBD      | Steem Backed Dollars                 |
 | SC       | Siacoin                              |
 | SCASH    | SpaceCash                            |
 | SCL      | Social Nexus                         |
@@ -1351,7 +1332,6 @@ The following cryptocurrencies are supported by the workflow:
 | SLING    | Sling Coin                           |
 | SLM      | SlimCoin                             |
 | SLR      | SolarCoin                            |
-| SLS      | SaluS                                |
 | SMAC     | Social Media Coin                    |
 | SMART    | SmartCash                            |
 | SMC      | SmartCoin                            |
@@ -1393,10 +1373,8 @@ The following cryptocurrencies are supported by the workflow:
 | SSTC     | SunShotCoin                          |
 | SSV      | SSVCoin                              |
 | STA      | Starta                               |
-| STA*     | Stakers                              |
 | STALIN   | StalinCoin                           |
 | STAR     | Starbase                             |
-| STAR*    | StarCoin                             |
 | START    | StartCoin                            |
 | STCN     | Stakecoin                            |
 | STEEM    | Steem                                |
@@ -1404,14 +1382,12 @@ The following cryptocurrencies are supported by the workflow:
 | STHR     | Stakerush                            |
 | STO      | Save The Ocean                       |
 | STORJ    | Storj                                |
-| STR*     | StarCoin                             |
 | STRAT    | Stratis                              |
 | STS      | STRESScoin                           |
 | STU      | BitJob                               |
 | STV      | Sativa Coin                          |
 | STX      | Stox                                 |
 | SUB      | Substratum Network                   |
-| SUB*     | Subscriptio                          |
 | SUMO     | Sumokoin                             |
 | SUP      | Supcoin                              |
 | SUPER    | SuperCoin                            |
@@ -1579,7 +1555,6 @@ The following cryptocurrencies are supported by the workflow:
 | WOP      | WorldPay                             |
 | WORM     | HealthyWorm                          |
 | WRC      | Worldcore                            |
-| WRC*     | WarCoin                              |
 | WRT      | WRTcoin                              |
 | WSX      | WeAreSatoshi                         |
 | WTC      | Waltonchain                          |
@@ -1618,7 +1593,6 @@ The following cryptocurrencies are supported by the workflow:
 | XGR      | GoldReserve                          |
 | XHI      | HiCoin                               |
 | XID      | Sphre AIR                            |
-| XID*     | International Diamond Coin           |
 | XIOS     | Xios                                 |
 | XJO      | JouleCoin                            |
 | XLB      | LibertyCoin                          |
@@ -1694,13 +1668,73 @@ The following cryptocurrencies are supported by the workflow:
 | ZOI      | Zoin                                 |
 | ZOOM     | ZoomCoin                             |
 | ZRC      | ZrCoin                               |
-| ZRC*     | ZiftrCoin                            |
 | ZRX      | 0x                                   |
 | ZSC      | Zeusshield                           |
 | ZSE      | ZSEcoin                              |
 | ZUR      | Zurcoin                              |
 | ZXT      | Zcrypt                               |
 | ZYD      | ZayedCoin                            |
+
+
+<a name="unsupported-currencies"></a>
+Unsupported currencies
+----------------------
+
+The following (crypto)currencies are unsupported. Some have symbols that conflict with other currencies, and others cannot be understood by the `pint` library as they start with digits or end with `*`.
+
+| Symbol |                     Name                     |
+|--------|----------------------------------------------|
+| 007    | 007 coin                                     |
+| 1337   | 1337                                         |
+| 1CR    | 1Credit                                      |
+| 1ST    | FirstBlood                                   |
+| 2015   | 2015 coin                                    |
+| 2BACCO | 2BACCO Coin                                  |
+| 2GIVE  | 2GiveCoin                                    |
+| 32BIT  | 32Bitcoin                                    |
+| 365    | 365Coin                                      |
+| 404    | 404Coin                                      |
+| 42     | 42 Coin                                      |
+| 4CHN   | ChanCoin                                     |
+| 611    | SixEleven                                    |
+| 808    | 808                                          |
+| 888    | Octocoin                                     |
+| 8BIT   | 8BIT Coin                                    |
+| 8BT    | 8 Circuit Studios                            |
+| AIR*   | Aircoin                                      |
+| ARC*   | ArcticCoin                                   |
+| AST*   | Astral                                       |
+| BNB*   | Boats and Bitches                            |
+| BOB    | Bob Coin                                     |
+| BSD    | BitSend                                      |
+| BTG*   | BitGem                                       |
+| BTM*   | Bytom                                        |
+| BTX*   | BitcoinTX                                    |
+| CAT*   | BitClave                                     |
+| CNT    | Centurion                                    |
+| COV*   | CovenCoin                                    |
+| CRC    | CraftCoin                                    |
+| GHS    | Giga Hash                                    |
+| GXC*   | GenXCoin                                     |
+| KNC*   | Khancoin                                     |
+| MAD    | SatoshiMadness                               |
+| MAT*   | Manet Coin                                   |
+| MYST*  | MysteryCoin                                  |
+| NET*   | Nimiq Exchange Token                         |
+| PEN    | PenCoin                                      |
+| PTS*   | Protoshares                                  |
+| RCN*   | RCoin                                        |
+| SAR    | SARCoin                                      |
+| SBD    | Steem Backed Dollar                          |
+| SLS    | SaluS                                        |
+| STA*   | Stakers                                      |
+| STAR*  | StarCoin                                     |
+| SUB*   | Subscriptio                                  |
+| WRC*   | WarCoin                                      |
+| XBC    | Bond Markets Unit European Unit of Account 9 |
+| XID*   | International Diamond Coin                   |
+| XPD    | Palladium                                    |
+| ZRC*   | ZiftrCoin                                    |
 
 
 [openx]: https://openexchangerates.org/

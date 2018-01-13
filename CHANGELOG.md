@@ -2,6 +2,12 @@
 Changelog
 =========
 
+### [3.5.1][v3.5.1] ###
+
+Released 2018-01-13
+
+- Add `CURRENCY_DECIMAL_PLACES` setting to provide alternate number of decimal places for currency conversions.
+
 
 ### [3.5][v3.5] ###
 
@@ -168,4 +174,5 @@ Released 2014-08-09.
 [v3.3.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.3.1
 [v3.4]: https://github.com/deanishe/alfred-convert/releases/tag/v3.4
 [v3.5]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5
+[v3.5.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.1
 [openx]: https://openexchangerates.org/
