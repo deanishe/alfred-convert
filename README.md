@@ -83,12 +83,12 @@ Actioning an item (selecting it and hitting `↩`) will copy it to the clipboard
 <a name="configuration"></a>
 ### Configuration ###
 
-The workflow is configured via the configuration sheet (`[𝒙]`) in Alfred Preferences and via a couple of text files in its data directory.
+The workflow is configured via the [configuration sheet][config-sheet] (the `[𝒙]` icon) in Alfred Preferences and via a couple of text files in its data directory.
 
 
 #### Configuration sheet ####
 
-Basic configuration is performed in the configuration sheet:
+Basic configuration is performed in the [configuration sheet][config-sheet]:
 
 |           Option          |                                                                    Meaning                                                                    |
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
@@ -226,3 +226,4 @@ All other code/media are released under the [MIT Licence][mit].
 [openx]: https://openexchangerates.org/
 [openx-free]: https://openexchangerates.org/signup/free
 [openx-appid]: https://openexchangerates.org/account/app-ids
+[config-sheet]: https://www.alfredapp.com/help/workflows/advanced/variables/#environment
