@@ -590,11 +590,11 @@ def convert(query):
                       DYNAMIC_DECIMALS)
         wf.setvar('query', query)
         for conv in results:
-            value = arg = f.formatted(conv.to_number, conv.to_unit)
-            copytext = f.formatted_no_thousands(conv.to_number, conv.to_unit)
+            value = copytext = f.formatted(conv.to_number, conv.to_unit)
+            arg = f.formatted_no_thousands(conv.to_number, conv.to_unit)
             if not COPY_UNIT:
-                arg = f.formatted(conv.to_number)
-                copytext = f.formatted_no_thousands(conv.to_number)
+                copytext = f.formatted(conv.to_number)
+                arg = f.formatted_no_thousands(conv.to_number)
 
             it = wf.add_item(value,
                              valid=True,
