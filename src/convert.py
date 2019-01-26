@@ -230,6 +230,19 @@ class Formatter(object):
 
         return num
 
+    def formatted_no_thousands(self, n, unit=None):
+        """Format number with decimal separator only."""
+        fmt = u'{{:0.{:d}f}}'.format(self._decimal_places(n))
+        num = fmt.format(n)
+        # log.debug('n=%r, fmt=%r, num=%r', n, fmt, num)
+        num = num.replace('.', '||point||')
+        num = num.replace('||point||', self.decimal_separator)
+
+        if unit:
+            num = u'{} {}'.format(num, unit)
+
+        return num
+
 
 class Conversion(object):
     """Results of a conversion.
@@ -577,13 +590,15 @@ def convert(query):
                       DYNAMIC_DECIMALS)
         wf.setvar('query', query)
         for conv in results:
-            value = copytext = f.formatted(conv.to_number, conv.to_unit)
+            value = arg = f.formatted(conv.to_number, conv.to_unit)
+            copytext = f.formatted_no_thousands(conv.to_number, conv.to_unit)
             if not COPY_UNIT:
-                copytext = f.formatted(conv.to_number)
+                arg = f.formatted(conv.to_number)
+                copytext = f.formatted_no_thousands(conv.to_number)
 
             it = wf.add_item(value,
                              valid=True,
-                             arg=copytext,
+                             arg=arg,
                              copytext=copytext,
                              largetext=value,
                              icon='icon.png')

@@ -489,7 +489,7 @@ variables={allvars}</string>
 
 Based on the awesome Pint library.
 
-In addition to all units supported by Pint, all the currencies supported by Yahoo! Finance and cryptocurrencies supported by CryptoCompare.com are supported.
+In addition to all units supported by Pint, almost all the currencies supported by OpenExchangeRates.org and cryptocurrencies supported by CryptoCompare.com are supported.
 
 You can also add your own custom units.
 
@@ -499,9 +499,11 @@ Configuration
 
 COPY_UNIT determines whether the unit is also copied when you press CMD+C. 0 or no value means the unit won't be copied. Any other value means the unit will also be copied.
 
+CURRENCY_DECIMAL_PLACES overrides DECIMAL_PLACES (see below) for currency conversion.
+
 DECIMAL_PLACES is the number of decimal places to show in conversion results.
 
-DECIMAL_SEPARATOR is the character used to separate whole numbers from decimal fraction when parsing and outputting numbers.
+DECIMAL_SEPARATOR is the character used to separate whole numbers from decimal fraction when parsing input and displaying output (see also THOUSANDS_SEPARATOR below).
 
 DYNAMIC_DECIMALS is whether to dynamically increase the number of decimal places shown until the result is non-zero. Set to 0 or empty to turn off.
 
@@ -643,7 +645,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>APP_KEY</string>
 	</array>
 	<key>version</key>
-	<string>3.5.1</string>
+	<string>3.5.2</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

@@ -41,7 +41,8 @@ Usage
 -----
 
 - `conv <quantity> <from unit> [<to unit>]` — Perform a conversion
-    - `↩` or `⌘C` — Copy the result to the pasteboard
+    - `↩` — Copy the result to the pasteboard
+    - `⌘C` — Copy result to pasteboard without thousands separator
     - `⌘↩` — Add/remove destination unit as default for this dimensionality
     - `⌘L` — Show result in Alfred's Large Type window
 - `convinfo` — View help file and information about the workflow, or edit custom units and active currencies
