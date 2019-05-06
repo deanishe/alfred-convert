@@ -58,22 +58,6 @@ def grouper(n, iterable):
     return groups
 
 
-# def interleave(*iterables):
-#     """Interleave elements of ``iterables``.
-
-#     Args:
-#         *iterables: Iterables to interleave
-
-#     Returns:
-#         list: Elements of ``iterables`` interleaved
-
-#     """
-#     sentinel = object()
-#     it = izip_longest(*iterables, fillvalue=sentinel)
-#     c = chain.from_iterable(it)
-#     return list(filter(lambda v: v is not sentinel, c))
-
-
 def load_cryptocurrency_rates(symbols):
     """Return dict of exchange rates from CryptoCompare.com.
 

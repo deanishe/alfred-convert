@@ -47,6 +47,7 @@ from workflow import (
     MATCH_ALLCHARS,
     Workflow3,
 )
+from workflow.util import run_trigger
 
 from config import (
     bootstrap,
@@ -57,7 +58,6 @@ from config import (
     CUSTOM_DEFINITIONS_FILENAME,
     ICON_CURRENCY,
     ICON_HELP,
-    KEYWORD_SETTINGS,
     README_URL,
 )
 
@@ -67,9 +67,6 @@ SIGNUP_URL = 'https://openexchangerates.org/signup/free'
 log = None
 
 DELIMITER = u'\u203a'  # SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
-
-ALFRED_AS = 'tell application "Alfred 3" to search "{}"'.format(
-    KEYWORD_SETTINGS)
 
 
 def human_timedelta(td):
@@ -92,16 +89,23 @@ def human_timedelta(td):
     for unit in ('day', 'hour', 'minute', 'second'):
         i = d[unit]
 
-        if unit == 'second' and len(output):
-            # no seconds unless last update was < 1m ago
-            break
-
         if i == 1:
             output.append('1 %s' % unit)
 
         elif i > 1:
             output.append('%d %ss' % (i, unit))
+        
+        # we want to ignore only leading zero values
+        # otherwise we'll end up with times like
+        # "3 days and 10 seconds"
+        elif len(output):
+            output.append(None)
 
+    if len(output) > 2:
+        output = output[:2]
+
+    # strip out "Nones" to leave only relevant units
+    output = [s for s in output if s is not None]
     output.append('ago')
     return ' '.join(output)
 
@@ -115,8 +119,9 @@ def handle_delimited_query(query):
     """
     # Currencies or decimal places
     if query.endswith(DELIMITER):  # User deleted trailing space
-        subprocess.call(['osascript', '-e', ALFRED_AS])
-        return
+        run_trigger('config')
+        # subprocess.call(['osascript', '-e', ALFRED_AS])
+        # return
 
     mode, query = [s.strip() for s in query.split(DELIMITER)]
 

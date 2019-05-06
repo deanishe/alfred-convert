@@ -497,6 +497,10 @@ You can also add your own custom units.
 Configuration
 -------------
 
+APP_KEY is your API key for OpenExchangeRates.org. This is required
+to download exchange rates for fiat currencies.
+
+
 COPY_UNIT determines whether the unit is also copied when you press CMD+C. 0 or no value means the unit won't be copied. Any other value means the unit will also be copied.
 
 CURRENCY_DECIMAL_PLACES overrides DECIMAL_PLACES (see below) for currency conversion.
@@ -645,7 +649,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>APP_KEY</string>
 	</array>
 	<key>version</key>
-	<string>3.5.2</string>
+	<string>3.6.0</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

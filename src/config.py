@@ -14,12 +14,6 @@ import os
 import shutil
 
 # ----------------------------------------------------------------------
-# Keywords assigned to Alfred Keywords/Script Filters
-# ----------------------------------------------------------------------
-KEYWORD_CONVERT = 'conv'
-KEYWORD_SETTINGS = 'convinfo'
-
-# ----------------------------------------------------------------------
 # Result display
 # ----------------------------------------------------------------------
 DECIMAL_PLACES = int(os.getenv('DECIMAL_PLACES') or '2')
@@ -43,7 +37,8 @@ CURRENCY_CACHE_AGE = int(os.getenv('UPDATE_INTERVAL') or '360') * 60
 CURRENCY_CACHE_NAME = 'exchange_rates'
 REFERENCE_CURRENCY = 'USD'
 OPENX_API_URL = 'https://openexchangerates.org/api/latest.json?app_id={}'
-CRYPTO_COMPARE_BASE_URL = 'https://min-api.cryptocompare.com/data/price?fsym={}&tsyms={}'
+CRYPTO_COMPARE_BASE_URL = (
+    'https://min-api.cryptocompare.com/data/price?fsym={}&tsyms={}')
 SYMBOLS_PER_REQUEST = 20
 USER_AGENT = 'Alfred Convert/{}'.format(os.getenv('alfred_workflow_version'))
 NOKEY_FILENAME = 'nokey'
