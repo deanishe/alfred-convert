@@ -21,12 +21,9 @@ up your Python script to best utilise the :class:`Workflow` object.
 
 from __future__ import print_function, unicode_literals
 
-import atexit
 import binascii
-from contextlib import contextmanager
 import cPickle
 from copy import deepcopy
-import errno
 import json
 import logging
 import logging.handlers
@@ -35,7 +32,6 @@ import pickle
 import plistlib
 import re
 import shutil
-import signal
 import string
 import subprocess
 import sys
@@ -47,6 +43,13 @@ try:
 except ImportError:  # pragma: no cover
     import xml.etree.ElementTree as ET
 
+# imported to maintain API
+from util import AcquisitionError  # noqa: F401
+from util import (
+    atomic_writer,
+    LockFile,
+    uninterruptible,
+)
 
 #: Sentinel for properties that haven't been set yet (that might
 #: correctly have the value ``None``)
@@ -443,11 +446,8 @@ DEFAULT_UPDATE_FREQUENCY = 1
 
 
 ####################################################################
-# Lockfile and Keychain access errors
+# Keychain access errors
 ####################################################################
-
-class AcquisitionError(Exception):
-    """Raised if a lock cannot be acquired."""
 
 
 class KeychainError(Exception):
@@ -799,205 +799,6 @@ class Item(object):
         return root
 
 
-class LockFile(object):
-    """Context manager to protect filepaths with lockfiles.
-
-    .. versionadded:: 1.13
-
-    Creates a lockfile alongside ``protected_path``. Other ``LockFile``
-    instances will refuse to lock the same path.
-
-    >>> path = '/path/to/file'
-    >>> with LockFile(path):
-    >>>     with open(path, 'wb') as fp:
-    >>>         fp.write(data)
-
-    Args:
-        protected_path (unicode): File to protect with a lockfile
-        timeout (int, optional): Raises an :class:`AcquisitionError`
-            if lock cannot be acquired within this number of seconds.
-            If ``timeout`` is 0 (the default), wait forever.
-        delay (float, optional): How often to check (in seconds) if
-            lock has been released.
-
-    """
-
-    def __init__(self, protected_path, timeout=0, delay=0.05):
-        """Create new :class:`LockFile` object."""
-        self.lockfile = protected_path + '.lock'
-        self.timeout = timeout
-        self.delay = delay
-        self._locked = False
-        atexit.register(self.release)
-
-    @property
-    def locked(self):
-        """`True` if file is locked by this instance."""
-        return self._locked
-
-    def acquire(self, blocking=True):
-        """Acquire the lock if possible.
-
-        If the lock is in use and ``blocking`` is ``False``, return
-        ``False``.
-
-        Otherwise, check every `self.delay` seconds until it acquires
-        lock or exceeds `self.timeout` and raises an `~AcquisitionError`.
-
-        """
-        start = time.time()
-        while True:
-
-            self._validate_lockfile()
-
-            try:
-                fd = os.open(self.lockfile, os.O_CREAT | os.O_EXCL | os.O_RDWR)
-                with os.fdopen(fd, 'w') as fd:
-                    fd.write(str(os.getpid()))
-                break
-            except OSError as err:
-                if err.errno != errno.EEXIST:  # pragma: no cover
-                    raise
-
-                if self.timeout and (time.time() - start) >= self.timeout:
-                    raise AcquisitionError('lock acquisition timed out')
-                if not blocking:
-                    return False
-                time.sleep(self.delay)
-
-        self._locked = True
-        return True
-
-    def _validate_lockfile(self):
-        """Check existence and validity of lockfile.
-
-        If the lockfile exists, but contains an invalid PID
-        or the PID of a non-existant process, it is removed.
-
-        """
-        try:
-            with open(self.lockfile) as fp:
-                s = fp.read()
-        except Exception:
-            return
-
-        try:
-            pid = int(s)
-        except ValueError:
-            return self.release()
-
-        from background import _process_exists
-        if not _process_exists(pid):
-            self.release()
-
-    def release(self):
-        """Release the lock by deleting `self.lockfile`."""
-        self._locked = False
-        try:
-            os.unlink(self.lockfile)
-        except (OSError, IOError) as err:  # pragma: no cover
-            if err.errno != 2:
-                raise err
-
-    def __enter__(self):
-        """Acquire lock."""
-        self.acquire()
-        return self
-
-    def __exit__(self, typ, value, traceback):
-        """Release lock."""
-        self.release()
-
-    def __del__(self):
-        """Clear up `self.lockfile`."""
-        if self._locked:  # pragma: no cover
-            self.release()
-
-
-@contextmanager
-def atomic_writer(file_path, mode):
-    """Atomic file writer.
-
-    .. versionadded:: 1.12
-
-    Context manager that ensures the file is only written if the write
-    succeeds. The data is first written to a temporary file.
-
-    :param file_path: path of file to write to.
-    :type file_path: ``unicode``
-    :param mode: sames as for :func:`open`
-    :type mode: string
-
-    """
-    temp_suffix = '.aw.temp'
-    temp_file_path = file_path + temp_suffix
-    with open(temp_file_path, mode) as file_obj:
-        try:
-            yield file_obj
-            os.rename(temp_file_path, file_path)
-        finally:
-            try:
-                os.remove(temp_file_path)
-            except (OSError, IOError):
-                pass
-
-
-class uninterruptible(object):
-    """Decorator that postpones SIGTERM until wrapped function returns.
-
-    .. versionadded:: 1.12
-
-    .. important:: This decorator is NOT thread-safe.
-
-    As of version 2.7, Alfred allows Script Filters to be killed. If
-    your workflow is killed in the middle of critical code (e.g.
-    writing data to disk), this may corrupt your workflow's data.
-
-    Use this decorator to wrap critical functions that *must* complete.
-    If the script is killed while a wrapped function is executing,
-    the SIGTERM will be caught and handled after your function has
-    finished executing.
-
-    Alfred-Workflow uses this internally to ensure its settings, data
-    and cache writes complete.
-
-    """
-
-    def __init__(self, func, class_name=''):
-        """Decorate `func`."""
-        self.func = func
-        self._caught_signal = None
-
-    def signal_handler(self, signum, frame):
-        """Called when process receives SIGTERM."""
-        self._caught_signal = (signum, frame)
-
-    def __call__(self, *args, **kwargs):
-        """Trap ``SIGTERM`` and call wrapped function."""
-        self._caught_signal = None
-        # Register handler for SIGTERM, then call `self.func`
-        self.old_signal_handler = signal.getsignal(signal.SIGTERM)
-        signal.signal(signal.SIGTERM, self.signal_handler)
-
-        self.func(*args, **kwargs)
-
-        # Restore old signal handler
-        signal.signal(signal.SIGTERM, self.old_signal_handler)
-
-        # Handle any signal caught during execution
-        if self._caught_signal is not None:
-            signum, frame = self._caught_signal
-            if callable(self.old_signal_handler):
-                self.old_signal_handler(signum, frame)
-            elif self.old_signal_handler == signal.SIG_DFL:
-                sys.exit(0)
-
-    def __get__(self, obj=None, klass=None):
-        """Decorator API."""
-        return self.__class__(self.func.__get__(obj, klass),
-                              klass.__name__)
-
-
 class Settings(dict):
     """A dictionary that saves itself when changed.
 
@@ -1031,13 +832,15 @@ class Settings(dict):
 
     def _load(self):
         """Load cached settings from JSON file `self._filepath`."""
+        data = {}
+        with LockFile(self._filepath, 0.5):
+            with open(self._filepath, 'rb') as fp:
+                data.update(json.load(fp))
+
+        self._original = deepcopy(data)
+
         self._nosave = True
-        d = {}
-        with open(self._filepath, 'rb') as file_obj:
-            for key, value in json.load(file_obj, encoding='utf-8').items():
-                d[key] = value
-        self.update(d)
-        self._original = deepcopy(d)
+        self.update(data)
         self._nosave = False
 
     @uninterruptible
@@ -1050,13 +853,13 @@ class Settings(dict):
         """
         if self._nosave:
             return
+
         data = {}
         data.update(self)
-        # for key, value in self.items():
-        #     data[key] = value
-        with LockFile(self._filepath):
-            with atomic_writer(self._filepath, 'wb') as file_obj:
-                json.dump(data, file_obj, sort_keys=True, indent=2,
+
+        with LockFile(self._filepath, 0.5):
+            with atomic_writer(self._filepath, 'wb') as fp:
+                json.dump(data, fp, sort_keys=True, indent=2,
                           encoding='utf-8')
 
     # dict methods
@@ -1090,9 +893,9 @@ class Workflow(object):
     storing & caching data, using Keychain, and generating Script
     Filter feedback.
 
-    ``Workflow`` is compatible with both Alfred 2 and 3. The
-    :class:`~workflow.Workflow3` subclass provides additional,
-    Alfred 3-only features, such as workflow variables.
+    ``Workflow`` is compatible with Alfred 2+. Subclass
+    :class:`~workflow.Workflow3` provides additional features,
+    only available in Alfred 3+, such as workflow variables.
 
     :param default_settings: default workflow settings. If no settings file
         exists, :class:`Workflow.settings` will be pre-populated with
@@ -1163,8 +966,9 @@ class Workflow(object):
         self._last_version_run = UNSET
         # Cache for regex patterns created for filter keys
         self._search_pattern_cache = {}
-        # Magic arguments
-        #: The prefix for all magic arguments. Default is ``workflow:``
+        #: Prefix for all magic arguments.
+        #: The default value is ``workflow:`` so keyword
+        #: ``config`` would match user query ``workflow:config``.
         self.magic_prefix = 'workflow:'
         #: Mapping of available magic arguments. The built-in magic
         #: arguments are registered by default. To add your own magic arguments
@@ -1309,12 +1113,7 @@ class Workflow(object):
         :rtype: ``bool``
 
         """
-        if self._debugging is None:
-            if self.alfred_env.get('debug') == 1:
-                self._debugging = True
-            else:
-                self._debugging = False
-        return self._debugging
+        return self.alfred_env.get('debug') == '1'
 
     @property
     def name(self):
@@ -1423,14 +1222,18 @@ class Workflow(object):
         """Path to workflow's cache directory.
 
         The cache directory is a subdirectory of Alfred's own cache directory
-        in ``~/Library/Caches``. The full path is:
+        in ``~/Library/Caches``. The full path is in Alfred 4+ is:
+
+        ``~/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/<bundle id>``
+
+        For earlier versions:
 
         ``~/Library/Caches/com.runningwithcrayons.Alfred-X/Workflow Data/<bundle id>``
 
-        ``Alfred-X`` may be ``Alfred-2`` or ``Alfred-3``.
+        where ``Alfred-X`` may be ``Alfred-2`` or ``Alfred-3``.
 
-        :returns: full path to workflow's cache directory
-        :rtype: ``unicode``
+        Returns:
+            unicode: full path to workflow's cache directory
 
         """
         if self.alfred_env.get('workflow_cache'):
@@ -1455,12 +1258,18 @@ class Workflow(object):
         """Path to workflow's data directory.
 
         The data directory is a subdirectory of Alfred's own data directory in
-        ``~/Library/Application Support``. The full path is:
+        ``~/Library/Application Support``. The full path for Alfred 4+ is:
 
-        ``~/Library/Application Support/Alfred 2/Workflow Data/<bundle id>``
+        ``~/Library/Application Support/Alfred/Workflow Data/<bundle id>``
 
-        :returns: full path to workflow data directory
-        :rtype: ``unicode``
+        For earlier versions, the path is:
+
+        ``~/Library/Application Support/Alfred X/Workflow Data/<bundle id>``
+
+        where ``Alfred X` is ``Alfred 2`` or ``Alfred 3``.
+
+        Returns:
+            unicode: full path to workflow data directory
 
         """
         if self.alfred_env.get('workflow_data'):
@@ -1482,8 +1291,8 @@ class Workflow(object):
     def workflowdir(self):
         """Path to workflow's root directory (where ``info.plist`` is).
 
-        :returns: full path to workflow root directory
-        :rtype: ``unicode``
+        Returns:
+            unicode: full path to workflow root directory
 
         """
         if not self._workflowdir:
@@ -1586,9 +1395,12 @@ class Workflow(object):
             return self._logger
 
         # Initialise new logger and optionally handlers
-        logger = logging.getLogger('workflow')
+        logger = logging.getLogger('')
 
-        if not len(logger.handlers):  # Only add one set of handlers
+        # Only add one set of handlers
+        # Exclude from coverage, as pytest will have configured the
+        # root logger already
+        if not len(logger.handlers):  # pragma: no cover
 
             fmt = logging.Formatter(
                 '%(asctime)s %(filename)s:%(lineno)s'
@@ -2239,6 +2051,9 @@ class Workflow(object):
         """
         start = time.time()
 
+        # Write to debugger to ensure "real" output starts on a new line
+        print('.', file=sys.stderr)
+
         # Call workflow's entry function/method within a try-except block
         # to catch any errors and display an error message in Alfred
         try:
@@ -2453,17 +2268,16 @@ class Workflow(object):
         :returns: ``True`` if an update is available, else ``False``
 
         """
+        key = '__workflow_latest_version'
         # Create a new workflow object to ensure standard serialiser
         # is used (update.py is called without the user's settings)
-        update_data = Workflow().cached_data('__workflow_update_status',
-                                             max_age=0)
+        status = Workflow().cached_data(key, max_age=0)
 
-        self.logger.debug('update_data: %r', update_data)
-
-        if not update_data or not update_data.get('available'):
+        # self.logger.debug('update status: %r', status)
+        if not status or not status.get('available'):
             return False
 
-        return update_data['available']
+        return status['available']
 
     @property
     def prereleases(self):
@@ -2496,6 +2310,7 @@ class Workflow(object):
         :type force: ``Boolean``
 
         """
+        key = '__workflow_latest_version'
         frequency = self._update_settings.get('frequency',
                                               DEFAULT_UPDATE_FREQUENCY)
 
@@ -2504,10 +2319,9 @@ class Workflow(object):
             return
 
         # Check for new version if it's time
-        if (force or not self.cached_data_fresh(
-                '__workflow_update_status', frequency * 86400)):
+        if (force or not self.cached_data_fresh(key, frequency * 86400)):
 
-            github_slug = self._update_settings['github_slug']
+            repo = self._update_settings['github_slug']
             # version = self._update_settings['version']
             version = str(self.version)
 
@@ -2517,8 +2331,7 @@ class Workflow(object):
             update_script = os.path.join(os.path.dirname(__file__),
                                          b'update.py')
 
-            cmd = ['/usr/bin/python', update_script, 'check', github_slug,
-                   version]
+            cmd = ['/usr/bin/python', update_script, 'check', repo, version]
 
             if self.prereleases:
                 cmd.append('--prereleases')
@@ -2544,11 +2357,11 @@ class Workflow(object):
         """
         import update
 
-        github_slug = self._update_settings['github_slug']
+        repo = self._update_settings['github_slug']
         # version = self._update_settings['version']
         version = str(self.version)
 
-        if not update.check_update(github_slug, version, self.prereleases):
+        if not update.check_update(repo, version, self.prereleases):
             return False
 
         from background import run_in_background
@@ -2557,8 +2370,7 @@ class Workflow(object):
         update_script = os.path.join(os.path.dirname(__file__),
                                      b'update.py')
 
-        cmd = ['/usr/bin/python', update_script, 'install', github_slug,
-               version]
+        cmd = ['/usr/bin/python', update_script, 'install', repo, version]
 
         if self.prereleases:
             cmd.append('--prereleases')
