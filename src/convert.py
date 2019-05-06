@@ -126,11 +126,14 @@ class NoToUnits(Exception):
 class Input(object):
     """Parsed user query."""
 
-    def __init__(self, number, dimensionality, from_unit, to_unit=None):
+    def __init__(self, number, dimensionality, from_unit,
+                 to_unit=None, context=None):
+        """Create new ``Input``."""
         self.number = number
         self.dimensionality = dimensionality
         self.from_unit = from_unit
         self.to_unit = to_unit
+        self.context = context
 
     @property
     def is_currency(self):
@@ -178,6 +181,7 @@ class Formatter(object):
 
         Returns:
             int: Number of decimal places for result.
+
         """
         log.debug('DYNAMIC_DECIMALS: %s', ('off', 'on')[self.dynamic_decimals])
 
@@ -384,7 +388,7 @@ class Converter(object):
         if to_unit:
             tu = unicode(to_unit.units)
         i = Input(from_unit.magnitude, unicode(from_unit.dimensionality),
-                  unicode(from_unit.units), tu)
+                  unicode(from_unit.units), tu, ctx)
 
         log.debug('[parser] %s', i)
 
@@ -609,8 +613,10 @@ def convert(query):
                 action = 'delete'
                 name = 'Remove'
 
-            mod = it.add_modifier('cmd', u'{} {} as default unit for {}'.format(
-                name, conv.to_unit, conv.dimensionality))
+            mod = it.add_modifier(
+                'cmd',
+                u'{} {} as default unit for {}'.format(
+                    name, conv.to_unit, conv.dimensionality))
             mod.setvar('action', action)
             mod.setvar('unit', conv.to_unit)
             mod.setvar('dimensionality', conv.dimensionality)
