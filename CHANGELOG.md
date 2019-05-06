@@ -2,6 +2,28 @@
 Changelog
 =========
 
+### [3.6.0][v3.6.0] ###
+
+Released 2019-05-06
+
+- Alfred 4 support.
+
+
+### [3.5.3][v3.5.3] ###
+
+Released 2019-01-26
+
+- Swap `⌘C` and `↩` to match Alfred's behaviour. `↩` copies result without thousands separator and `⌘C` copies result with separator.
+
+
+### [3.5.2][v3.5.2] ###
+
+Released 2019-01-26
+
+- Copy result with or without thousands separator.
+
+
+
 ### [3.5.1][v3.5.1] ###
 
 Released 2018-01-13
@@ -175,4 +197,7 @@ Released 2014-08-09.
 [v3.4]: https://github.com/deanishe/alfred-convert/releases/tag/v3.4
 [v3.5]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5
 [v3.5.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.1
+[v3.5.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.2
+[v3.5.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.3
+[v3.6.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.6.0
 [openx]: https://openexchangerates.org/

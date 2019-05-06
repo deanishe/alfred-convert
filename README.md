@@ -2,7 +2,7 @@
 Alfred-Convert
 ==============
 
-Convert between different units offline in [Alfred 2 & 3][alfred].
+Convert between different units offline in [Alfred 3 & 4][alfred].
 
 ![][demo]
 
@@ -16,11 +16,14 @@ You can also add your own custom units.
 
 - [Downloading](#downloading)
 - [Usage](#usage)
-    - [Conversions](#conversions)
-    - [Configuration](#configuration)
+  - [Conversions](#conversions)
+  - [Configuration](#configuration)
+    - [Configuration sheet](#configuration-sheet)
+    - [Active currencies](#active-currencies)
+    - [Custom units](#custom-units)
 - [Supported units](#supported-units)
-    - [Supported currencies](#supported-currencies)
-    - [Adding custom units](#adding-custom-units)
+  - [Supported currencies](#supported-currencies)
+  - [Adding custom units](#adding-custom-units)
 - [Releases](#releases)
 - [Thanks, copyright, licensing](#thanks-copyright-licensing)
 
@@ -33,7 +36,7 @@ Downloading
 
 Download from [GitHub releases][ghreleases].
 
-**Note**: Version 3.0 and above only supports Alfred 3. If you're still using Alfred 2, please download [v2.5][v2.5].
+**Note**: Version 3.0 and above only supports Alfred 3+. If you're still using Alfred 2, please download [v2.5][v2.5].
 
 
 <a name="usage"></a>
@@ -158,6 +161,9 @@ See [CHANGELOG][changelog] for more information.
 
 |     Release     |      Date      |
 |-----------------|----------------|
+| [3.6.0][v3.6.0] | 2019-05-06     |
+| [3.5.3][v3.5.3] | 2019-01-26     |
+| [3.5.2][v3.5.2] | 2019-01-26     |
 | [3.5.1][v3.5.1] | 2018-01-13     |
 | [3.5][v3.5]     | 2018-01-12     |
 | [3.4][v3.4]     | 2017-12-26     |
@@ -223,6 +229,9 @@ All other code/media are released under the [MIT Licence][mit].
 [v3.4]: https://github.com/deanishe/alfred-convert/releases/tag/v3.4
 [v3.5]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5
 [v3.5.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.1
+[v3.5.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.2
+[v3.5.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.3
+[v3.6.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.6.0
 [cryptocompare]: https://www.cryptocompare.com/
 [openx]: https://openexchangerates.org/
 [openx-free]: https://openexchangerates.org/signup/free
