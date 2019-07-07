@@ -1,0 +1,2 @@
+Pint==0.9
+Alfred-Workflow==1.36
