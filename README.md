@@ -36,7 +36,7 @@ Downloading
 
 Download from [GitHub releases][ghreleases].
 
-**Note**: Version 3.7 and above only supports Alfred 4+. If you're still using Alfred 4, please download [v3.6.2][v3.6.2].
+**Note**: Version 3.7 and above only supports Alfred 4+. If you're still using Alfred 3, please download [v3.6.2][v3.6.2].
 
 
 <a name="usage"></a>
