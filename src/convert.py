@@ -70,8 +70,8 @@ def error_if_currency(unit):
     """
     if unit_is_currency(unit):
         log.error(
-            "[parser] unit %s is a fiat currency, but exchange "
-            "rates aren't configured", unit)
+            "[parser] unit %s is a fiat currency, but OpenExchangeRates.org "
+            "API key isn't set", unit)
 
         show_currency_help()
         sys.exit(0)
@@ -79,7 +79,7 @@ def error_if_currency(unit):
 
 def show_currency_help():
     """Show a message in Alfred telling user to set ``APP_KEY``."""
-    wf.add_item('Set APP_KEY to convert currencies',
+    wf.add_item('Set APP_KEY to convert this currency',
                 'Action this item for instructions',
                 autocomplete='workflow:appkey',
                 icon=ICON_WARNING)

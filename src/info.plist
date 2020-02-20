@@ -182,7 +182,7 @@
 			<key>uid</key>
 			<string>607FA0B2-94A5-48E4-96E9-0BFA8872F7EE</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -210,6 +210,8 @@
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -248,7 +250,7 @@
 			<key>uid</key>
 			<string>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -364,6 +366,8 @@ variables={allvars}</string>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -402,7 +406,7 @@ variables={allvars}</string>
 			<key>uid</key>
 			<string>EF92F243-C49B-4DFC-B0A4-72317B2457A7</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -649,7 +653,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>APP_KEY</string>
 	</array>
 	<key>version</key>
-	<string>3.6.2</string>
+	<string>3.7.0</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

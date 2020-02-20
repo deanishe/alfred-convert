@@ -32,6 +32,7 @@ from config import (
     OPENX_APP_KEY,
     SYMBOLS_PER_REQUEST,
     USER_AGENT,
+    XRA_API_URL,
 )
 
 
@@ -81,6 +82,31 @@ def load_cryptocurrency_rates(symbols):
                   REFERENCE_CURRENCY, rate, sym)
 
     return data
+
+
+def load_xra_rates(symbols):
+    """Return dict of exchange rates from exchangerate-api.com.
+
+    Returns:
+        dict: `{symbol: rate}` mapping of exchange rates.
+
+    """
+    rates = {}
+    wanted = set(symbols)
+    url = XRA_API_URL.format(REFERENCE_CURRENCY)
+    r = web.get(url, headers={'User-Agent': USER_AGENT})
+    r.raise_for_status()
+    log.debug('[%s] %s', r.status_code, url)
+    data = r.json()
+
+    for sym, rate in data['rates'].items():
+        if sym not in wanted:
+            continue
+        log.debug('[ExchangeRate-API.com] 1 %s = %s %s',
+                  REFERENCE_CURRENCY, rate, sym)
+        rates[sym] = rate
+
+    return rates
 
 
 def load_openx_rates(symbols):
@@ -160,8 +186,16 @@ def fetch_exchange_rates():
     active = load_active_currencies()
 
     syms = [s for s in CURRENCIES.keys() if s in active]
-    # rates.update(load_openx_rates(syms))
-    jobs = [(load_openx_rates, (syms,))]
+    if not OPENX_APP_KEY:
+        log.warning(
+            'fetching limited set of fiat currency exchange rates: '
+            'APP_KEY for openexchangerates.org not set. '
+            'Please sign up for a free account here: '
+            'https://openexchangerates.org/signup/free'
+        )
+        jobs = [(load_xra_rates, (syms,))]
+    else:
+        jobs = [(load_openx_rates, (syms,))]
 
     syms = []
     for s in CRYPTO_CURRENCIES.keys():
@@ -190,7 +224,7 @@ def fetch_exchange_rates():
 
 
 def main(wf):
-    """Update exchange rates from Yahoo! Finance.
+    """Update exchange rates.
 
     Args:
         wf (workflow.Workflow): Workflow object.
@@ -199,8 +233,10 @@ def main(wf):
     start_time = time.time()
     bootstrap(wf)
 
-    log.info('fetching exchange rates from OpenExchangeRates.org and '
-             'CryptoCompare.com ...')
+    site = 'OpenExchangeRates.org' if OPENX_APP_KEY else 'ExchangeRate-API.com'
+
+    log.info('fetching exchange rates from %s and CryptoCompare.com ...',
+             site)
 
     rates = wf.cached_data(CURRENCY_CACHE_NAME,
                            fetch_exchange_rates,

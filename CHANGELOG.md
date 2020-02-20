@@ -2,6 +2,27 @@
 Changelog
 =========
 
+### [3.7.0][v3.7.0] ###
+
+Released 2020-02-20
+
+- Add exchange rates from ExchangeRate-API.com (no API key required)
+
+
+### [3.6.2][v3.6.2] ###
+
+Released 2019-09-06
+
+- Include `pkg_resources` (Pint dependency)
+
+
+### [3.6.1][v3.6.1] ###
+
+Released 2019-05-30
+
+- Fix argument quoting
+
+
 ### [3.6.0][v3.6.0] ###
 
 Released 2019-05-06
@@ -200,4 +221,7 @@ Released 2014-08-09.
 [v3.5.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.2
 [v3.5.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.3
 [v3.6.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.6.0
+[v3.6.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.6.1
+[v3.6.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.6.2
+[v3.7.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.7.0
 [openx]: https://openexchangerates.org/

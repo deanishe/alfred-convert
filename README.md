@@ -36,7 +36,7 @@ Downloading
 
 Download from [GitHub releases][ghreleases].
 
-**Note**: Version 3.0 and above only supports Alfred 3+. If you're still using Alfred 2, please download [v2.5][v2.5].
+**Note**: Version 3.7 and above only supports Alfred 4+. If you're still using Alfred 4, please download [v3.6.2][v3.6.2].
 
 
 <a name="usage"></a>
@@ -58,7 +58,7 @@ Usage
 <a name="conversions"></a>
 ### Conversions ###
 
-**NOTE**: To perform conversions between fiat currencies, you must set a key for the [openexchangerates.org][openx] API in the workflow's [configuration sheet](#configuration). You can sign up for a free account [here][openx-free]. When you're signed up, copy the **App ID** from the email you receive or [this page][openx-appid] into the `APP_KEY` field in the [configuration sheet](#configuration).
+**NOTE**: Only a limited number of fiat currencies are supported by default. Additional rates are only supported if you set a key for the [openexchangerates.org][openx] API in the workflow's [configuration sheet](#configuration). You can sign up for a free account [here][openx-free]. When you're signed up, copy the **App ID** from the email you receive or [this page][openx-appid] into the `APP_KEY` field in the [configuration sheet](#configuration).
 
 - `conv [<context>] <quantity> <from unit> [<to unit>]` — Perform a conversion
     - `↩` or `⌘C` — Copy the result to the pasteboard
@@ -161,6 +161,9 @@ See [CHANGELOG][changelog] for more information.
 
 |     Release     |      Date      |
 |-----------------|----------------|
+| [3.7.0][v3.7.0] | 2020-02-20     |
+| [3.6.2][v3.6.2] | 2019-09-06     |
+| [3.6.1][v3.6.1] | 2019-05-30     |
 | [3.6.0][v3.6.0] | 2019-05-06     |
 | [3.5.3][v3.5.3] | 2019-01-26     |
 | [3.5.2][v3.5.2] | 2019-01-26     |
@@ -232,6 +235,9 @@ All other code/media are released under the [MIT Licence][mit].
 [v3.5.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.2
 [v3.5.3]: https://github.com/deanishe/alfred-convert/releases/tag/v3.5.3
 [v3.6.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.6.0
+[v3.6.1]: https://github.com/deanishe/alfred-convert/releases/tag/v3.6.1
+[v3.6.2]: https://github.com/deanishe/alfred-convert/releases/tag/v3.6.2
+[v3.7.0]: https://github.com/deanishe/alfred-convert/releases/tag/v3.7.0
 [cryptocompare]: https://www.cryptocompare.com/
 [openx]: https://openexchangerates.org/
 [openx-free]: https://openexchangerates.org/signup/free
