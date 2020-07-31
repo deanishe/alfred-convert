@@ -50,12 +50,16 @@ class Variables(dict):
     information.
 
     Args:
-        arg (unicode, optional): Main output/``{query}``.
+        arg (unicode or list, optional): Main output/``{query}``.
         **variables: Workflow variables to set.
 
+    In Alfred 4.1+ and Alfred-Workflow 1.40+, ``arg`` may also be a
+    :class:`list` or :class:`tuple`.
 
     Attributes:
-        arg (unicode): Output value (``{query}``).
+        arg (unicode or list): Output value (``{query}``).
+            In Alfred 4.1+ and Alfred-Workflow 1.40+, ``arg`` may also be a
+            :class:`list` or :class:`tuple`.
         config (dict): Configuration for downstream workflow element.
 
     """
@@ -68,7 +72,7 @@ class Variables(dict):
 
     @property
     def obj(self):
-        """Return ``alfredworkflow`` `dict`."""
+        """``alfredworkflow`` :class:`dict`."""
         o = {}
         if self:
             d2 = {}
@@ -92,10 +96,10 @@ class Variables(dict):
 
         """
         if not self and not self.config:
-            if self.arg:
-                return self.arg
-            else:
+            if not self.arg:
                 return u''
+            if isinstance(self.arg, unicode):
+                return self.arg
 
         return json.dumps(self.obj)
 
@@ -327,6 +331,9 @@ class Item3(object):
             icontype (unicode, optional): Type of icon.  See
                 :meth:`Workflow.add_item() <workflow.Workflow.add_item>`
                 for valid values.
+
+        In Alfred 4.1+ and Alfred-Workflow 1.40+, ``arg`` may also be a
+        :class:`list` or :class:`tuple`.
 
         Returns:
             Modifier: Configured :class:`Modifier`.
@@ -568,6 +575,9 @@ class Workflow3(Workflow):
                 turned on for your Script Filter, Alfred (version 3.5 and
                 above) will filter against this field, not ``title``.
 
+        In Alfred 4.1+ and Alfred-Workflow 1.40+, ``arg`` may also be a
+        :class:`list` or :class:`tuple`.
+
         See :meth:`Workflow.add_item() <workflow.Workflow.add_item>` for
         the main documentation and other parameters.
 
@@ -717,5 +727,8 @@ class Workflow3(Workflow):
 
     def send_feedback(self):
         """Print stored items to console/Alfred as JSON."""
-        json.dump(self.obj, sys.stdout)
+        if self.debugging:
+            json.dump(self.obj, sys.stdout, indent=2, separators=(',', ': '))
+        else:
+            json.dump(self.obj, sys.stdout)
         sys.stdout.flush()

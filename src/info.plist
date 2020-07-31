@@ -231,7 +231,11 @@
 				<key>runningsubtext</key>
 				<string>Convertifying…</string>
 				<key>script</key>
-				<string>/usr/bin/python convert.py "$1"</string>
+				<string>echo . &gt;&amp;2
+echo "http_proxy=$http_proxy"&gt;&amp;2
+echo "https_proxy=$https_proxy"&gt;&amp;2
+
+/usr/bin/python convert.py "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -476,6 +480,8 @@ variables={allvars}</string>
 			<dict>
 				<key>argument</key>
 				<string>{var:query}</string>
+				<key>passthroughargument</key>
+				<false/>
 				<key>variables</key>
 				<dict/>
 			</dict>
@@ -653,7 +659,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>APP_KEY</string>
 	</array>
 	<key>version</key>
-	<string>3.7.0</string>
+	<string>3.7.1</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
