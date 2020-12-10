@@ -77,6 +77,10 @@ def load_cryptocurrency_rates(symbols):
     r.raise_for_status()
 
     data = r.json()
+    if data[u'Response'] == u'Error':
+        log.warn('Got error from crypto exchange: %s', data)
+        return {}
+
     for sym, rate in data.items():
         log.debug('[CryptoCompare.com] 1 %s = %s %s',
                   REFERENCE_CURRENCY, rate, sym)
