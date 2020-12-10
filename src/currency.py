@@ -171,6 +171,14 @@ def load_active_currencies():
     return symbols
 
 
+def is_valid_currency(currency):
+    return isinstance(currency, basestring) and (currency in CURRENCIES or currency in CRYPTO_CURRENCIES)
+
+
+def is_valid_exchange_rate(rate):
+    return isinstance(rate, int) or isinstance(rate, float)
+
+
 def fetch_exchange_rates():
     """Retrieve all currency exchange rates.
 
@@ -205,7 +213,7 @@ def fetch_exchange_rates():
             continue
         if s in active:
             syms.append(s)
-    # syms = [s for s in CRYPTO_CURRENCIES.keys() if s in active]
+
     for symbols in grouper(SYMBOLS_PER_REQUEST, syms):
         jobs.append((load_cryptocurrency_rates, (symbols,)))
 
@@ -218,7 +226,12 @@ def fetch_exchange_rates():
     pool.join()
 
     for f in futures:
-        rates.update(f.get())
+        for currency, rate in f.get().iteritems():
+            if is_valid_currency(currency) and is_valid_exchange_rate(rate):
+                rates[currency] = rate
+                log.debug("Currency %s has new rate %s", currency, rate)
+            else:
+                log.warn("Got invalid rate update for currency '%s' to '%s'", currency, rate)
 
     return rates
 
