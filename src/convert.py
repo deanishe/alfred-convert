@@ -478,7 +478,7 @@ class Converter(object):
 
         """
         from_unit = to_unit = None
-        units = [s.strip() for s in query.split()]
+        units = [s.strip() for s in query.split() if s.strip() not in ('to', 'as')]
         from_unit = units[0]
         log.debug('[parser] from_unit=%s', from_unit)
 
