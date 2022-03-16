@@ -14,18 +14,20 @@ You can also add your own custom units.
 
 <!-- MarkdownTOC autolink="true" bracket="round" depth="2" autoanchor="true" -->
 
-- [Downloading](#downloading)
-- [Usage](#usage)
-  - [Conversions](#conversions)
-  - [Configuration](#configuration)
-    - [Configuration sheet](#configuration-sheet)
-    - [Active currencies](#active-currencies)
-    - [Custom units](#custom-units)
-- [Supported units](#supported-units)
-  - [Supported currencies](#supported-currencies)
-  - [Adding custom units](#adding-custom-units)
-- [Releases](#releases)
-- [Thanks, copyright, licensing](#thanks-copyright-licensing)
+- [Alfred-Convert](#alfred-convert)
+  - [Downloading](#downloading)
+  - [macOS 12.3 and later](#macos-123-and-later)
+  - [Usage](#usage)
+    - [Conversions](#conversions)
+    - [Configuration](#configuration)
+      - [Configuration sheet](#configuration-sheet)
+      - [Active currencies](#active-currencies)
+      - [Custom units](#custom-units)
+  - [Supported units](#supported-units)
+    - [Supported currencies](#supported-currencies)
+    - [Adding custom units](#adding-custom-units)
+  - [Releases](#releases)
+  - [Thanks, copyright, licensing](#thanks-copyright-licensing)
 
 <!-- /MarkdownTOC -->
 
@@ -38,6 +40,31 @@ Download from [GitHub releases][ghreleases].
 
 **Note**: Version 3.7 and above only supports Alfred 4+. If you're still using Alfred 3, please download [v3.6.2][v3.6.2].
 
+<a name="newmacos"></a>
+macOS 12.3 and later
+-----------
+
+As of macOS 12.3 Python 2.7 is no longer incleded in macOS by default so you will need to install it.
+In this fork I have added **pyenv** as a requirement. 
+
+Install it using [Homebrew](https://brew.sh/):
+```zsh
+brew install pyenv
+```
+
+Add it to your ZSH profile (or go to the [pyenv installation guide](https://github.com/pyenv/pyenv#basic-github-checkout) for more options):
+```zsh
+echo 'eval "$(pyenv init --path)"' >> ~/.zprofile
+
+echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+```
+
+Then install Python 2.7 using pyenv:
+```zsh
+pyenv install pypy2.7-7.3.6
+```
+
+Once you have pyenv installed make sure to edit the `PYTHONEXECUTABLE` variable in `workflow/workflow.py` (should be on line 57) replacing `YOURUSERNAME` with the your username (this should be the same as the name of your home folder, otherwise get this by running `whoami` in Terminal). You can find the `workflow` folder containing `workflow.py` by right clicking on the workflow in the workflow tab of Alfred and then clicking "Open in Finder".
 
 <a name="usage"></a>
 Usage

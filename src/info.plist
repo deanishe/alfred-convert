@@ -4,6 +4,8 @@
 <dict>
 	<key>bundleid</key>
 	<string>net.deanishe.alfred-convert</string>
+	<key>category</key>
+	<string>Tools</string>
 	<key>connections</key>
 	<dict>
 		<key>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</key>
@@ -174,6 +176,8 @@
 				<false/>
 				<key>clipboardtext</key>
 				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
 				<key>transient</key>
 				<false/>
 			</dict>
@@ -235,7 +239,13 @@
 echo "http_proxy=$http_proxy"&gt;&amp;2
 echo "https_proxy=$https_proxy"&gt;&amp;2
 
-/usr/bin/python convert.py "$1"</string>
+PYENV_ORIG_VALUE=$(/opt/homebrew/bin/pyenv global)
+
+/opt/homebrew/bin/pyenv global pypy2.7-7.3.6
+
+/opt/homebrew/bin/pyenv exec python convert.py "$1"
+
+/opt/homebrew/bin/pyenv global $PYENV_ORIG_VALUE</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -245,7 +255,7 @@ echo "https_proxy=$https_proxy"&gt;&amp;2
 				<key>title</key>
 				<string>Convert a Quantity</string>
 				<key>type</key>
-				<integer>0</integer>
+				<integer>5</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -391,7 +401,13 @@ variables={allvars}</string>
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>/usr/bin/python info.py "$1"</string>
+				<string>PYENV_ORIG_VALUE=$(/opt/homebrew/bin/pyenv global)
+
+/opt/homebrew/bin/pyenv global pypy2.7-7.3.6
+
+/opt/homebrew/bin/pyenv exec python info.py "$1"
+
+/opt/homebrew/bin/pyenv global $PYENV_ORIG_VALUE</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>

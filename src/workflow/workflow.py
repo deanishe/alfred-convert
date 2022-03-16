@@ -51,6 +51,13 @@ from util import (
     uninterruptible,
 )
 
+####################################################################
+# Python executable path
+####################################################################
+PYTHONEXECUTABLE = "/Users/YOURUSERNAME/.pyenv/versions/pypy2.7-7.3.6/bin/python"
+
+
+
 #: Sentinel for properties that haven't been set yet (that might
 #: correctly have the value ``None``)
 UNSET = object()
@@ -402,7 +409,6 @@ DUMB_PUNCTUATION = {
     '–': '-',
     '—': '-'
 }
-
 
 ####################################################################
 # Used by `Workflow.filter`
@@ -2330,7 +2336,7 @@ class Workflow(object):
             update_script = os.path.join(os.path.dirname(__file__),
                                          b'update.py')
 
-            cmd = ['/usr/bin/python', update_script, 'check', repo, version]
+            cmd = [PYTHONEXECUTABLE, update_script, 'check', repo, version]
 
             if self.prereleases:
                 cmd.append('--prereleases')
@@ -2369,7 +2375,7 @@ class Workflow(object):
         update_script = os.path.join(os.path.dirname(__file__),
                                      b'update.py')
 
-        cmd = ['/usr/bin/python', update_script, 'install', repo, version]
+        cmd = [PYTHONEXECUTABLE, update_script, 'install', repo, version]
 
         if self.prereleases:
             cmd.append('--prereleases')
