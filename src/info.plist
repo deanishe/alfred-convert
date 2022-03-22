@@ -231,7 +231,7 @@
 				<key>queuedelaymode</key>
 				<integer>1</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Convertifying…</string>
 				<key>script</key>
@@ -239,13 +239,7 @@
 echo "http_proxy=$http_proxy"&gt;&amp;2
 echo "https_proxy=$https_proxy"&gt;&amp;2
 
-PYENV_ORIG_VALUE=$(/opt/homebrew/bin/pyenv global)
-
-/opt/homebrew/bin/pyenv global pypy2.7-7.3.6
-
-/opt/homebrew/bin/pyenv exec python convert.py "$1"
-
-/opt/homebrew/bin/pyenv global $PYENV_ORIG_VALUE</string>
+/Users/$(whoami)/.pyenv/versions/pypy2.7-7.3.6/bin/python convert.py "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -255,7 +249,7 @@ PYENV_ORIG_VALUE=$(/opt/homebrew/bin/pyenv global)
 				<key>title</key>
 				<string>Convert a Quantity</string>
 				<key>type</key>
-				<integer>5</integer>
+				<integer>0</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -401,13 +395,7 @@ variables={allvars}</string>
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>PYENV_ORIG_VALUE=$(/opt/homebrew/bin/pyenv global)
-
-/opt/homebrew/bin/pyenv global pypy2.7-7.3.6
-
-/opt/homebrew/bin/pyenv exec python info.py "$1"
-
-/opt/homebrew/bin/pyenv global $PYENV_ORIG_VALUE</string>
+				<string>/Users/$(whoami)/.pyenv/versions/pypy2.7-7.3.6/bin/python info.py "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -660,7 +648,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<key>CURRENCY_DECIMAL_PLACES</key>
 		<string>2</string>
 		<key>DECIMAL_PLACES</key>
-		<string>2</string>
+		<string>4</string>
 		<key>DECIMAL_SEPARATOR</key>
 		<string>.</string>
 		<key>DYNAMIC_DECIMALS</key>
@@ -675,7 +663,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>APP_KEY</string>
 	</array>
 	<key>version</key>
-	<string>3.7.1</string>
+	<string>3.7.3</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

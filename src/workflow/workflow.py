@@ -54,8 +54,8 @@ from util import (
 ####################################################################
 # Python executable path
 ####################################################################
-PYTHONEXECUTABLE = "/Users/YOURUSERNAME/.pyenv/versions/pypy2.7-7.3.6/bin/python"
-
+HOMEPATH = os.getenv('HOME')
+PYTHONEXECUTABLE = HOMEPATH + '/.pyenv/versions/pypy2.7-7.3.6/bin/python'
 
 
 #: Sentinel for properties that haven't been set yet (that might
@@ -2342,7 +2342,6 @@ class Workflow(object):
                 cmd.append('--prereleases')
 
             self.logger.info('checking for update ...')
-
             run_in_background('__workflow_update_check', cmd)
 
         else:
