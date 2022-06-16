@@ -234,7 +234,7 @@ All other code/media are released under the [MIT Licence][mit].
 [fontawesome]: http://fortawesome.github.io/Font-Awesome/
 [ghissues]: https://github.com/deanishe/alfred-convert/issues
 [ghpulls]: https://github.com/deanishe/alfred-convert/pulls
-[ghreleases]: https://github.com/deanishe/alfred-convert/releases
+[ghreleases]: https://github.com/willemml/alfred-convert/releases
 [mit]: http://opensource.org/licenses/MIT
 [pintdocs]: http://pint.readthedocs.org/en/latest/index.html
 [pinthowto]: http://pint.readthedocs.org/en/latest/defining.html
