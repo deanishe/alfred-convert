@@ -4,6 +4,8 @@
 <dict>
 	<key>bundleid</key>
 	<string>net.deanishe.alfred-convert</string>
+	<key>category</key>
+	<string>Tools</string>
 	<key>connections</key>
 	<dict>
 		<key>1E12C11D-30DB-44A8-AD75-F5BE7F2DA451</key>
@@ -174,6 +176,8 @@
 				<false/>
 				<key>clipboardtext</key>
 				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
 				<key>transient</key>
 				<false/>
 			</dict>
@@ -227,7 +231,7 @@
 				<key>queuedelaymode</key>
 				<integer>1</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Convertifying…</string>
 				<key>script</key>
@@ -235,7 +239,7 @@
 echo "http_proxy=$http_proxy"&gt;&amp;2
 echo "https_proxy=$https_proxy"&gt;&amp;2
 
-/usr/bin/python convert.py "$1"</string>
+/Users/$(whoami)/.pyenv/versions/pypy2.7-7.3.6/bin/python convert.py "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -391,7 +395,7 @@ variables={allvars}</string>
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>/usr/bin/python info.py "$1"</string>
+				<string>/Users/$(whoami)/.pyenv/versions/pypy2.7-7.3.6/bin/python info.py "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -644,7 +648,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<key>CURRENCY_DECIMAL_PLACES</key>
 		<string>2</string>
 		<key>DECIMAL_PLACES</key>
-		<string>2</string>
+		<string>4</string>
 		<key>DECIMAL_SEPARATOR</key>
 		<string>.</string>
 		<key>DYNAMIC_DECIMALS</key>
@@ -659,7 +663,7 @@ UPDATE_INTERVAL is the number of minutes between exchange rate updates.</string>
 		<string>APP_KEY</string>
 	</array>
 	<key>version</key>
-	<string>3.7.1</string>
+	<string>3.7.3</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

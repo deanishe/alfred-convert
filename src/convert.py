@@ -18,6 +18,7 @@ import sys
 from pint import UnitRegistry, UndefinedUnitError, DimensionalityError
 
 from workflow import Workflow3, ICON_WARNING, ICON_INFO
+from workflow.workflow import PYTHONEXECUTABLE
 from workflow.background import run_in_background, is_running
 from workflow.update import Version
 from config import (
@@ -667,7 +668,7 @@ def main(wf):
 
     if not wf.cached_data_fresh(CURRENCY_CACHE_NAME, CURRENCY_CACHE_AGE):
         # Update currency rates
-        cmd = ['/usr/bin/python', wf.workflowfile('currency.py')]
+        cmd = [PYTHONEXECUTABLE, wf.workflowfile('currency.py')]
         run_in_background('update', cmd)
         wf.rerun = 0.5
 
